@@ -1,10 +1,17 @@
 import React, { Component } from 'react';
 import './App.css';
+import withRoot from './withRoot';
+import PropTypes from 'prop-types';
 
 // Material-ui
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
 
 // WEB3 Services
 import Web3 from 'web3';
@@ -19,6 +26,30 @@ const SERVER_DOMAIN = (config.env === 'development') ?
   'http://localhost:5000' : 
   'https://cusd-faucet-server-ropsten.herokuapp.com'
 
+const styles = theme => ({
+  root: {
+    flexGrow: 1
+  },
+  main: {
+    textAlign: 'center',
+    paddingTop: theme.spacing.unit * 5,
+  },
+  paper: {
+    paddingTop: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 1,
+    marginLeft: theme.spacing.unit * 20,
+    marginRight: theme.spacing.unit * 20,
+  },
+  grow: {
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginLeft: -12,
+    marginRight: 20,
+  },
+});
 
 class App extends Component {
   constructor(props) {
@@ -155,7 +186,7 @@ class App extends Component {
     if (window.web3) {
       let web3 = window.web3
       let amountToMint = web3.utils.toWei(this.state.amount_to_mint, 'ether')
-
+  
       let to = this.state.user_address
       if (!web3.utils.isAddress(to)) {
         console.log('invalid user address: ', to)
@@ -176,6 +207,7 @@ class App extends Component {
         let minter_status = await axios.get(
           path.join(SERVER_DOMAIN, 'api/faucet/minter')
         )
+        console.log(minter_status)
         let minter_balance = minter_status.minter_balance
         if (minter_balance <= 0) {
           alert('Minter does not have enough eth to mint :(')
@@ -273,81 +305,95 @@ class App extends Component {
 
     const user_short = this.state.user_address ? this.state.user_address.substring(0, 8) : "" 
 
+    const { classes } = this.props;
+
     return (
-      <div className="App">
-        {/* USER IDENTITY  */}
-        <Paper elevation={5}>
-          <Typography> 
-            You are connected to Ethereum as: {user_short}...
-          </Typography>
-        </Paper>
-        {/* REQUEST USER SIGNATURE */}
-        <Paper elevation={4}>
-          <Button
-            onClick={this.handleClick_Login}
-            disabled={this.state.signing_in}
-            variant="contained"
-            color="primary"
-          >
-            Sign In to Ethereum
-          </Button>
-        </Paper>
-        {/* MINT */}
-        <Paper elevation={3}>
-          {/* MINT NEW CUSD  */}
-          <Paper elevation={1}>
-            { !this.state.user_address ?
-            (
-              <Button disabled>Please sign in get CUSD!</Button>
-            )
-            : (
-              <Button
-                onClick={this.handleClick_Mint}
-                disabled={this.state.minting}
-                variant="contained"
-                color="secondary"
-              >
-                Mint me {this.state.amount_to_mint} CUSD
-              </Button>
-            )
-            }
-          </Paper>
-          {/* MINT TXNS  */}
-          { this.state.pendingMint.length > 0 ? (
-          <Paper elevation={1}>
-            <Typography> 
-              Your mint transactions: 
+      <div className={classes.root}>
+        <AppBar position="static">
+          <Toolbar>
+            {/* <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
+              <MenuIcon />
+            </IconButton> */}
+            <Typography variant="h6" color="inherit" className={classes.grow}>
+              Ropsten Faucet 🍶
             </Typography>
-            {this.state.pendingMint.map((pending_hash, i) => {
-              return (<Typography key={i}> 
-                {etherscan} ({i}): 
-                <a
-                  href={"https://ropsten.etherscan.io/tx/" + pending_hash}
-                  target="_blank"
-                  rel="noopener noreferrer"
+            {/* REQUEST USER SIGNATURE */}
+            <Button
+              onClick={this.handleClick_Login}
+              disabled={this.state.signing_in}
+              variant="contained"
+              color="primary"
+            >
+              Sign In to Ethereum
+            </Button>
+          </Toolbar>
+        </AppBar>
+        <div className={classes.main}>
+          {/* USER IDENTITY  */}
+          <Paper className={classes.paper} elevation={3}>
+            <Typography> 
+              You are connected to Ethereum as: {user_short}...
+            </Typography>
+          </Paper>
+          {/* MINT */}
+          <Paper className={classes.paper} elevation={3}>
+            {/* MINT NEW CUSD  */}
+              { !this.state.user_address ?
+              (
+                <Button disabled>Please sign in get CUSD!</Button>
+              )
+              : (
+                <Button
+                  onClick={this.handleClick_Mint}
+                  disabled={this.state.minting}
+                  variant="contained"
+                  color="secondary"
                 >
-                  {" track on Etherscan"}
-                </a>
-              </Typography>)
-            })}
-          </Paper> ) : ("")}
-        </Paper>
-        {/* USER BALANCES  */}
-        <Paper elevation={5}>
-          <Button
-            onClick={this.handleClick_Balance}
-            disabled={!this.state.user_address}
-            color="secondary"
-            variant="contained">
-            Refresh Balance
-          </Button>
-          <Typography> 
-            Your CUSD balance: {this.state.balance_cusd}
-          </Typography>
-        </Paper>
+                  Mint me {this.state.amount_to_mint} CUSD
+                </Button>
+              )
+              }
+            {/* MINT TXNS  */}
+            { this.state.pendingMint.length > 0 ? (
+            <div>
+              <Typography> 
+                Your mint transactions: 
+              </Typography>
+              {this.state.pendingMint.map((pending_hash, i) => {
+                return (<Typography key={i}> 
+                  {etherscan} ({i}): 
+                  <a
+                    href={"https://ropsten.etherscan.io/tx/" + pending_hash}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {" track on Etherscan"}
+                  </a>
+                </Typography>)
+              })}
+            </div> ) : ("")}
+          </Paper>
+          {/* USER BALANCES  */}
+          <Paper className={classes.paper} elevation={3}>
+            <Button
+              onClick={this.handleClick_Balance}
+              disabled={!this.state.user_address}
+              color="secondary"
+              variant="contained">
+              Refresh Balance
+            </Button>
+            <Typography> 
+              Your CUSD balance: {this.state.balance_cusd}
+            </Typography>
+          </Paper>
+        </div>
       </div>
     );
   }
 }
 
-export default App;
+App.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withRoot(withStyles(styles)(App));
