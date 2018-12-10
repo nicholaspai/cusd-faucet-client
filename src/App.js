@@ -305,7 +305,7 @@ class App extends Component {
               <MenuIcon />
             </IconButton> */}
             <Typography variant="h6" color="inherit" className={classes.grow}>
-              Ropsten Faucet 🍶
+              Ropsten Faucet <span role="img" aria-label="Sake">🍶</span>
             </Typography>
             {/* REQUEST USER SIGNATURE */}
             <Button
@@ -322,7 +322,14 @@ class App extends Component {
           {/* USER IDENTITY  */}
           <Paper className={classes.paper} elevation={3}>
             <Typography> 
-              You are connected to Ethereum as: {user_short}...
+              You are connected to Ethereum as: 
+                  {this.state.user_address ? (<a
+                    href={"https://ropsten.etherscan.io/address/" + this.state.user_address}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {user_short}...
+                  </a>) : ("")}
             </Typography>
           </Paper>
           {/* MINT */}
