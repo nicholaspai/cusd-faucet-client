@@ -220,6 +220,8 @@ class App extends Component {
           post_data
         );
 
+        console.log(response)
+
         let pending_hash = response.data.pending_hash
         this.setState({
           pendingMint: this.state.pendingMint.concat([pending_hash]),
