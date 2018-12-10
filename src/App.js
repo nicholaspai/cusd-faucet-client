@@ -10,19 +10,17 @@ import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import TextField from '@material-ui/core/TextField'
 
 // WEB3 Services
 import Web3 from 'web3';
-
-// Config
-import config from './config';
-import path from 'path';
+import { sendCUSD } from './services/sendCUSD'
 
 // REST API server
 import axios from 'axios'
 const MINT_ENDPOINT = "https://cusd-faucet-server-ropsten.herokuapp.com/api/faucet/minter"
+const TRANSFER_ENDPOINT = "https://cusd-faucet-server-ropsten.herokuapp.com/api/faucet/relayer"
+
 const styles = theme => ({
   root: {
     flexGrow: 1
@@ -36,15 +34,16 @@ const styles = theme => ({
     paddingBottom: theme.spacing.unit * 2,
     marginTop: theme.spacing.unit * 2,
     marginBottom: theme.spacing.unit * 1,
-    marginLeft: theme.spacing.unit * 20,
-    marginRight: theme.spacing.unit * 20,
+    marginLeft: theme.spacing.unit * 5,
+    marginRight: theme.spacing.unit * 5,
   },
   grow: {
     flexGrow: 1,
   },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 200,
   },
 });
 
@@ -59,6 +58,10 @@ class App extends Component {
       minting: false,
       pendingMint: [],
       balance_cusd: '',
+      transferring: false,
+      pendingTransfer: [],
+      amount_to_transfer: '',
+      transfer_to: ''
     };
   }
 
@@ -273,9 +276,73 @@ class App extends Component {
     }
   }
 
+   // Transfer CUSD to another user
+  handleClick_Transfer = async () => {
+    if (window.web3) {
+      let web3 = window.web3
+      let amountToTransfer = web3.utils.toWei(this.state.amount_to_transfer, 'ether')
+  
+      let from = this.state.user_address
+      let to = this.state.transfer_to
+      if (!web3.utils.isAddress(to)) {
+        console.log('invalid user address: (to) ', to)
+        return
+      }
+      if (!web3.utils.isAddress(from)) {
+        console.log('invalid user address: (from) ', from)
+        return
+      }
+
+      let post_data = {
+        amount: amountToTransfer.toString(),
+        user: to
+      }
+
+      this.setState({
+        transferring: true
+      })
+
+      try {
+        // TODO: Each pending transfer should have a Number:transfer_id, and a status: pending, failed, success
+        let relayer_status = await axios.get(
+          TRANSFER_ENDPOINT
+        )
+        console.log(relayer_status)
+        let relayer_balance = relayer_status.balance_relayer
+        if (relayer_balance <= 0) {
+          alert('Relayer does not have enough eth to forward metatransfer :(')
+          this.setState({
+            minting: false
+          })
+        }
+
+        alert('Please sign the transfer metatransaction, and we will pay for your ETH gas fees to send CUSD!')
+        await sendCUSD(web3, from, to, amountToTransfer)
+
+
+        // let response = await axios.post(
+        //   TRANSFER_ENDPOINT,
+        //   post_data
+        // );
+
+        // console.log(response)
+
+        // let pending_hash = response.data.pending_hash
+        // this.setState({
+        //   pendingTransfer: this.state.pendingTransfer.concat([pending_hash]),
+        //   transferring: false
+        // })
+      } catch (err) {
+        this.setState({
+          transferring: false
+        })
+      }
+    }
+  }
+
   /** END BUTTON CLICK HANDLERS */
 
-  
+
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value,
@@ -300,9 +367,6 @@ class App extends Component {
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
-            {/* <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
-              <MenuIcon />
-            </IconButton> */}
             <Typography variant="h6" color="inherit" className={classes.grow}>
               Ropsten Faucet <span role="img" aria-label="Sake">🍶</span>
             </Typography>
@@ -382,6 +446,71 @@ class App extends Component {
               Your CUSD balance: {this.state.balance_cusd}
             </Typography>
           </Paper>
+          {/* TRANSFER */}
+          <Paper className={classes.paper} elevation={3}>
+            {/* TRANSFER CUSD  */}
+              { !this.state.user_address ?
+              (
+                <Button disabled>Please sign in trade CUSD!</Button>
+              )
+              : (
+                <div>
+                <form>
+                  <TextField
+                    id="transfer-to"
+                    label="Transfer To"
+                    className={classes.textField}
+                    value={this.state.transfer_to}
+                    onChange={this.handleChange('transfer_to')}
+                    margin="normal"
+                  />
+                  <TextField
+                    id="transfer-amount"
+                    label="Amount"
+                    type="number"
+                    className={classes.textField}
+                    value={this.state.amount_to_transfer}
+                    onChange={this.handleChange('amount_to_transfer')}
+                    margin="normal"
+                  />
+                </form>
+                <Button
+                  onClick={this.handleClick_Transfer}
+                  disabled={
+                    this.state.transferring ||
+                    !this.state.transfer_to ||
+                    isNaN(this.state.amount_to_transfer) ||
+                    this.state.amount_to_transfer <= 0
+                  }
+                  variant="contained"
+                  color="secondary"
+                >
+                  Transfer {this.state.amount_to_transfer ? this.state.amount_to_transfer : ""} CUSD
+                </Button>
+                </div>
+              )
+              }
+            {/* TRANSFER TXNS  */}
+            { this.state.pendingTransfer.length > 0 ? (
+            <div>
+              <Typography> 
+                Your transfer transactions: 
+              </Typography>
+              {this.state.pendingTransfer.map((pending_hash, i) => {
+                return (<Typography key={i}> 
+                  {etherscan} ({i}): 
+                  <a
+                    href={"https://ropsten.etherscan.io/tx/" + pending_hash}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {" track on Etherscan"}
+                  </a>
+                </Typography>)
+              })}
+            </div> ) : ("")}
+          </Paper>
+
         </div>
       </div>
     );
