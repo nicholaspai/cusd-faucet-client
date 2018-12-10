@@ -3,6 +3,8 @@
 1) `npm i` to install dependencies
 2) `npm run start` to start local ropsten CUSD faucet
 
+![Ropsten Wallet Screenshot](https://github.com/nicholaspai/cusd-faucet-client/blob/master/Screenshot%202018-12-10%2009.03.19.png)
+
 # CREATE_REACT_APP: 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
