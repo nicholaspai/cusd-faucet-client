@@ -1,4 +1,5 @@
 # CUSD Faucet Client: Quick start
+Deployed at: https://cusd-faucet-ropsten.herokuapp.com/
 
 1) `npm i` to install dependencies
 2) `npm run start-test` to start local ropsten CUSD faucet
