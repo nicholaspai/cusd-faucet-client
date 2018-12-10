@@ -9,14 +9,16 @@
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-scripts": "2.1.1",
+    "serve": "^10.1.1",
     "web3": "^1.0.0-beta.36"
   },
   "scripts": {
     "start-test": "react-scripts start",
-    "start" : "serve -s build",
+    "start": "serve -s build",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "heroku-logs": "heroku logs -a cusd-faucet-ropsten"
   },
   "eslintConfig": {
     "extends": "react-app"
