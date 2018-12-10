@@ -152,6 +152,9 @@ class App extends Component {
 
   /** CONTINUOUS TIMER BEGINNING AT MOUNT */
   componentDidMount = async () => {
+    // Request user's web3 connection
+    await this.setWindowWeb3() 
+
     var intervalId = setInterval(this.timer, 1000);
     // store intervalId in the state so it can be accessed later:
     this.setState({intervalId: intervalId});
@@ -161,8 +164,6 @@ class App extends Component {
   timer = async () => {
     // Update signMessageuser balance
     await this.updateUserBalance(this.state.user_address)
-    // Request user's web3 connection
-    await this.setWindowWeb3() 
   }
 
   componentWillUnmount = () => {
