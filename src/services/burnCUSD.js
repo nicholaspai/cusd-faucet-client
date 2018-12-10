@@ -1,17 +1,17 @@
 import { getCUSD } from './getCUSD'
 import { signMessage } from './signMessage'
 
-// Send amount of CUSD from user to another user
-export const sendCUSD = async function(web3, from, to, amount) {
+const WT0_ADDRESS = "0xcd36463470c4b92700b4d5fbe270e680d9d48968";
+
+// Burn amount of CUSD from user 
+export const burnCUSD = async function(web3, from, amount) {
   if (
     !web3 ||
     !from ||
-    !to ||
     !amount ||
     isNaN(amount) ||
     amount <= 0 ||
-    !web3.utils.isAddress(from) ||
-    !web3.utils.isAddress(to)
+    !web3.utils.isAddress(from) 
   ) {
     console.error("invalid parameters passed");
     return;
@@ -19,8 +19,8 @@ export const sendCUSD = async function(web3, from, to, amount) {
 
   try {
     let cusd = getCUSD(web3);
-
-    let crafted_transaction = cusd.methods.transfer(to, amount);
+    let stablecoin = WT0_ADDRESS
+    let crafted_transaction = cusd.methods.burnCarbonDollar(stablecoin, amount);
     let nonce = await cusd.methods.replayNonce(from).call();
     let metatoken = cusd.options.address;
     let reward = Math.ceil(
@@ -33,8 +33,8 @@ export const sendCUSD = async function(web3, from, to, amount) {
     // @devs: cast all signed ints to unsigned ints via web3.utils.toTwosComplement()
     let metaTx = [
       metatoken,
-      "metaTransfer",
-      to,
+      "metaBurnCarbonDollar",
+      stablecoin,
       amount,
       web3.utils.toTwosComplement(nonce),
       web3.utils.toTwosComplement(reward)
@@ -44,8 +44,8 @@ export const sendCUSD = async function(web3, from, to, amount) {
     let sig = await signMessage(web3, hash, from);
 
     var post_data = {
-      type: 'transfer',
-      transferRecipient: to,
+      type: 'burn',
+      stablecoin,
       amount,
       sig,
       signerNonce: nonce,

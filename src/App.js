@@ -15,11 +15,17 @@ import TextField from '@material-ui/core/TextField'
 // WEB3 Services
 import Web3 from 'web3';
 import { sendCUSD } from './services/sendCUSD'
+import { burnCUSD } from './services/burnCUSD'
+import { updateUserBalance } from './services/updateUserBalance'
+import { signMessage } from './services/signMessage'
+import { recoverMessageSigner } from './services/recoverMessageSigner'
 
 // REST API server
 import axios from 'axios'
-const MINT_ENDPOINT = "https://cusd-faucet-server-ropsten.herokuapp.com/api/faucet/minter"
-const TRANSFER_ENDPOINT = "https://cusd-faucet-server-ropsten.herokuapp.com/api/faucet/relayer"
+const SERVER= 'http://localhost:5000/'
+// const SERVER = "https://cusd-faucet-server-ropsten.herokuapp.com/"
+const MINTER_ENDPOINT = SERVER+"api/faucet/minter"
+const RELAYER_ENDPOINT = SERVER+"api/faucet/relayer"
 
 const styles = theme => ({
   root: {
@@ -58,10 +64,14 @@ class App extends Component {
       minting: false,
       pendingMint: [],
       balance_cusd: '',
+      updating_balance: false,
       transferring: false,
       pendingTransfer: [],
       amount_to_transfer: '',
-      transfer_to: ''
+      transfer_to: '',
+      burning: false,
+      pendingBurn: [],
+      amount_to_burn: ''
     };
   }
 
@@ -90,64 +100,15 @@ class App extends Component {
     }
   }
 
-  // Fetch active CUSD instance
-  getCusd = () => {
-    let web3 = window.web3
-    // Contract ABI's
-    const ABI = require("./contracts/MetaToken.json");
-
-    // Contract Ropsten Addresses
-    const ADDRESS = "0x67450c8908e2701abfa6745be3949ad32acf42d8";
-
-    var jsonFile = ABI;
-    var abi = jsonFile.abi;
-    var deployedAddress = ADDRESS;
-    const instance = new web3.eth.Contract(abi, deployedAddress);
-    return instance;
-  }
-
   // Refresh user CUSD balance
-  updateUserBalance = async (user) => {
-    if (window.web3 && user) {
-      let cusd = this.getCusd()
-      if (window.web3.utils.isAddress(user)) {
-        let balance = await cusd.methods.balanceOf(user).call()
-        let short_balance = window.web3.utils.fromWei(balance.toString(), 'ether')
-        this.setState({
-          balance_cusd: short_balance
-        })
-        return short_balance
-      } else {
-        return -1
-      }
-    } else {
-      return -1
+  _updateUserBalance = async (web3, user) => {
+    if (!web3 || !user) return;
+    let short_balance = await updateUserBalance(web3, user)
+    if (short_balance >= 0 ) {
+      this.setState({
+        balance_cusd: short_balance
+      })
     }
-  }
-
-  // Request user to cryptographically sign a message
-  signMessage = (dataToSign, from) => {
-    return new Promise((resolve, reject) =>
-      window.web3.eth.personal.sign(
-        dataToSign,
-        from,
-        (err, signature) => {
-          if (err) return reject(err);
-          return resolve(signature);
-        }
-      )
-    );
-  };
-
-  // Get user who signed a message
-  getUserFromSignature = async (
-      message,
-      signature
-  ) => {
-      let user = await window.web3.eth.accounts.recover(
-        message, signature
-      )
-      return user
   }
 
   /** CONTINUOUS TIMER BEGINNING AT MOUNT */
@@ -162,8 +123,8 @@ class App extends Component {
 
   // @dev Put anything that you want to continually compute here
   timer = async () => {
-    // Update signMessageuser balance
-    await this.updateUserBalance(this.state.user_address)
+    // Update user balance
+    await this._updateUserBalance(window.web3, this.state.user_address)
   }
 
   componentWillUnmount = () => {
@@ -172,15 +133,6 @@ class App extends Component {
   }
   
   /** BUTTON CLICK HANDLERS */
-
-  // Refresh user balance in state
-  handleClick_Balance = async () => {
-    if (this.state.user_address) {
-      await this.updateUserBalance(this.state.user_address)
-    } else {
-      return
-    }
-  }
 
   // Mint new CUSD to user
   handleClick_Mint = async () => {
@@ -206,7 +158,7 @@ class App extends Component {
       try {
         // TODO: Each pending mint should have a Number:mint_id, and a status: pending, failed, success
         let minter_status = await axios.get(
-          MINT_ENDPOINT
+          MINTER_ENDPOINT
         )
         let minter_balance = minter_status.minter_balance
         if (minter_balance <= 0) {
@@ -216,11 +168,9 @@ class App extends Component {
           })
         }
         let response = await axios.post(
-          MINT_ENDPOINT,
+          MINTER_ENDPOINT,
           post_data
         );
-
-        console.log(response)
 
         let pending_hash = response.data.pending_hash
         this.setState({
@@ -251,8 +201,9 @@ class App extends Component {
         let messageToSign = "Welcome to the Carbon CUSD faucet! Please sign this message to verify that you are who you say you are, and we'll mint you " 
                             + this.state.amount_to_mint 
                             + " CUSD."
-        let sig = await this.signMessage(messageToSign, user)
-        let signer = await this.getUserFromSignature(
+        let sig = await signMessage(window.web3, messageToSign, user)
+        let signer = await recoverMessageSigner(
+          window.web3,
           messageToSign,
           sig
         )
@@ -276,7 +227,7 @@ class App extends Component {
     }
   }
 
-   // Transfer CUSD to another user
+  // Transfer CUSD to another user
   handleClick_Transfer = async () => {
     if (window.web3) {
       let web3 = window.web3
@@ -293,11 +244,6 @@ class App extends Component {
         return
       }
 
-      let post_data = {
-        amount: amountToTransfer.toString(),
-        user: to
-      }
-
       this.setState({
         transferring: true
       })
@@ -305,9 +251,8 @@ class App extends Component {
       try {
         // TODO: Each pending transfer should have a Number:transfer_id, and a status: pending, failed, success
         let relayer_status = await axios.get(
-          TRANSFER_ENDPOINT
+          RELAYER_ENDPOINT
         )
-        console.log(relayer_status)
         let relayer_balance = relayer_status.balance_relayer
         if (relayer_balance <= 0) {
           alert('Relayer does not have enough eth to forward metatransfer :(')
@@ -317,24 +262,73 @@ class App extends Component {
         }
 
         alert('Please sign the transfer metatransaction, and we will pay for your ETH gas fees to send CUSD!')
-        await sendCUSD(web3, from, to, amountToTransfer)
+        let post_data = await sendCUSD(web3, from, to, amountToTransfer)
+        // console.log('metatransfer: ', post_data)
 
+        let response = await axios.post(
+          RELAYER_ENDPOINT,
+          post_data
+        );
 
-        // let response = await axios.post(
-        //   TRANSFER_ENDPOINT,
-        //   post_data
-        // );
-
-        // console.log(response)
-
-        // let pending_hash = response.data.pending_hash
-        // this.setState({
-        //   pendingTransfer: this.state.pendingTransfer.concat([pending_hash]),
-        //   transferring: false
-        // })
+        let pending_hash = response.data.hash
+        this.setState({
+          pendingTransfer: this.state.pendingTransfer.concat([pending_hash]),
+          transferring: false
+        })
       } catch (err) {
         this.setState({
           transferring: false
+        })
+      }
+    }
+  }
+
+  // Redeem CUSD by burning
+  handleClick_Burn = async () => {
+    if (window.web3) {
+      let web3 = window.web3
+      let amountToBurn = web3.utils.toWei(this.state.amount_to_burn, 'ether')
+  
+      let from = this.state.user_address
+      if (!web3.utils.isAddress(from)) {
+        console.log('invalid user address: (from) ', from)
+        return
+      }
+
+      this.setState({
+        burning: true
+      })
+
+      try {
+        // TODO: Each pending burn should have a Number:burn_id, and a status: pending, failed, success
+        let relayer_status = await axios.get(
+          RELAYER_ENDPOINT
+        )
+        let relayer_balance = relayer_status.balance_relayer
+        if (relayer_balance <= 0) {
+          alert('Relayer does not have enough eth to forward metatransfer :(')
+          this.setState({
+            burning: false
+          })
+        }
+
+        alert('Please sign the burn metatransaction, and we will pay for your ETH gas fees to redeem CUSD!')
+        let post_data = await burnCUSD(web3, from, amountToBurn)
+
+        let response = await axios.post(
+          RELAYER_ENDPOINT,
+          post_data
+        );
+        
+        let pending_hash = response.data.hash
+        this.setState({
+          pendingBurn: this.state.pendingBurn.concat([pending_hash]),
+          burning: false
+        })
+
+      } catch (err) {
+        this.setState({
+          burning: false
         })
       }
     }
@@ -435,13 +429,6 @@ class App extends Component {
           </Paper>
           {/* USER BALANCES  */}
           <Paper className={classes.paper} elevation={3}>
-            <Button
-              onClick={this.handleClick_Balance}
-              disabled={!this.state.user_address}
-              color="secondary"
-              variant="contained">
-              Refresh Balance
-            </Button>
             <Typography> 
               Your CUSD balance: {this.state.balance_cusd}
             </Typography>
@@ -510,7 +497,61 @@ class App extends Component {
               })}
             </div> ) : ("")}
           </Paper>
-
+          {/* BURN */}
+          <Paper className={classes.paper} elevation={3}>
+            {/* BURN CUSD  */}
+              { !this.state.user_address ?
+              (
+                <Button disabled>Please sign in redeem CUSD!</Button>
+              )
+              : (
+                <div>
+                <form>
+                  <TextField
+                    id="burn-amount"
+                    label="Amount"
+                    type="number"
+                    className={classes.textField}
+                    value={this.state.amount_to_burn}
+                    onChange={this.handleChange('amount_to_burn')}
+                    margin="normal"
+                  />
+                </form>
+                <Button
+                  onClick={this.handleClick_Burn}
+                  disabled={
+                    this.state.burning ||
+                    isNaN(this.state.amount_to_burn) ||
+                    this.state.amount_to_burn <= 0
+                  }
+                  variant="contained"
+                  color="secondary"
+                >
+                  Redeem {this.state.amount_to_burn ? this.state.amount_to_burn : ""} CUSD
+                </Button>
+                </div>
+              )
+              }
+            {/* BURN TXNS  */}
+            { this.state.pendingBurn.length > 0 ? (
+            <div>
+              <Typography> 
+                Your burn transactions: 
+              </Typography>
+              {this.state.pendingBurn.map((pending_hash, i) => {
+                return (<Typography key={i}> 
+                  {etherscan} ({i}): 
+                  <a
+                    href={"https://ropsten.etherscan.io/tx/" + pending_hash}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {" track on Etherscan"}
+                  </a>
+                </Typography>)
+              })}
+            </div> ) : ("")}
+          </Paper>
         </div>
       </div>
     );
