@@ -22,8 +22,8 @@ import { recoverMessageSigner } from './services/recoverMessageSigner'
 
 // REST API server
 import axios from 'axios'
-const SERVER= 'http://localhost:5000/'
-// const SERVER = "https://cusd-faucet-server-ropsten.herokuapp.com/"
+// const SERVER= 'http://localhost:5000/'
+const SERVER = "https://cusd-faucet-server-ropsten.herokuapp.com/"
 const MINTER_ENDPOINT = SERVER+"api/faucet/minter"
 const RELAYER_ENDPOINT = SERVER+"api/faucet/relayer"
 
