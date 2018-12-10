@@ -6,15 +6,19 @@ import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 
-import axios from 'axios'
+// WEB3 Services
 import Web3 from 'web3';
 
 // Config
 import config from './config';
 import path from 'path';
+
+// REST API server
+import axios from 'axios'
 const SERVER_DOMAIN = (config.env === 'development') ? 
   'http://localhost:5000' : 
   'https://cusd-faucet-server-ropsten.herokuapp.com'
+
 
 class App extends Component {
   constructor(props) {
@@ -30,13 +34,9 @@ class App extends Component {
     };
   }
 
-  // Extract web3 instance from injected web3
-  getWeb3 = (window_web3) => {
-    var _web3 = new Web3(window_web3.currentProvider)
-    return _web3
-  }
-
-
+  /** WEB3 RELATED SERVICE FUNCTIONS */
+  
+  // Detect or set window.web3 ethereum connection
   setWindowWeb3 = async () => {
     // Modern dapp browsers...
     if (window.ethereum) {
@@ -59,83 +59,9 @@ class App extends Component {
     }
   }
 
-  // Get user who signed a message
-  getUserFromSignature = async (
-      web3,
-      message,
-      signature
-  ) => {
-      let user = await web3.eth.accounts.recover(
-        message, signature
-      )
-      return user
-  }
-
-  handleClick_Login = async () => {
-    this.setState({
-      signing_in: true
-    })
-    
-    if ( window.web3 ) {
-      let web3 = this.getWeb3(window.web3)
-      let network = (await web3.eth.net.getId()).toString()
-
-      // Users must be on Ropsten
-      if (network !== "3") {
-        alert('No network detected, please switch to the Ropsten test net!')
-        this.setState({
-          signing_in: false
-        })
-        return
-      }
-
-      try {
-        let accounts = await web3.eth.getAccounts()
-        let user = accounts[0]
-
-        let messageToSign = "Welcome to the Carbon CUSD faucet! Please sign this message to verify that you are who you say you are, and we'll mint you " 
-                            + this.state.amount_to_mint 
-                            + " CUSD."
-        let sig = await this.signTransaction(web3, messageToSign, user)
-        let signer = await this.getUserFromSignature(
-          web3,
-          messageToSign,
-          sig
-        )
-        this.setState({
-          user_address: signer,
-          signing_in: false
-        })
-      } catch (err) {
-        console.error('user could not sign message')
-        this.setState({
-          signing_in: false
-        })
-      }
-    } else {
-      // No web3 injected
-      alert('Cannot connect to Ethereum, are you using a dapp-enabled browser?')
-      this.setState({
-        signing_in: false
-      })
-      return
-    }
-  }
-
-  signTransaction = (web3, dataToSign, from) => {
-    return new Promise((resolve, reject) =>
-      web3.eth.personal.sign(
-        dataToSign,
-        from,
-        (err, signature) => {
-          if (err) return reject(err);
-          return resolve(signature);
-        }
-      )
-    );
-  };
-
-  getCusd = web3 => {
+  // Fetch active CUSD instance
+  getCusd = () => {
+    let web3 = window.web3
     // Contract ABI's
     const ABI = require("./contracts/MetaToken.json");
 
@@ -149,13 +75,13 @@ class App extends Component {
     return instance;
   }
 
+  // Refresh user CUSD balance
   updateUserBalance = async (user) => {
     if (window.web3 && user) {
-      let web3 = this.getWeb3(window.web3)
-      let cusd = this.getCusd(web3)
-      if (web3.utils.isAddress(user)) {
+      let cusd = this.getCusd()
+      if (window.web3.utils.isAddress(user)) {
         let balance = await cusd.methods.balanceOf(user).call()
-        let short_balance = web3.utils.fromWei(balance.toString(), 'ether')
+        let short_balance = window.web3.utils.fromWei(balance.toString(), 'ether')
         this.setState({
           balance_cusd: short_balance
         })
@@ -168,28 +94,66 @@ class App extends Component {
     }
   }
 
-  // @dev Put anything that you want to continually compute here
-  timer = async () => {
-    // Update user balance
-    this.updateUserBalance(this.state.user_address)
+  // Request user to cryptographically sign a message
+  signMessage = (dataToSign, from) => {
+    return new Promise((resolve, reject) =>
+      window.web3.eth.personal.sign(
+        dataToSign,
+        from,
+        (err, signature) => {
+          if (err) return reject(err);
+          return resolve(signature);
+        }
+      )
+    );
+  };
+
+  // Get user who signed a message
+  getUserFromSignature = async (
+      message,
+      signature
+  ) => {
+      let user = await window.web3.eth.accounts.recover(
+        message, signature
+      )
+      return user
   }
 
+  /** CONTINUOUS TIMER BEGINNING AT MOUNT */
   componentDidMount = async () => {
-    // await this.setWindowWeb3() // Request user's web3 connection
     var intervalId = setInterval(this.timer, 1000);
     // store intervalId in the state so it can be accessed later:
     this.setState({intervalId: intervalId});
+  }
+
+  // @dev Put anything that you want to continually compute here
+  timer = async () => {
+    // Update signMessageuser balance
+    await this.updateUserBalance(this.state.user_address)
+    // Request user's web3 connection
+    await this.setWindowWeb3() 
   }
 
   componentWillUnmount = () => {
     // use intervalId from the state to clear the interval
     clearInterval(this.state.intervalId);
   }
-
   
+  /** BUTTON CLICK HANDLERS */
+
+  // Refresh user balance in state
+  handleClick_Balance = async () => {
+    if (this.state.user_address) {
+      await this.updateUserBalance(this.state.user_address)
+    } else {
+      return
+    }
+  }
+
+  // Mint new CUSD to user
   handleClick_Mint = async () => {
     if (window.web3) {
-      let web3 = this.getWeb3(window.web3)
+      let web3 = window.web3
       let amountToMint = web3.utils.toWei(this.state.amount_to_mint, 'ether')
 
       let to = this.state.user_address
@@ -237,13 +201,59 @@ class App extends Component {
     }
   }
 
-  handleClick_Balance = () => {
-    if (this.state.user_address) {
-      this.updateUserBalance(this.state.user_address)
+  // Ask user to authenticate their keypair
+  handleClick_Login = async () => {
+    this.setState({
+      signing_in: true
+    })
+    
+    if ( window.web3 ) {
+      let web3 = window.web3
+      let network = (await web3.eth.net.getId()).toString()
+
+      // Users must be on Ropsten
+      if (network !== "3") {
+        alert('No network detected, please switch to the Ropsten test net!')
+        this.setState({
+          signing_in: false
+        })
+        return
+      }
+
+      try {
+        let accounts = await web3.eth.getAccounts()
+        let user = accounts[0]
+
+        let messageToSign = "Welcome to the Carbon CUSD faucet! Please sign this message to verify that you are who you say you are, and we'll mint you " 
+                            + this.state.amount_to_mint 
+                            + " CUSD."
+        let sig = await this.signMessage(messageToSign, user)
+        let signer = await this.getUserFromSignature(
+          messageToSign,
+          sig
+        )
+        this.setState({
+          user_address: signer,
+          signing_in: false
+        })
+      } catch (err) {
+        console.error('user could not sign message')
+        this.setState({
+          signing_in: false
+        })
+      }
     } else {
+      // No web3 injected
+      alert('Cannot connect to Ethereum, are you using a dapp-enabled browser?')
+      this.setState({
+        signing_in: false
+      })
       return
     }
   }
+
+  /** END BUTTON CLICK HANDLERS */
+
   
   handleChange = name => event => {
     this.setState({
