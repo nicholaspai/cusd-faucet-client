@@ -22,10 +22,7 @@ import path from 'path';
 
 // REST API server
 import axios from 'axios'
-const SERVER_DOMAIN = (config.env === 'development') ? 
-  'http://localhost:5000' : 
-  'https://cusd-faucet-server-ropsten.herokuapp.com'
-
+const MINT_ENDPOINT = "https://cusd-faucet-server-ropsten.herokuapp.com/api/faucet/minter"
 const styles = theme => ({
   root: {
     flexGrow: 1
@@ -206,7 +203,7 @@ class App extends Component {
       try {
         // TODO: Each pending mint should have a Number:mint_id, and a status: pending, failed, success
         let minter_status = await axios.get(
-          path.join(SERVER_DOMAIN, 'api/faucet/minter')
+          MINT_ENDPOINT
         )
         let minter_balance = minter_status.minter_balance
         if (minter_balance <= 0) {
@@ -216,7 +213,7 @@ class App extends Component {
           })
         }
         let response = await axios.post(
-          path.join(SERVER_DOMAIN, "/api/faucet/minter"),
+          MINT_ENDPOINT,
           post_data
         );
 
