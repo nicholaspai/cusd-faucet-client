@@ -1,7 +1,9 @@
 # CUSD Faucet Client: Quick start
 
 1) `npm i` to install dependencies
-2) `npm run start` to start local ropsten CUSD faucet
+2) `npm run start-test` to start local ropsten CUSD faucet
+3) `npm run build` to make minimified `build/index.html` app
+4) `npm run start` to serve optimized `index.html`
 
 ![Ropsten Wallet Screenshot](https://github.com/nicholaspai/cusd-faucet-client/blob/master/Screenshot%202018-12-10%2009.03.19.png)
 
