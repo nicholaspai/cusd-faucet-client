@@ -241,16 +241,6 @@ class App extends Component {
     
     if ( window.web3 ) {
       let web3 = window.web3
-      let network = (await web3.eth.net.getId()).toString()
-
-      // Users must be on Ropsten
-      if (network !== "3") {
-        alert('No network detected, please switch to the Ropsten test net!')
-        this.setState({
-          signing_in: false
-        })
-        return
-      }
 
       try {
         let accounts = await web3.eth.getAccounts()
