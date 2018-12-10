@@ -208,7 +208,6 @@ class App extends Component {
         let minter_status = await axios.get(
           path.join(SERVER_DOMAIN, 'api/faucet/minter')
         )
-        console.log(minter_status)
         let minter_balance = minter_status.minter_balance
         if (minter_balance <= 0) {
           alert('Minter does not have enough eth to mint :(')
