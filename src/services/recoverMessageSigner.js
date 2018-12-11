@@ -5,7 +5,7 @@
       signature
   ) => {
       if (!web3) return;
-      let user = await window.web3.eth.accounts.recover(
+      let user = await web3.eth.accounts.recover(
         message, signature
       )
       return user

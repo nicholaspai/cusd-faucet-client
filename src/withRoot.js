@@ -3,6 +3,8 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import purple from '@material-ui/core/colors/purple';
 import green from '@material-ui/core/colors/green';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { Provider } from "react-redux";
+import store from "./store/store";
 
 // A theme with custom primary and secondary color.
 // It's optional.
@@ -30,9 +32,11 @@ function withRoot(Component) {
     // thanks to React context.
     return (
       <MuiThemeProvider theme={theme}>
+        <Provider store={store}> 
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
         <Component {...props} />
+        </Provider>
       </MuiThemeProvider>
     );
   }
