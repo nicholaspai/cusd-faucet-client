@@ -8,7 +8,7 @@ class BloksLogo extends Component {
       <img
         style={{ height: "20px", width: "auto" }}
         alt="Bloks.io"
-        src="https://eoscafeblock.com/cafe_logo_256.png"
+        src="https://s3.amazonaws.com/carbon12/eoscafeblock.png"
       />
     );
 
