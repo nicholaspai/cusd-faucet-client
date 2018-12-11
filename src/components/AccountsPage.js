@@ -6,14 +6,14 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
 
 // Redux state
 import { connect } from "react-redux";
-import { accountsActions } from "../store/accountsActions";
+import { } from "../store/accountsActions";
 
 // Custom Components
-import EtherscanLogo from './helpers/EtherscanLogo'
+import EthAccounts from './accountsComponents/EthAccounts'
+import EosAccounts from './accountsComponents/EosAccounts'
 
 const styles = theme => ({
   paper: {
@@ -35,13 +35,9 @@ const styles = theme => ({
 
 // Redux mappings
 const mapState = state => ({
-  eth_accounts: state.accounts.eth_accounts,
-  eos_accounts: state.accounts.eos_accounts,
 });
 
 const mapDispatch = dispatch => ({
-  addEthAccount: newAccount => dispatch(accountsActions.addEthAccount(newAccount)),
-  addEosAccount: newAccount => dispatch(accountsActions.addEosAccount(newAccount)),
 });
 
 class AccountsPage extends Component {
@@ -52,24 +48,10 @@ class AccountsPage extends Component {
     };
   }
 
-  handleClick_AddEthAccount = async () => {
-    let new_account = "placeholder-"+this.props.eth_accounts.length.toString()
-
-    this.props.addEthAccount(new_account)
-  }
-
-  handleClick_AddEosAccount = async () => {
-    let new_account = "placeholder-"+this.props.eos_accounts.length.toString()
-
-    this.props.addEosAccount(new_account)
-  }
-
   render() {
 
     const { 
       classes, 
-      eth_accounts,
-      eos_accounts
     } = this.props;
 
     return (
@@ -78,72 +60,10 @@ class AccountsPage extends Component {
             <Typography variant="subtitle1" className={classes.section}> 
                 <b>Account Management</b>: (1) select network => (2) "new" || "sign in" || "import" 
             </Typography>
-            {/* START ETH  */}
-            <div>
-              <Typography variant="body1" className={classes.section}> 
-                  <b>Eth Accounts</b>: 
-              </Typography>
-              {/* Add Eth Accounts */}
-              <Button 
-                variant="contained" 
-                onClick={this.handleClick_AddEthAccount}
-                disabled={false}
-              >
-                New
-              </Button>
-              {/* View Eth Accounts */}
-              { eth_accounts.length > 0 ? (
-              <div>
-                <Typography> 
-                  Your Ethereum accounts: 
-                </Typography>
-                {eth_accounts.map((account, i) => {
-                  return (<Typography key={i}> 
-                    <EtherscanLogo /> ({i}): 
-                    <a
-                      href={"https://ropsten.etherscan.io/address/" + account}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {" view account"}
-                    </a>
-                  </Typography>)
-                })}
-              </div> ) : ("")}
-            </div>
-            {/* START EOS  */}
-            <div>
-              <Typography variant="body1" className={classes.section}> 
-                  <b>EOS Accounts</b>: 
-              </Typography>
-              {/* Add EOS Accounts */}
-              <Button 
-                variant="contained" 
-                onClick={this.handleClick_AddEosAccount}
-                disabled={false}
-              >
-                New
-              </Button>
-              {/* View EOS Accounts */}
-              { eos_accounts.length > 0 ? (
-              <div>
-                <Typography> 
-                  Your EOS accounts: 
-                </Typography>
-                {eos_accounts.map((account, i) => {
-                  return (<Typography key={i}> 
-                    <EtherscanLogo /> ({i}): 
-                    <a
-                      href={"https://bloks.io/account/" + account}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {" view account"}
-                    </a>
-                  </Typography>)
-                })}
-              </div> ) : ("")}
-            </div>
+            {/* ETH  */}
+            <EthAccounts />
+            {/* EOS  */}
+            <EosAccounts />
         </Paper>
         </div>
     )
