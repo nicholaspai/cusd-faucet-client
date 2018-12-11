@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography'
 
 // Redux state
 import { connect } from "react-redux";
-import { actions } from "../store/actions";
+import { ethActions } from "../store/ethActions";
 
 // Custom Components
 import EtherscanLogo from './helpers/EtherscanLogo'
@@ -40,10 +40,7 @@ const mapState = state => ({
 });
 
 const mapDispatch = dispatch => ({
-  setWeb3: web3 =>
-    dispatch(actions.setWeb3(web3)),
-  setEthAddress: address => dispatch(actions.setEthAddress(address)),
-  concatPendingMints: newMint => dispatch(actions.concatPendingMints(newMint)),
+  concatPendingMints: newMint => dispatch(ethActions.concatPendingMints(newMint)),
 });
 
 class MintButton extends Component {

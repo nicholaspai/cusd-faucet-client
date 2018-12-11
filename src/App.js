@@ -8,7 +8,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 // Redux state
 import { connect } from "react-redux";
-import { actions } from "./store/actions";
+import { globalActions } from "./store/globalActions";
 
 // WEB3 Services
 import Web3 from 'web3';
@@ -44,7 +44,7 @@ const mapState = state => ({
 
 const mapDispatch = dispatch => ({
   setWeb3: web3 =>
-    dispatch(actions.setWeb3(web3)),
+    dispatch(globalActions.setWeb3(web3)),
 });
 
 class App extends Component {
@@ -55,7 +55,7 @@ class App extends Component {
     };
   }
 
-  /** WEB3 RELATED SERVICE FUNCTIONS */
+  /** SET UP WEB3 */
   
   // Detect or set window.web3 ethereum connection
   setWindowWeb3 = async () => {

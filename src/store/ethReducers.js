@@ -1,4 +1,4 @@
-import { TYPES, PAGES } from "./actions";
+import { TYPES } from "./ethActions";
 
 // Initial state
 export const initialState = {
@@ -8,10 +8,6 @@ export const initialState = {
     pending_mints: [],
     pending_transfers: [],
     pending_burns: [],
-  },
-  global: {
-    web3: '',
-    page: PAGES.MAIN,
   },
 };
 
@@ -37,22 +33,6 @@ export const eth = (state = initialState.eth, action) => {
     case TYPES.CONCAT_PENDING_BURNS:
       return Object.assign({}, state, {
         pending_burns: state.pending_burns.concat(action.object)
-      });
-    default:
-      return state;
-  }
-};
-
-// Global app state
-export const global = (state = initialState.global, action) => {
-  switch (action.type) {
-    case TYPES.SET_WEB3:
-      return Object.assign({}, state, {
-        web3: action.object
-      });
-    case TYPES.SET_PAGE:
-      return Object.assign({}, state, {
-        page: action.number
       });
     default:
       return state;

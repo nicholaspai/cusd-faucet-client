@@ -8,7 +8,7 @@ import Menu from '@material-ui/core/Menu';
 
 // Redux state
 import { connect } from "react-redux";
-import { actions, PAGES } from "../store/actions";
+import { globalActions, PAGES } from "../store/globalActions";
 
 const styles = {
 };
@@ -18,7 +18,7 @@ const mapState = state => ({
 })
 
 const mapDispatch = dispatch => ({
-  setPage: number => dispatch(actions.setPage(number))
+  setPage: number => dispatch(globalActions.setPage(number))
 });
 
 class HeaderMenu extends React.Component {
