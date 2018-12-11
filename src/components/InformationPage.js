@@ -8,9 +8,6 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 
-// Icons
-import Github from "../assets/Github.svg";
-
 const styles = theme => ({
   paper: {
     paddingTop: theme.spacing.unit * 2,

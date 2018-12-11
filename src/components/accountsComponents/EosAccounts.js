@@ -13,7 +13,7 @@ import { connect } from "react-redux";
 import { accountsActions } from "../../store/accountsActions";
 
 // Custom Components
-import EtherscanLogo from '../helpers/EtherscanLogo'
+import BloksLogo from '../helpers/BloksLogo'
 
 const styles = theme => ({
   paper: {
@@ -84,7 +84,7 @@ class EosAccounts extends Component {
                 </Typography>
                 {eos_accounts.map((account, i) => {
                   return (<Typography key={i}> 
-                    <EtherscanLogo /> ({i}): 
+                    <BloksLogo /> ({i}): 
                     <a
                       href={"https://bloks.io/account/" + account}
                       target="_blank"
