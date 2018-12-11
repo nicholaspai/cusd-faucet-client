@@ -6,6 +6,10 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
+
+// Icons
+import Github from "../assets/Github.svg";
 
 const styles = theme => ({
   paper: {
@@ -25,13 +29,6 @@ const styles = theme => ({
   }
 });
 
-// Redux mappings
-const mapState = state => ({
-});
-
-const mapDispatch = dispatch => ({
-});
-
 class InformationPage extends Component {
   constructor(props) {
     super(props);
@@ -47,6 +44,7 @@ class InformationPage extends Component {
     } = this.props;
 
     return (
+        <div>
         <Paper className={classes.paper} elevation={3}>
             <Typography variant="body1" className={classes.section}> 
                 <b>A Universal Wallet for a True Digital Economy</b>: This is our cross-chain open-source wallet initiative where we intend to link user 
@@ -64,6 +62,14 @@ class InformationPage extends Component {
                 when using CUSD. We pay your ETH gas fees, you compensate us in CUSD, and no one needs to hodl trivial amounts of ETH anymore 🧞‍
             </Typography>
         </Paper>
+        <Paper className={classes.paper} elevation={3}>
+            <a href="https://github.com/nicholaspai/cusd-faucet-client" target="_blank" rel="noopener noreferrer">
+              <Button variant="contained" className={classes.section}> 
+                Github Repo
+              </Button>
+            </a>
+        </Paper>
+        </div>
     )
   }
 }
