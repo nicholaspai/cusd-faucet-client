@@ -75,7 +75,7 @@ class AccountsPage extends Component {
     return (
         <div>
         <Paper className={classes.paper} elevation={3}>
-            <Typography variant="display1" className={classes.section}> 
+            <Typography variant="subtitle1" className={classes.section}> 
                 <b>Account Management</b>: (1) select network => (2) "new" || "sign in" || "import" 
             </Typography>
             {/* START ETH  */}
