@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import withRoot from '../withRoot';
+import withRoot from '../../withRoot';
 import PropTypes from 'prop-types';
 
 // Material-ui
@@ -9,10 +9,10 @@ import Typography from '@material-ui/core/Typography'
 
 // Redux state
 import { connect } from "react-redux";
-import { ethActions } from "../store/ethActions";
+import { ethActions } from "../../store/ethActions";
 
 // WEB3 Services
-import { updateUserBalance } from '../services/updateUserBalance'
+import { updateUserBalance } from '../../services/updateUserBalance'
 
 const styles = theme => ({
   paper: {

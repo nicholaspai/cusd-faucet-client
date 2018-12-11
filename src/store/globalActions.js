@@ -7,7 +7,8 @@ export const TYPES = {
 // Page options for main site
 export const PAGES = {
   MAIN: 0,
-  INFO: 1
+  ACCOUNTS: 1,
+  INFO: 2
 }
 
 export const globalActions = {

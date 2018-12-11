@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import withRoot from '../withRoot';
+import withRoot from '../../withRoot';
 import PropTypes from 'prop-types';
 
 // Material-ui
@@ -11,18 +11,18 @@ import TextField from '@material-ui/core/TextField'
 
 // Redux state
 import { connect } from "react-redux";
-import { ethActions } from "../store/ethActions";
+import { ethActions } from "../../store/ethActions";
 
 // Custom Components
-import EtherscanLogo from './helpers/EtherscanLogo'
+import EtherscanLogo from '../helpers/EtherscanLogo'
 
 // WEB3 Services
-import { sendCUSD } from '../services/sendCUSD'
+import { sendCUSD } from '../../services/sendCUSD'
 
 // REST API server
 import axios from 'axios'
-import config from "../config"
-const SERVER = config.server_url_prod
+import config from "../../config"
+const SERVER = config.server_url
 const RELAYER_ENDPOINT = SERVER+"api/faucet/relayer"
 
 const styles = theme => ({

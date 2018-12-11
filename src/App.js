@@ -8,18 +8,15 @@ import { withStyles } from '@material-ui/core/styles';
 
 // Redux state
 import { connect } from "react-redux";
-import { globalActions } from "./store/globalActions";
+import { globalActions, PAGES } from "./store/globalActions";
 
 // WEB3 Services
 import Web3 from 'web3';
 
-// Core Wallet Components
+// Core Wallet Pages + Header
 import Header from './components/Header'
-import Accounts from './components/Accounts'
-import MintButton from './components/MintButton'
-import Balances from './components/Balances'
-import TransferButton from './components/TransferButton'
-import BurnButton from './components/BurnButton'
+import HomePage from './components/HomePage'
+import AccountsPage from './components/AccountsPage'
 import InformationPage from './components/InformationPage'
 
 const styles = theme => ({
@@ -31,6 +28,10 @@ const styles = theme => ({
     paddingTop: theme.spacing.unit * 5,
   },
   information: {
+    textAlign: 'center',
+    paddingTop: theme.spacing.unit * 5,
+  },
+  accounts: {
     textAlign: 'center',
     paddingTop: theme.spacing.unit * 5,
   }
@@ -56,7 +57,6 @@ class App extends Component {
   }
 
   /** SET UP WEB3 */
-  
   // Detect or set window.web3 ethereum connection
   setWindowWeb3 = async () => {
     // Modern dapp browsers...
@@ -84,7 +84,7 @@ class App extends Component {
     }
   }
 
-  /** BEGINNING OF MOUNT */
+  /** ACTIONS TO PERFORM ON LOAD */
   componentDidMount = async () => {
     // Request user's web3 connection
     await this.setWindowWeb3() 
@@ -100,23 +100,19 @@ class App extends Component {
     return (
       <div className={classes.root}>
         <Header />
-        { page === 0 ? (
+        { page === PAGES.MAIN ? (
           <div className={classes.main}>
-            {/* USER IDENTITY  */}
-            <Accounts />
-            {/* MINT */}
-            <MintButton />
-            {/* USER BALANCES  */}
-            <Balances />
-            {/* TRANSFER */}
-            <TransferButton />
-            {/* BURN */}
-            <BurnButton />
+            <HomePage />
           </div>
         ): ("")}
-        { page === 1 ? (
+        { page === PAGES.INFO ? (
           <div className={classes.information}>
             <InformationPage />
+          </div>
+        ): ("")}
+        { page === PAGES.ACCOUNTS ? (
+          <div className={classes.accounts}>
+            <AccountsPage />
           </div>
         ): ("")}
       </div>

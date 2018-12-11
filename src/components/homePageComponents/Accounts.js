@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import withRoot from '../withRoot';
+import withRoot from '../../withRoot';
 import PropTypes from 'prop-types';
 
 // Material-ui

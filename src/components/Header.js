@@ -18,7 +18,7 @@ import { connect } from "react-redux";
 import { ethActions } from "../store/ethActions";
 
 // Custom Components
-import HeaderMenu from './HeaderMenu'
+import HeaderMenu from './headerComponents/HeaderMenu'
 
 const styles = theme => ({
   grow: {
