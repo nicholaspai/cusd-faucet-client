@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import withRoot from '../withRoot';
+import withRoot from '../../withRoot';
 import PropTypes from 'prop-types';
 
 // Material-ui
@@ -11,18 +11,18 @@ import TextField from '@material-ui/core/TextField'
 
 // Redux state
 import { connect } from "react-redux";
-import { actions } from "../store/actions";
+import { ethActions } from "../../store/ethActions";
 
 // Custom Components
-import EtherscanLogo from './helpers/EtherscanLogo'
+import EtherscanLogo from '../helpers/EtherscanLogo'
 
 // WEB3 Services
-import { sendCUSD } from '../services/sendCUSD'
+import { sendCUSD } from '../../services/sendCUSD'
 
 // REST API server
 import axios from 'axios'
-import config from "../config"
-const SERVER = config.server_url_prod
+import config from "../../config"
+const SERVER = config.server_url
 const RELAYER_ENDPOINT = SERVER+"api/faucet/relayer"
 
 const styles = theme => ({
@@ -49,10 +49,7 @@ const mapState = state => ({
 });
 
 const mapDispatch = dispatch => ({
-  setWeb3: web3 =>
-    dispatch(actions.setWeb3(web3)),
-  setEthAddress: address => dispatch(actions.setEthAddress(address)),
-  concatPendingTransfers: newTransfer => dispatch(actions.concatPendingTransfers(newTransfer)),
+  concatPendingTransfers: newTransfer => dispatch(ethActions.concatPendingTransfers(newTransfer)),
 });
 
 class TransferButton extends Component {

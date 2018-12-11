@@ -8,7 +8,7 @@ import Menu from '@material-ui/core/Menu';
 
 // Redux state
 import { connect } from "react-redux";
-import { actions, PAGES } from "../store/actions";
+import { globalActions, PAGES } from "../../store/globalActions";
 
 const styles = {
 };
@@ -18,7 +18,7 @@ const mapState = state => ({
 })
 
 const mapDispatch = dispatch => ({
-  setPage: number => dispatch(actions.setPage(number))
+  setPage: number => dispatch(globalActions.setPage(number))
 });
 
 class HeaderMenu extends React.Component {
@@ -34,13 +34,20 @@ class HeaderMenu extends React.Component {
     this.setState({ anchorEl: null });
   };
 
+  /** PAGE SELECTOR: see globalActions.PAGES for more details */
   goToMainPage = () => {
       this.props.setPage(PAGES.MAIN)
+  }
+
+  goToAccountsPage = () => {
+      this.props.setPage(PAGES.ACCOUNTS)
   }
 
   goToInfoPage = () => {
       this.props.setPage(PAGES.INFO)
   }
+  /** END PAGE SELECTOR */
+
 
   render() {
     const { anchorEl } = this.state;
@@ -71,6 +78,7 @@ class HeaderMenu extends React.Component {
                   onClose={this.handleClose}
                 >
                   <MenuItem onClick={this.goToMainPage}>Home</MenuItem>
+                  <MenuItem onClick={this.goToAccountsPage}>Accounts</MenuItem>
                   <MenuItem onClick={this.goToInfoPage}>Information</MenuItem>
                 </Menu>
         </div>

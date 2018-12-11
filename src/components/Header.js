@@ -15,10 +15,10 @@ import { recoverMessageSigner } from '../services/recoverMessageSigner'
 
 // Redux state
 import { connect } from "react-redux";
-import { actions } from "../store/actions";
+import { ethActions } from "../store/ethActions";
 
 // Custom Components
-import HeaderMenu from './HeaderMenu'
+import HeaderMenu from './headerComponents/HeaderMenu'
 
 const styles = theme => ({
   grow: {
@@ -31,7 +31,7 @@ const mapState = state => ({
 })
 
 const mapDispatch = dispatch => ({
-  setEthAddress: address => dispatch(actions.setEthAddress(address))
+  setEthAddress: address => dispatch(ethActions.setEthAddress(address))
 });
 
 class Header extends Component {

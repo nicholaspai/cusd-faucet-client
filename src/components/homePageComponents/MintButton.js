@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import withRoot from '../withRoot';
+import withRoot from '../../withRoot';
 import PropTypes from 'prop-types';
 
 // Material-ui
@@ -10,15 +10,15 @@ import Typography from '@material-ui/core/Typography'
 
 // Redux state
 import { connect } from "react-redux";
-import { actions } from "../store/actions";
+import { ethActions } from "../../store/ethActions";
 
 // Custom Components
-import EtherscanLogo from './helpers/EtherscanLogo'
+import EtherscanLogo from '../helpers/EtherscanLogo'
 
 // REST API server
 import axios from 'axios'
-import config from "../config"
-const SERVER = config.server_url_prod
+import config from "../../config"
+const SERVER = config.server_url
 const MINTER_ENDPOINT = SERVER+"api/faucet/minter"
 
 const styles = theme => ({
@@ -40,10 +40,7 @@ const mapState = state => ({
 });
 
 const mapDispatch = dispatch => ({
-  setWeb3: web3 =>
-    dispatch(actions.setWeb3(web3)),
-  setEthAddress: address => dispatch(actions.setEthAddress(address)),
-  concatPendingMints: newMint => dispatch(actions.concatPendingMints(newMint)),
+  concatPendingMints: newMint => dispatch(ethActions.concatPendingMints(newMint)),
 });
 
 class MintButton extends Component {

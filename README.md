@@ -3,8 +3,12 @@ Deployed at: https://cusd-faucet-ropsten.herokuapp.com/
 
 1) `npm i` to install dependencies
 2) `npm run start-test` to start local ropsten CUSD faucet
-3) `npm run build` to make minimified `build/index.html` app
-4) `npm run start` to serve optimized `index.html`
+
+3) Choice of REST server:
+- Change `server_url` link in `./src/config.js` to select server for broadcasting web3 transactions and managing accounts
+
+4) `npm run build` to make minimified `build/index.html` app
+5) `npm run start` to serve optimized `index.html`
 
 ![Ropsten Wallet Screenshot](https://github.com/nicholaspai/cusd-faucet-client/blob/master/Screenshot%202018-12-10%2009.03.19.png)
 
