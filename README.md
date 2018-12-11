@@ -8,8 +8,10 @@ Deployed at: https://cusd-faucet-ropsten.herokuapp.com/
 
 ![Ropsten Wallet Screenshot](https://github.com/nicholaspai/cusd-faucet-client/blob/master/Screenshot%202018-12-10%2009.03.19.png)
 
-# CREATE_REACT_APP: 
+# Ethereum
+Connection via an Infura WebSocket
 
+# React App: 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
