@@ -19,6 +19,9 @@ import HomePage from './components/HomePage'
 import AccountsPage from './components/AccountsPage'
 import InformationPage from './components/InformationPage'
 
+// Config 
+import config from './config'
+
 const styles = theme => ({
   root: {
     flexGrow: 1
@@ -80,6 +83,9 @@ class App extends Component {
     }
     // Non-dapp browsers...
     else {
+        var WEB_3_NODE = ('wss://ropsten.infura.io/ws/v3/'+config.infura_public_key)
+        let non_provider_web3 = new Web3(new Web3.providers.WebsocketProvider(WEB_3_NODE));
+        this.props.setWeb3(non_provider_web3)
         alert('Non-Ethereum browser detected! This is not a problem, because we can create accounts for you, but we recommend getting a more secure cold-storage for the long-term.');
     }
   }
