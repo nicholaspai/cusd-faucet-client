@@ -95,6 +95,7 @@ class NewIdentityDialog extends Component {
             return
         }
         // 2. Fetch username to global Redux state
+            // This should also decrypt all encrypted wallet files with the user's password
 
         // Close
         this.props.onCloseHandler()

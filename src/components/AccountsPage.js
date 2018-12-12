@@ -77,7 +77,7 @@ class AccountsPage extends Component {
     } = this.state;
 
     const wallet_name = (username ? username+"'s Account" : "No Account")
-    const hover_text = "These burner wallet will self-destruct when you leave the page unless you choose to save them to your account"
+    const hover_text = "These burner wallets will self-destruct when you leave the page unless you choose to save them to your account"
 
     return (
         <div>

@@ -7,6 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Save from '@material-ui/icons/Save';
 
 // Redux state
@@ -16,6 +17,11 @@ import { NETWORKS } from "../../store/accountsActions";
 // Custom Components
 import EtherscanLogo from '../helpers/EtherscanLogo'
 import NewEthAccountDialog from './NewEthAccountDialog'
+
+// Wallet management helpers
+import createEncryptedWallet from '../../eth_services/encryptAccount'
+import getJsonAddress from '../../eth_services/getJsonAddress'
+import saveAccountToUser from '../../db_services/saveAccountToUser'
 
 const styles = theme => ({
   paper: {
@@ -32,7 +38,12 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit * 2,
     marginRight: theme.spacing.unit * 2,
     textAlign: 'left'
-  }
+  },
+  facebook2: {
+    color: '#6798e5',
+    animationDuration: '550ms',
+    position: 'absolute',
+  },
 });
 
 // Redux mappings
@@ -49,7 +60,9 @@ class EthAccounts extends Component {
     super(props);
 
     this.state = {
-      open_new_account_dialog: false
+      open_new_account_dialog: false,
+      password: 'CHANGE_THIS_PASSWORD',
+      saving: false
     };
   }
 
@@ -65,15 +78,48 @@ class EthAccounts extends Component {
     })
   }
 
-  saveAccount = (new_account_index) => {
+  // Encrypt wallet data with user's password
+  saveAccount = async (new_account_index) => {
     let identityToAssociateWithAccount = this.props.username
     let new_account = (
       new_account_index < this.props.eth_accounts.length 
-      ? this.props.eth_accounts[new_account_index].address 
+      ? this.props.eth_accounts[new_account_index] 
       : null)
+    let password = this.state.password
 
     if (identityToAssociateWithAccount && new_account) {
-      alert('Saving ' + new_account + ' to ' + identityToAssociateWithAccount)
+      
+      // Encrypt json wallet
+      try {
+        this.setState({
+          saving: true
+        })
+
+        // Set up body of API request
+        let encrypted_json = await createEncryptedWallet(password, new_account)
+        let address_from_encrypted_json = getJsonAddress(encrypted_json)
+        let post_data = {
+          user: identityToAssociateWithAccount,
+          network: '0', // ETH = 0, EOS = 1
+          public_key: address_from_encrypted_json,
+          wallet: encrypted_json
+        }
+        console.log('data to post: ', post_data)
+        let save_data_result = await saveAccountToUser(post_data)
+        console.log('React now can use this data: ', save_data_result)
+        this.setState({
+          saving: false
+        })
+
+  
+      } catch (err) {
+        console.log('ERROR: could not encrypt wallet json')
+        this.setState({
+          saving: false
+        })
+        return
+      }
+
     } else {
       alert('cannot save to this account')
       return
@@ -88,7 +134,8 @@ class EthAccounts extends Component {
       username
     } = this.props;
     const {
-      open_new_account_dialog
+      open_new_account_dialog,
+      saving
     } = this.state
 
     return (
@@ -121,7 +168,17 @@ class EthAccounts extends Component {
                       <Button
                         onClick={() => this.saveAccount(i)}
                       >
-                        <Save />
+                        {saving ? 
+                        (<CircularProgress
+                            variant="indeterminate"
+                            disableShrink
+                            className={classes.facebook2}
+                            size={24}
+                            thickness={4}
+                        />) : 
+                        (
+                          <Save />
+                        )}
                       </Button>
                     )}
                   </Typography>)

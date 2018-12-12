@@ -63,15 +63,7 @@ class NewEthAccountDialog extends Component {
             })
             let new_account_json = await createAccount_eth()
 
-            let new_eth_address = new_account_json.address
-            let new_account = {
-                address: new_eth_address,
-                wallet: {
-                    json: new_account_json,
-                    encrypted: false
-                }
-            }
-            this.props.addEthAccount(new_account)
+            this.props.addEthAccount(new_account_json)
             this.setState({
                 creating_account: false
             })
