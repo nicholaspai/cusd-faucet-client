@@ -15,6 +15,8 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
 
+// REST API Calls
+import saveUser from '../../db_services/saveUser'
 
 // Redux state
 import { connect } from "react-redux";
@@ -79,11 +81,34 @@ class NewIdentityDialog extends Component {
             return
         }
 
-        // 2. Fetch username to global Redux state
-        this.props.setUsername(new_username)
-        // Close
-        this.props.onCloseHandler()
-        return
+        // Save User to database
+        try {
+            this.setState({
+                creating_account: true
+            })
+            let post_data = {
+                user: new_username,
+                password: new_password, 
+            }
+            console.log('post data: ', post_data)
+            let save_data_result = await saveUser(post_data)
+            console.log('React now can use this data: ', save_data_result)
+            this.setState({
+                creating_account: false
+            })
+
+            // 2. Fetch username to global Redux state
+            this.props.setUsername(new_username)
+            // Close
+            this.props.onCloseHandler()
+            return
+        } catch (err) {
+            console.log('ERROR: could not save user data')
+            this.setState({
+                creating_account: false
+            })
+            return
+        }
     }
 
     // Sign in to an existing identity 

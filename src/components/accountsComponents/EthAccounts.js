@@ -102,7 +102,7 @@ class EthAccounts extends Component {
           user: identityToAssociateWithAccount,
           network: '0', // ETH = 0, EOS = 1
           public_key: address_from_encrypted_json,
-          wallet: encrypted_json
+          wallet: JSON.stringify(encrypted_json)
         }
         console.log('data to post: ', post_data)
         let save_data_result = await saveAccountToUser(post_data)
@@ -113,7 +113,7 @@ class EthAccounts extends Component {
 
   
       } catch (err) {
-        console.log('ERROR: could not encrypt wallet json')
+        console.log('ERROR: could not save wallet data')
         this.setState({
           saving: false
         })
