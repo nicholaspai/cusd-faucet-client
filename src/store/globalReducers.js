@@ -5,6 +5,7 @@ export const initialState = {
   global: {
     web3: '',
     page: PAGES.MAIN,
+    username: '',
   },
 };
 
@@ -18,6 +19,10 @@ export const global = (state = initialState.global, action) => {
     case TYPES.SET_PAGE:
       return Object.assign({}, state, {
         page: action.number
+      });
+    case TYPES.SET_USERNAME:
+      return Object.assign({}, state, {
+        username: action.string
       });
     default:
       return state;

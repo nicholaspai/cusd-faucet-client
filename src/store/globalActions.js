@@ -1,7 +1,8 @@
 // List of all actions that can be dispatched to redux store
 export const TYPES = {
   SET_WEB3: "SET_WEB3",
-  SET_PAGE: "SET_PAGE"
+  SET_PAGE: "SET_PAGE",
+  SET_USERNAME: "SET_USERNAME"
 };
 
 // Page options for main site
@@ -23,5 +24,11 @@ export const globalActions = {
     object
   }), 
   // Set Web3 object
+
+  setUsername: string => ({
+    type: TYPES.SET_USERNAME,
+    string
+  }), 
+  // Set User identity key: 'username'
 };
 

@@ -56,7 +56,7 @@ class InformationPage extends Component {
             </Typography>
             <Typography variant="body1" className={classes.section}> 
                 <b>Account Management</b>: No cryptonetwork account? No problem, you can create a <i>burner</i> account
-                through our management portal, Accounts. We will <b>never</b> store your keys or passwords because these burner accounts were designed to self-destruct.
+                through our management portal. We will <b>never</b> store your keys or passwords because these burner accounts were designed to self-destruct.
                 For top security, move CUSD to a more secure cold-storage wallet like Scatter or Metamask! 🗝💵🗝
             </Typography>
         </Paper>

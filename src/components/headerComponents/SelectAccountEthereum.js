@@ -43,10 +43,10 @@ const styles = theme => ({
     },
 });
 
-const findJsonFromAddress = (address, array) => {
+const findWalletFromAddress = (address, array) => {
     for (var i = 0; i < array.length; i++) {
         if (array[i].address === address) {
-            return array[i].json_encrypted
+            return array[i].wallet
         }
     }
 }
@@ -70,14 +70,19 @@ class SelectAccountEthereum extends React.Component {
   signInToSelectedAccount = async () => {
     let selectedAddress = this.state.value
     let password = this.state.password
-    let encryptedJson = findJsonFromAddress(selectedAddress, this.props.eth_accounts)
+    let wallet = findWalletFromAddress(selectedAddress, this.props.eth_accounts)
+    let wallet_json = wallet.json
 
     try {
         this.setState({
             unlocking: true,
             password_error: false
         })
-        let unlockedAccount = await unlockAccountEth(encryptedJson, password)
+        let unlockedAccount = (
+            wallet.encrypted === true ? 
+            await unlockAccountEth(wallet_json, password) 
+            : wallet_json
+        )
         this.setState({
             unlocking: false
         })
@@ -115,7 +120,6 @@ class SelectAccountEthereum extends React.Component {
         ...other } = this.props;
     const {
         value,
-        password,
         unlocking,
         password_error
     } = this.state
@@ -180,7 +184,6 @@ class SelectAccountEthereum extends React.Component {
             : 
             (<Button 
                 onClick={this.signInToSelectedAccount} 
-                disabled={!password}
                 color="primary"
             >
                 Unlock

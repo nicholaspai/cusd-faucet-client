@@ -6,6 +6,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button';
+import AddIcon from '@material-ui/icons/Add';
+import Tooltip from '@material-ui/core/Tooltip';
 
 // Redux state
 import { connect } from "react-redux";
@@ -14,6 +17,7 @@ import { } from "../store/accountsActions";
 // Custom Components
 import EthAccounts from './accountsComponents/EthAccounts'
 import EosAccounts from './accountsComponents/EosAccounts'
+import NewIdentityDialog from './accountsComponents/NewIdentityDialog'
 
 const styles = theme => ({
   paper: {
@@ -30,11 +34,12 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit * 2,
     marginRight: theme.spacing.unit * 2,
     textAlign: 'left'
-  }
+  },
 });
 
 // Redux mappings
 const mapState = state => ({
+  username: state.global.username
 });
 
 const mapDispatch = dispatch => ({
@@ -45,21 +50,51 @@ class AccountsPage extends Component {
     super(props);
 
     this.state = {
+      openIdentityDialog: false
     };
+  }
+
+  generateNewIdentity = () => {
+    this.setState({
+      openIdentityDialog: true
+    })
+  }
+
+  closeIdentityDialog = () => {
+    this.setState({
+      openIdentityDialog: false
+    })
   }
 
   render() {
 
     const { 
       classes, 
+      username
     } = this.props;
+    const {
+      openIdentityDialog
+    } = this.state;
+
+    const wallet_name = (username ? username+"'s Account" : "No Account")
+    const hover_text = "These burner wallet will self-destruct when you leave the page unless you choose to save them to your account"
 
     return (
         <div>
         <Paper className={classes.paper} elevation={3}>
-            <Typography variant="subtitle1" className={classes.section}> 
-                <b>Account Management</b>:
-            </Typography>
+            <Tooltip title={hover_text} placement="top">
+              <Typography variant="subtitle1" className={classes.section}> 
+                  <Button 
+                    color="primary" 
+                    aria-label="New Account"
+                    onClick={this.generateNewIdentity}
+                  >
+                    <AddIcon />
+                    {wallet_name}
+                  </Button>
+              </Typography>
+            </Tooltip>
+            <NewIdentityDialog open={openIdentityDialog} onCloseHandler={this.closeIdentityDialog} />
             {/* ETH  */}
             <EthAccounts />
             {/* EOS  */}

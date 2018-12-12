@@ -67,7 +67,7 @@ class EosAccounts extends Component {
     return (
         <Paper className={classes.paper} elevation={3}>
               <Typography variant="body1" className={classes.section}> 
-                  <b>EOS Accounts</b>: 
+                  <b>EOS Wallets</b>: 
               </Typography>
               {/* Add EOS Accounts */}
               <Button 
@@ -80,9 +80,6 @@ class EosAccounts extends Component {
               {/* View EOS Accounts */}
               { eos_accounts.length > 0 ? (
               <div>
-                <Typography> 
-                  Your EOS accounts: 
-                </Typography>
                 {eos_accounts.map((account, i) => {
                   return (<Typography key={i}> 
                     <BloksLogo /> ({i}): 

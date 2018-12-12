@@ -18,7 +18,10 @@ function callback_encrypt(progress) {
 // @param password Password used to encrypt new JSON wallet
 const createAccount = async (password) => {
     let randomWallet = new ethers.Wallet.createRandom()
-    let encryptedJson = await randomWallet.encrypt(password, callback_encrypt);
+    let encryptedJson = randomWallet
+    if (password) {
+        encryptedJson = await randomWallet.encrypt(password, callback_encrypt);
+    }
     return encryptedJson
 }
 
