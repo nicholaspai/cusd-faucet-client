@@ -1,7 +1,11 @@
 {
   "name": "cusd-faucet",
   "version": "0.1.0",
+  "engines": {
+    "node": "11.0.0"
+  },
   "private": true,
+  "author": "@mountainwaterpi",
   "dependencies": {
     "@material-ui/core": "^3.6.1",
     "@material-ui/icons": "^3.0.1",
