@@ -42,7 +42,7 @@ const mapDispatch = dispatch => ({
     setUsername: name => dispatch(globalActions.setUsername(name))
 });
 
-class NewIdentityDialog extends Component {
+class IdentityDialog extends Component {
 
     constructor(props) {
         super(props);
@@ -234,10 +234,10 @@ class NewIdentityDialog extends Component {
     }
 }
 
-NewIdentityDialog.propTypes = {
+IdentityDialog.propTypes = {
     classes: PropTypes.object.isRequired,
     open: PropTypes.bool.isRequired,
     onCloseHandler: PropTypes.func.isRequired,
 };
 
-export default connect(mapState, mapDispatch)(withRoot(withStyles(styles)(NewIdentityDialog)));
+export default connect(mapState, mapDispatch)(withRoot(withStyles(styles)(IdentityDialog)));

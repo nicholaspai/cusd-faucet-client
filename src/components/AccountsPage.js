@@ -17,7 +17,7 @@ import { } from "../store/accountsActions";
 // Custom Components
 import EthAccounts from './accountsComponents/EthAccounts'
 import EosAccounts from './accountsComponents/EosAccounts'
-import NewIdentityDialog from './accountsComponents/NewIdentityDialog'
+import IdentityDialog from './accountsComponents/IdentityDialog'
 
 const styles = theme => ({
   paper: {
@@ -94,7 +94,7 @@ class AccountsPage extends Component {
                   </Button>
               </Typography>
             </Tooltip>
-            <NewIdentityDialog open={openIdentityDialog} onCloseHandler={this.closeIdentityDialog} />
+            <IdentityDialog open={openIdentityDialog} onCloseHandler={this.closeIdentityDialog} />
             {/* ETH  */}
             <EthAccounts />
             {/* EOS  */}
