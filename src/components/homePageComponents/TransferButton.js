@@ -96,16 +96,25 @@ class TransferButton extends Component {
         if (relayer_balance <= 0) {
           alert('Relayer does not have enough eth to forward metatransfer :(')
           this.setState({
-            minting: false
+            transferring: false
           })
         }
 
         let post_data = await sendCUSD(web3, from, to, amountToTransfer, this.props.eth_wallet)
-
-        let response = await axios.post(
-          RELAYER_ENDPOINT,
-          post_data
-        );
+        
+        let response
+        try {
+          response = await axios.post(
+            RELAYER_ENDPOINT,
+            post_data
+          );
+        } catch (err) {
+          this.setState({
+            transferring: false
+          })
+          console.error("please be patient in between transactions") ;
+          return ; 
+        }
 
         let pending_hash = response.data.hash
         this.props.concatPendingTransfers(pending_hash)

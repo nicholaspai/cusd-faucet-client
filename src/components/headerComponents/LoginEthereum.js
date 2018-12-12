@@ -55,34 +55,33 @@ class LoginEthereum extends Component {
     this.handleClose()
     
     let web3 = this.props.web3
-    if ( web3 ) {
-      try {
-        let accounts = await web3.eth.getAccounts()
-        let user = accounts[0]
-
-        let messageToSign = "Welcome to the Carbon CUSD faucet! Please sign this message to verify that you are who you say you are, and we'll mint you " 
-                            + this.state.amount_to_mint 
-                            + " CUSD."
-        let sig = await signMessage(web3, messageToSign, user)
-        let signer = await recoverMessageSigner(
-          window.web3,
-          messageToSign,
-          sig
-        )
-        this.props.setEthAddress(signer)
-        this.props.setEthWallet('') // FIXME: !Only a Carbon account should have a signer-wallet via ethers.js!
-        this.setState({
-          signing_in: false
-        })
-      } catch (err) {
-        console.error('user could not sign message')
-        this.setState({
-          signing_in: false
-        })
-      }
-    } else {
+    if ( !web3 ) {
       // No web3 injected
-      alert('Cannot connect to Ethereum, are you using a dapp-enabled browser?')
+      alert('we cannot detect your web3, sorry')
+      this.setState({
+        signing_in: false
+      })
+    }
+    try {
+      let accounts = await web3.eth.getAccounts()
+      let user = accounts[0]
+
+      let messageToSign = "I am cryptograhically signing this message" 
+
+      let sig = await signMessage(web3, messageToSign, user)
+      let signer = await recoverMessageSigner(
+        window.web3,
+        messageToSign,
+        sig
+      )
+      this.props.setEthAddress(signer)
+      this.props.setEthWallet('') // FIXME: !Only a Carbon account should have a signer-wallet via ethers.js!
+      this.setState({
+        signing_in: false
+      })
+    } catch (err) {
+      alert('if you do not have an Ethereum account, get a free burner account at "Accounts"')
+      console.error('signature failed')
       this.setState({
         signing_in: false
       })
@@ -98,7 +97,7 @@ class LoginEthereum extends Component {
         })
     }
     else {
-        alert('Go to the "Accounts" page to create an account!')
+        alert('No accounts detected')
     }
   }
 

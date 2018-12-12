@@ -14,7 +14,8 @@ const styles = {
 };
 
 const mapState = state => ({
-  page: state.global.page
+  page: state.global.page,
+  web3: state.global.web3
 })
 
 const mapDispatch = dispatch => ({
@@ -65,7 +66,7 @@ class HeaderMenu extends React.Component {
                   color="inherit"
                 >
                   <Info />
-                </IconButton>
+                </IconButton> 
                 <Menu
                   id="menu-appbar"
                   anchorEl={anchorEl}

@@ -7,9 +7,12 @@ import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography'
 import Toolbar from '@material-ui/core/Toolbar';
+import Button from '@material-ui/core/Button';
+
 
 // Redux state
 import { connect } from "react-redux";
+import { globalActions, PAGES } from '../store/globalActions'
 
 // Custom Components
 import HeaderMenu from './headerComponents/HeaderMenu'
@@ -22,9 +25,11 @@ const styles = theme => ({
 });
 
 const mapState = state => ({
+  user_address: state.eth.user_address
 })
 
 const mapDispatch = dispatch => ({
+  setPage: NUMBER => dispatch(globalActions.setPage(NUMBER))
 });
 
 class Header extends Component {
@@ -35,15 +40,32 @@ class Header extends Component {
     };
   }
   
+  goToMainPage = () => {
+      this.props.setPage(PAGES.MAIN)
+  }
+  
   render() {
-    const { classes } = this.props;
+    const { 
+      classes, 
+      user_address 
+    } = this.props;
+
+    const short_name = user_address ? user_address.substring(0,8) : ""
 
     return (
         <AppBar position="static">
           <Toolbar>
             <HeaderMenu />
             <Typography variant="h6" color="inherit" className={classes.grow}>
-              Ropsten Faucet <span role="img" aria-label="Sake">🍶</span>
+                Ropsten Faucet 
+                <Button 
+                  onClick={this.goToMainPage}
+                >
+                  <span role="img" aria-label="Sake">
+                  🍶
+                  </span>
+                </Button> 
+                {short_name}
             </Typography>
             {/* REQUEST USER SIGNATURE */}
             <LoginEthereum />

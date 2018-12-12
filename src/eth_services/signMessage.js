@@ -9,7 +9,6 @@ export const signMessage = async (web3, dataToSign, from, signer_wallet) => {
         return sig.signature
     } else {
       // Else ask injected web3 provider to sign
-      alert('Welcome to the CUSD faucet! Please sign the message to sign in, or authenticate your Transfer or Redemption of CUSD. We will broadcast all of your transactions, so there is no need to hold any ETH.')
       return new Promise((resolve, reject) =>
         web3.eth.personal.sign(
           dataToSign,

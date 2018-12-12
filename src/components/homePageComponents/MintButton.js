@@ -63,7 +63,7 @@ class MintButton extends Component {
   
       let to = this.props.eth_address
       if (!web3.utils.isAddress(to)) {
-        console.log('invalid user address: ', to)
+        console.error('invalid user address: ', to)
         return
       }
 
@@ -88,10 +88,21 @@ class MintButton extends Component {
             minting: false
           })
         }
-        let response = await axios.post(
-          MINTER_ENDPOINT,
-          post_data
-        );
+
+        // API CALL
+        let response
+        try {
+          response = await axios.post(
+            MINTER_ENDPOINT,
+            post_data
+          );
+        } catch (err) {
+          this.setState({
+            minting: false
+          })
+          console.error("please be patient in between transactions") ;
+          return ; 
+        }
 
         let pending_hash = response.data.pending_hash
         this.props.concatPendingMints(pending_hash)

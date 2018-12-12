@@ -86,7 +86,6 @@ class App extends Component {
         var WEB_3_NODE = ('wss://ropsten.infura.io/ws/v3/'+config.infura_public_key)
         let non_provider_web3 = new Web3(new Web3.providers.WebsocketProvider(WEB_3_NODE));
         this.props.setWeb3(non_provider_web3)
-        alert('Non-Ethereum browser detected! This is not a problem, because we can create accounts for you, but we recommend getting a more secure cold-storage for the long-term.');
     }
   }
 

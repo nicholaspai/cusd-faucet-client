@@ -16,6 +16,9 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import { connect } from "react-redux";
 import { ethActions } from "../../store/ethActions";
 
+// JSX Helpers
+import Loading from '../helpers/Loading'
+
 // Unlock an account with a password
 import unlockAccountEth from '../../eth_services/unlockAccount'
 
@@ -156,9 +159,11 @@ class SelectAccountEthereum extends React.Component {
           />)}
         </DialogContent>
         <DialogActions>
-          { !unlocking && (<Button onClick={onCloseHandler} color="primary">
+          { unlocking ? <Loading /> :
+          (<Button onClick={onCloseHandler} color="primary">
             Cancel
-          </Button>) }
+          </Button>) 
+          }
           { unlocking ?
             (<Button
                 disabled

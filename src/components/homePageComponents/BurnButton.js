@@ -68,7 +68,6 @@ class BurnButton extends Component {
   handleClick_Burn = async () => {
     let web3 = this.props.web3
     if (web3) {
-      let web3 = window.web3
       let amountToBurn = web3.utils.toWei(this.state.amount_to_burn, 'ether')
   
       let from = this.props.eth_address
@@ -96,10 +95,19 @@ class BurnButton extends Component {
 
         let post_data = await burnCUSD(web3, from, amountToBurn, this.props.eth_wallet)
 
-        let response = await axios.post(
-          RELAYER_ENDPOINT,
-          post_data
-        );
+        let response 
+        try {
+          response = await axios.post(
+            RELAYER_ENDPOINT,
+            post_data
+          );
+        } catch (err) {
+          this.setState({
+            burning: false
+          })
+          console.error("please be patient in between transactions") ;
+          return ; 
+        }
         
         let pending_hash = response.data.hash
         this.props.concatPendingBurns(pending_hash)

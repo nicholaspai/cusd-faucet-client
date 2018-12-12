@@ -21,6 +21,9 @@ import { accountsActions, NETWORKS } from "../../store/accountsActions";
 import createAccount_eth from '../../eth_services/createAccount'
 import getJsonAddress from '../../eth_services/getJsonAddress'
 
+// Helpers JSX
+import Loading from '../helpers/Loading'
+
 const styles = theme => ({
     facebook2: {
         color: '#6798e5',
@@ -77,9 +80,9 @@ class NewAccountDialog extends Component {
             })
         }
         else if (network === NETWORKS.EOS) {
-            alert('EOS account management not implemented yet!')
+            alert('EOS account management coming imminently')
         } else {
-            alert('Sorry, we do not support this network yet!')
+            alert('Sorry, we are looking to implement this network soon!')
         }
 
         // Close
@@ -134,7 +137,7 @@ class NewAccountDialog extends Component {
                     />)}
                     </DialogContent>
                     <DialogActions>
-                    {creating_account ? ("") : 
+                    {creating_account ? (<Loading />) : 
                     (<Button onClick={onCloseHandler} color="primary">
                         Nevermind
                     </Button>)}
