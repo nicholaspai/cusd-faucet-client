@@ -1,6 +1,6 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
-import logger from "redux-logger"; // Debuggin: prints redux actions to console
+// import logger from "redux-logger"; // Debuggin: prints redux actions to console
 
 // Redux Reducers to add to global state
 import { eth } from "./ethReducers";
@@ -16,4 +16,4 @@ const rootReducer = combineReducers({
 });
 
 // Import store from createStore() => store
-export default createStore(rootReducer, {}, applyMiddleware(logger, thunk));
+export default createStore(rootReducer, {}, applyMiddleware(thunk));
