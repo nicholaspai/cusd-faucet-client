@@ -1,5 +1,5 @@
 # CUSD Faucet Client: Quick start
-Production Client at: https://drip-drip.netlify.com/
+Production Client at: https://dripdrip.netlify.com/
 Test Client at: https://cusd-faucet-ropsten.herokuapp.com/
 
 1) `npm i` to install dependencies
