@@ -4,6 +4,7 @@ import { TYPES } from "./ethActions";
 export const initialState = {
   eth: {
     user_address: '',
+    user_wallet: '',
     balance_cusd: '',
     pending_mints: [],
     pending_transfers: [],
@@ -17,6 +18,10 @@ export const eth = (state = initialState.eth, action) => {
     case TYPES.SET_ETH_ADDRESS:
       return Object.assign({}, state, {
         user_address: action.string
+      });
+    case TYPES.SET_ETH_WALLET:
+      return Object.assign({}, state, {
+        user_wallet: action.object
       });
     case TYPES.SET_ETH_BALANCE:
       return Object.assign({}, state, {

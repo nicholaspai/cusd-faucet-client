@@ -51,6 +51,7 @@ class EosAccounts extends Component {
   }
 
   handleClick_AddEosAccount = async () => {
+    alert('EOS accounts coming soon 🤥')
     let new_account = "placeholder-"+this.props.eos_accounts.length.toString()
 
     this.props.addEosAccount(new_account)

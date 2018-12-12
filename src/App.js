@@ -80,7 +80,7 @@ class App extends Component {
     }
     // Non-dapp browsers...
     else {
-        alert('Non-Ethereum browser detected. You should consider trying MetaMask!');
+        alert('Non-Ethereum browser detected! This is not a problem, because we can create accounts for you, but we recommend getting a more secure cold-storage for the long-term.');
     }
   }
 

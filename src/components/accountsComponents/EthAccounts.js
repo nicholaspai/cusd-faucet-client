@@ -10,10 +10,11 @@ import Button from '@material-ui/core/Button'
 
 // Redux state
 import { connect } from "react-redux";
-import { accountsActions } from "../../store/accountsActions";
+import { NETWORKS } from "../../store/accountsActions";
 
 // Custom Components
 import EtherscanLogo from '../helpers/EtherscanLogo'
+import NewAccountDialog from './NewAccountDialog'
 
 const styles = theme => ({
   paper: {
@@ -39,7 +40,6 @@ const mapState = state => ({
 });
 
 const mapDispatch = dispatch => ({
-  addEthAccount: newAccount => dispatch(accountsActions.addEthAccount(newAccount)),
 });
 
 class EthAccounts extends Component {
@@ -47,13 +47,20 @@ class EthAccounts extends Component {
     super(props);
 
     this.state = {
+      open_new_account_dialog: false
     };
   }
 
   handleClick_AddEthAccount = async () => {
-    let new_account = "placeholder-"+this.props.eth_accounts.length.toString()
+    this.setState({
+      open_new_account_dialog: true
+    })
+  }
 
-    this.props.addEthAccount(new_account)
+  handleClose_AddEthAccount = () => {
+    this.setState({
+      open_new_account_dialog: false
+    })
   }
 
   render() {
@@ -62,6 +69,9 @@ class EthAccounts extends Component {
       classes, 
       eth_accounts,
     } = this.props;
+    const {
+      open_new_account_dialog
+    } = this.state
 
     return (
         <Paper className={classes.paper} elevation={3}>
@@ -86,7 +96,7 @@ class EthAccounts extends Component {
                   return (<Typography key={i}> 
                     <EtherscanLogo /> ({i}): 
                     <a
-                      href={"https://ropsten.etherscan.io/address/" + account}
+                      href={"https://ropsten.etherscan.io/address/" + account.address}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -95,6 +105,11 @@ class EthAccounts extends Component {
                   </Typography>)
                 })}
               </div> ) : ("")}
+              <NewAccountDialog 
+                open={open_new_account_dialog} 
+                onCloseHandler={this.handleClose_AddEthAccount} 
+                network={NETWORKS.ETH}
+              />
         </Paper >
     )
   }

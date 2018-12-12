@@ -17,7 +17,7 @@ import { ethActions } from "../../store/ethActions";
 import EtherscanLogo from '../helpers/EtherscanLogo'
 
 // WEB3 Services
-import { burnCUSD } from '../../services/burnCUSD'
+import { burnCUSD } from '../../eth_services/burnCUSD'
 
 // REST API server
 import axios from 'axios'
@@ -44,6 +44,7 @@ const styles = theme => ({
 // Redux mappings
 const mapState = state => ({
   eth_address: state.eth.user_address,
+  eth_wallet: state.eth.user_wallet,
   web3: state.global.web3,
   pending_burns: state.eth.pending_burns
 });
@@ -93,8 +94,7 @@ class BurnButton extends Component {
           })
         }
 
-        alert('Please sign the burn metatransaction, and we will pay for your ETH gas fees to redeem CUSD!')
-        let post_data = await burnCUSD(web3, from, amountToBurn)
+        let post_data = await burnCUSD(web3, from, amountToBurn, this.props.eth_wallet)
 
         let response = await axios.post(
           RELAYER_ENDPOINT,

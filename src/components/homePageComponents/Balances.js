@@ -12,7 +12,7 @@ import { connect } from "react-redux";
 import { ethActions } from "../../store/ethActions";
 
 // WEB3 Services
-import { updateUserBalance } from '../../services/updateUserBalance'
+import { updateUserBalance } from '../../eth_services/updateUserBalance'
 
 const styles = theme => ({
   paper: {

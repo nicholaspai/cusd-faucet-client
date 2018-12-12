@@ -1,6 +1,7 @@
 // List of all actions that can be dispatched to redux store
 export const TYPES = {
   SET_ETH_ADDRESS: "SET_ETH_ADDRESS",
+  SET_ETH_WALLET: "SET_ETH_WALLET",
   SET_ETH_BALANCE: "SET_ETH_BALANCE",
   CONCAT_PENDING_MINTS: "CONCAT_PENDING_MINTS",
   CONCAT_PENDING_TRANSFERS: "CONCAT_PENDING_TRANSFERS",
@@ -13,6 +14,12 @@ export const ethActions = {
     string
   }),
   // Set user eth account
+
+  setEthWallet: object => ({
+    type: TYPES.SET_ETH_WALLET,
+    object
+  }),
+  // Set user eth wallet that they can sign messages from
 
   setEthBalance: string => ({
     type: TYPES.SET_ETH_BALANCE,

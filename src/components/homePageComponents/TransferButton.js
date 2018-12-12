@@ -17,7 +17,7 @@ import { ethActions } from "../../store/ethActions";
 import EtherscanLogo from '../helpers/EtherscanLogo'
 
 // WEB3 Services
-import { sendCUSD } from '../../services/sendCUSD'
+import { sendCUSD } from '../../eth_services/sendCUSD'
 
 // REST API server
 import axios from 'axios'
@@ -44,6 +44,7 @@ const styles = theme => ({
 // Redux mappings
 const mapState = state => ({
   eth_address: state.eth.user_address,
+  eth_wallet: state.eth.user_wallet,
   web3: state.global.web3,
   pending_transfers: state.eth.pending_transfers,
 });
@@ -99,9 +100,7 @@ class TransferButton extends Component {
           })
         }
 
-        alert('Please sign the transfer metatransaction, and we will pay for your ETH gas fees to send CUSD!')
-        let post_data = await sendCUSD(web3, from, to, amountToTransfer)
-        // console.log('metatransfer: ', post_data)
+        let post_data = await sendCUSD(web3, from, to, amountToTransfer, this.props.eth_wallet)
 
         let response = await axios.post(
           RELAYER_ENDPOINT,

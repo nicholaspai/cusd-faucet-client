@@ -58,6 +58,11 @@ class InformationPage extends Component {
                 <b>MetaTransactions</b>: We are excited to offer "metatransactions", where users do not need to hold any ETH to pay for transaction fees
                 when using CUSD. We pay your ETH gas fees, you compensate us in CUSD, and no one needs to hodl trivial amounts of ETH anymore 🧞‍
             </Typography>
+            <Typography variant="body1" className={classes.section}> 
+                <b>Account Management</b>: No dApp browser? No idea what Ethereum or MetaMask is? No problem, you can create a <i>temporary</i> accounts
+                through our account management tool. We will <b>never</b> store your keys or passwords, and these wallets will disappear when you leave the page,
+                so please move any CUSD to a more secure cold-storage wallet! 🗝💵🗝
+            </Typography>
         </Paper>
         <Paper className={classes.paper} elevation={3}>
             <a href="https://github.com/nicholaspai/cusd-faucet-client" target="_blank" rel="noopener noreferrer">

@@ -37,14 +37,17 @@ class HeaderMenu extends React.Component {
   /** PAGE SELECTOR: see globalActions.PAGES for more details */
   goToMainPage = () => {
       this.props.setPage(PAGES.MAIN)
+      this.handleClose()
   }
 
   goToAccountsPage = () => {
       this.props.setPage(PAGES.ACCOUNTS)
+      this.handleClose()
   }
 
   goToInfoPage = () => {
       this.props.setPage(PAGES.INFO)
+      this.handleClose()
   }
   /** END PAGE SELECTOR */
 
