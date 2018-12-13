@@ -150,7 +150,7 @@ class BurnButton extends Component {
             {/* BURN CUSD  */}
               { !eth_address ?
               (
-                <Button disabled>Please sign in redeem CUSD!</Button>
+                <Button disabled>Please sign in to redeem CUSD!</Button>
               )
               : (
                 <div>
