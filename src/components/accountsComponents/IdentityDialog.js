@@ -50,7 +50,6 @@ class IdentityDialog extends Component {
         this.state = {
             username: '',
             password: '',
-            confirm_password: '',
             creating_account: false,
             openSignInDialog: false
         };
@@ -62,18 +61,23 @@ class IdentityDialog extends Component {
         });
     };
 
+    // Clear identity form
+    clearForm = () => {
+        this.setState({
+            username: '',
+            password: ''
+        })
+    }
+
     // Create a brand new identity
     generateNewAccount = async () => {
         let new_username = this.state.username
         let new_password = this.state.password
-        let confirm_password = this.state.confirm_password
 
         // 1. Add username + password hash object to database if username doesn't exist
         let isValidAccount = Boolean(
             new_username && 
-            new_password &&
-            confirm_password &&
-            (new_password === confirm_password)
+            new_password 
         )
 
         if (!isValidAccount) {
@@ -86,21 +90,17 @@ class IdentityDialog extends Component {
             this.setState({
                 saving: true
             })
-            let post_data = {
-                user: new_username,
-                password: new_password, 
+            let save_success = await saveUser(new_username, new_password)
+            if (save_success) {
+                // New account created
+                this.props.setUsername(new_username)
+                this.props.setUsername(new_username)
+                this.clearForm()
+                // Close
+                this.props.onCloseHandler()
+            } else {
+                //Invalid account or user already exists
             }
-            console.log('post data: ', post_data)
-            let save_data_result = await saveUser(post_data)
-            console.log('React now can use this data: ', save_data_result)
-            this.setState({
-                saving: false
-            })
-
-            // 2. Fetch username to global Redux state
-            this.props.setUsername(new_username)
-            // Close
-            this.props.onCloseHandler()
             return
         } catch (err) {
             console.log('ERROR: could not save user data')
@@ -145,12 +145,11 @@ class IdentityDialog extends Component {
         const {
             username,
             password,
-            confirm_password,
             creating_account,
             openSignInDialog
         } = this.state
 
-        const canCreateNew = Boolean(username && password && confirm_password && (password === confirm_password))
+        const canCreateNew = Boolean(username && password)
         const canSignIn = Boolean(username && password)
 
         return (
@@ -192,14 +191,6 @@ class IdentityDialog extends Component {
                         onChange={this.handleChange('password')}
                         fullWidth
                     />
-                    {!openSignInDialog ? (<TextField
-                        margin="dense"
-                        id="confirm-password"
-                        label="Confirm Password"
-                        type="password"
-                        onChange={this.handleChange('confirm_password')}
-                        fullWidth
-                    />) : ("")}
                     </DialogContent>
                     <DialogActions>
                     {creating_account ? (<Loading />) : 
