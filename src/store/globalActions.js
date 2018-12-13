@@ -1,6 +1,7 @@
 // List of all actions that can be dispatched to redux store
 export const TYPES = {
   SET_WEB3: "SET_WEB3",
+  SET_WEB3_NETWORK: "SET_WEB3_NETWORK",
   SET_PAGE: "SET_PAGE",
   SET_USERNAME: "SET_USERNAME"
 };
@@ -24,6 +25,12 @@ export const globalActions = {
     object
   }), 
   // Set Web3 object
+
+  setWeb3Network: number => ({
+    type: TYPES.SET_WEB3_NETWORK,
+    number
+  }), 
+  // Set Web3 network ID number
 
   setUsername: string => ({
     type: TYPES.SET_USERNAME,

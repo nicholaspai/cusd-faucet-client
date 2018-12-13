@@ -15,6 +15,7 @@ import { ethActions } from "../../store/ethActions";
 
 // Custom Components
 import EtherscanLogo from '../helpers/EtherscanLogo'
+import SignMessageSnackbar from '../helpers/SignMessageSnackbar'
 
 // WEB3 Services
 import { burnCUSD } from '../../eth_services/burnCUSD'
@@ -139,6 +140,10 @@ class BurnButton extends Component {
       eth_address,
       pending_burns
     } = this.props;
+    const {
+      burning,
+      amount_to_burn
+    } = this.state
 
     return (
           <Paper className={classes.paper} elevation={3}>
@@ -155,7 +160,7 @@ class BurnButton extends Component {
                     label="Amount"
                     type="number"
                     className={classes.textField}
-                    value={this.state.amount_to_burn}
+                    value={amount_to_burn}
                     onChange={this.handleChange('amount_to_burn')}
                     margin="normal"
                   />
@@ -163,14 +168,14 @@ class BurnButton extends Component {
                 <Button
                   onClick={this.handleClick_Burn}
                   disabled={
-                    this.state.burning ||
-                    isNaN(this.state.amount_to_burn) ||
-                    this.state.amount_to_burn <= 0
+                    burning ||
+                    isNaN(amount_to_burn) ||
+                    amount_to_burn <= 0
                   }
                   variant="contained"
                   color="secondary"
                 >
-                  Redeem {this.state.amount_to_burn ? this.state.amount_to_burn : ""} CUSD
+                  Redeem {amount_to_burn ? amount_to_burn : ""} CUSD
                 </Button>
                 </div>
               )
@@ -194,6 +199,8 @@ class BurnButton extends Component {
                 </Typography>)
               })}
             </div> ) : ("")}
+            {/* SNACKBAR ALERTS */}
+            <SignMessageSnackbar open={burning} />
           </Paper>
     );
   }

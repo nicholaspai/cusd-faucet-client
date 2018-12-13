@@ -15,6 +15,7 @@ import { ethActions } from "../../store/ethActions";
 
 // Custom Components
 import EtherscanLogo from '../helpers/EtherscanLogo'
+import SignMessageSnackbar from '../helpers/SignMessageSnackbar'
 
 // WEB3 Services
 import { sendCUSD } from '../../eth_services/sendCUSD'
@@ -88,7 +89,6 @@ class TransferButton extends Component {
       })
 
       try {
-        // TODO: Each pending transfer should have a Number:transfer_id, and a status: pending, failed, success
         let relayer_status = await axios.get(
           RELAYER_ENDPOINT
         )
@@ -145,70 +145,77 @@ class TransferButton extends Component {
       eth_address,
       pending_transfers
     } = this.props;
+    const {
+      transferring,
+      transfer_to,
+      amount_to_transfer
+    } = this.state;
 
     return (
         <Paper className={classes.paper} elevation={3}>
-        {/* TRANSFER CUSD  */}
-            { !eth_address ?
-            (
-            <Button disabled>Please sign in trade CUSD!</Button>
-            )
-            : (
-            <div>
-            <form>
-                <TextField
-                id="transfer-to"
-                label="Transfer To"
-                className={classes.textField}
-                value={this.state.transfer_to}
-                onChange={this.handleChange('transfer_to')}
-                margin="normal"
-                />
-                <TextField
-                id="transfer-amount"
-                label="Amount"
-                type="number"
-                className={classes.textField}
-                value={this.state.amount_to_transfer}
-                onChange={this.handleChange('amount_to_transfer')}
-                margin="normal"
-                />
-            </form>
-            <Button
-                onClick={this.handleClick_Transfer}
-                disabled={
-                this.state.transferring ||
-                !this.state.transfer_to ||
-                isNaN(this.state.amount_to_transfer) ||
-                this.state.amount_to_transfer <= 0
-                }
-                variant="contained"
-                color="secondary"
-            >
-                Transfer {this.state.amount_to_transfer ? this.state.amount_to_transfer : ""} CUSD
-            </Button>
-            </div>
-            )
-            }
-        {/* TRANSFER TXNS  */}
-        { pending_transfers.length > 0 ? (
-        <div>
-            <Typography> 
-            Your transfer transactions: 
-            </Typography>
-            {pending_transfers.map((pending_hash, i) => {
-            return (<Typography key={i}> 
-                <EtherscanLogo /> ({i}): 
-                <a
-                href={"https://ropsten.etherscan.io/tx/" + pending_hash}
-                target="_blank"
-                rel="noopener noreferrer"
-                >
-                {" track on Etherscan"}
-                </a>
-            </Typography>)
-            })}
-        </div> ) : ("")}
+          {/* TRANSFER CUSD  */}
+              { !eth_address ?
+              (
+              <Button disabled>Please sign in trade CUSD!</Button>
+              )
+              : (
+              <div>
+              <form>
+                  <TextField
+                  id="transfer-to"
+                  label="Transfer To"
+                  className={classes.textField}
+                  value={transfer_to}
+                  onChange={this.handleChange('transfer_to')}
+                  margin="normal"
+                  />
+                  <TextField
+                  id="transfer-amount"
+                  label="Amount"
+                  type="number"
+                  className={classes.textField}
+                  value={amount_to_transfer}
+                  onChange={this.handleChange('amount_to_transfer')}
+                  margin="normal"
+                  />
+              </form>
+              <Button
+                  onClick={this.handleClick_Transfer}
+                  disabled={
+                  transferring ||
+                  !transfer_to ||
+                  isNaN(amount_to_transfer) ||
+                  amount_to_transfer <= 0
+                  }
+                  variant="contained"
+                  color="secondary"
+              >
+                  Transfer {amount_to_transfer ? amount_to_transfer : ""} CUSD
+              </Button>
+              </div>
+              )
+              }
+          {/* TRANSFER TXNS  */}
+          { pending_transfers.length > 0 ? (
+          <div>
+              <Typography> 
+              Your transfer transactions: 
+              </Typography>
+              {pending_transfers.map((pending_hash, i) => {
+              return (<Typography key={i}> 
+                  <EtherscanLogo /> ({i}): 
+                  <a
+                  href={"https://ropsten.etherscan.io/tx/" + pending_hash}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >
+                  {" track on Etherscan"}
+                  </a>
+              </Typography>)
+              })}
+          </div> ) : ("")}
+          {/* SNACKBAR ALERTS */}
+          <SignMessageSnackbar open={transferring} />
         </Paper>
     );
   }

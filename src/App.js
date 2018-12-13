@@ -12,15 +12,13 @@ import { globalActions, PAGES } from "./store/globalActions";
 
 // WEB3 Services
 import Web3 from 'web3';
+import getDefaultWeb3 from './eth_services/getDefaultWeb3'
 
 // Core Wallet Pages + Header
 import Header from './components/Header'
 import HomePage from './components/HomePage'
 import AccountsPage from './components/AccountsPage'
 import InformationPage from './components/InformationPage'
-
-// Config 
-import config from './config'
 
 const styles = theme => ({
   root: {
@@ -42,13 +40,14 @@ const styles = theme => ({
 
 // Redux mappings
 const mapState = state => ({
-  web3: state.global.web3,
   page: state.global.page,
+  web3: state.global.web3
 });
 
 const mapDispatch = dispatch => ({
   setWeb3: web3 =>
     dispatch(globalActions.setWeb3(web3)),
+  setWeb3Network: number => dispatch(globalActions.setWeb3Network(number))
 });
 
 class App extends Component {
@@ -61,18 +60,26 @@ class App extends Component {
 
   /** SET UP WEB3 */
   // Detect or set window.web3 ethereum connection
-  setWindowWeb3 = async () => {
+  setGlobalWeb3 = async () => {
+
+    // Set default web3 in case browser cannot inject web3
+    let default_web3 = await getDefaultWeb3()
+    this.props.setWeb3(default_web3.web3)
+    this.props.setWeb3Network(default_web3.network)
+
+    // Now, replace web3 with injected web3 if possible
     // Modern dapp browsers...
     if (window.ethereum) {
         window.web3 = new Web3(window.ethereum);
         try {
             // Request account access if needed
-            await window.ethereum.enable();
-            
+            await window.ethereum.enable()
             // Store web3 instance in redux store
             this.props.setWeb3(window.web3)
+            let network = await window.web3.eth.net.getId()
+            this.props.setWeb3Network(network)
         } catch (error) {
-            // User denied account access...
+            // User denied account access... setting fallback web3 object to access web3 
             console.log('user denied ethereum account access')
         }
     }
@@ -80,19 +87,19 @@ class App extends Component {
     else if (window.web3) {
         window.web3 = new Web3(window.web3.currentProvider);
         this.props.setWeb3(window.web3)
+        let network = await window.web3.eth.net.getId()
+        this.props.setWeb3Network(network)
     }
     // Non-dapp browsers...
     else {
-        var WEB_3_NODE = ('wss://ropsten.infura.io/ws/v3/'+config.infura_public_key)
-        let non_provider_web3 = new Web3(new Web3.providers.WebsocketProvider(WEB_3_NODE));
-        this.props.setWeb3(non_provider_web3)
+
     }
   }
 
   /** ACTIONS TO PERFORM ON LOAD */
   componentDidMount = async () => {
     // Request user's web3 connection
-    await this.setWindowWeb3() 
+    await this.setGlobalWeb3() 
   }
 
   render() {

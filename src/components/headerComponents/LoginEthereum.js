@@ -61,6 +61,7 @@ class LoginEthereum extends Component {
       this.setState({
         signing_in: false
       })
+      return
     }
     try {
       let accounts = await web3.eth.getAccounts()

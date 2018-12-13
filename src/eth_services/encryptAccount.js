@@ -15,7 +15,6 @@ function callback_encrypt(progress) {
 // Encrypt JSON wallet
 // @param password Password used to encrypt JSON wallet
 const encryptAccount = async (password, wallet_json) => {
-    console.log(password, wallet_json)
     let encryptedJson
     if (wallet_json) {
         encryptedJson = await wallet_json.encrypt(password, callback_encrypt);

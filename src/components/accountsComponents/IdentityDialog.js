@@ -84,7 +84,7 @@ class IdentityDialog extends Component {
         // Save User to database
         try {
             this.setState({
-                creating_account: true
+                saving: true
             })
             let post_data = {
                 user: new_username,
@@ -94,7 +94,7 @@ class IdentityDialog extends Component {
             let save_data_result = await saveUser(post_data)
             console.log('React now can use this data: ', save_data_result)
             this.setState({
-                creating_account: false
+                saving: false
             })
 
             // 2. Fetch username to global Redux state
@@ -105,7 +105,7 @@ class IdentityDialog extends Component {
         } catch (err) {
             console.log('ERROR: could not save user data')
             this.setState({
-                creating_account: false
+                saving: false
             })
             return
         }
