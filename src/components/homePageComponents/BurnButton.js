@@ -86,7 +86,7 @@ class BurnButton extends Component {
         let relayer_status = await axios.get(
           RELAYER_ENDPOINT
         )
-        let relayer_balance = relayer_status.balance_relayer
+        let relayer_balance = relayer_status.data.balance_relayer
         if (relayer_balance <= 0) {
           alert('Relayer does not have enough eth to forward metatransfer :(')
           this.setState({
