@@ -152,10 +152,11 @@ class IdentityDialog extends Component {
                 let eth_accounts = existing_wallets[NETWORKS.ETH]
 
                 if (eth_accounts.length > 0) {
+                    console.log("loading " + eth_accounts.length + " wallets")
                     for (var i = 0; i < eth_accounts.length; i++) {
                         let wallet = eth_accounts[i]
                         let address = Object.keys(wallet)[0]
-                        console.log('loading wallet #'+i+': '+address)
+                        console.log('address: ', address)
                         let encrypted_wallet = JSON.parse(wallet[address])
                         let decrypted_wallet = await unlockAccount(encrypted_wallet, password)
                         this.props.addEthAccount(decrypted_wallet)

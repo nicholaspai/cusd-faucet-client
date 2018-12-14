@@ -14,6 +14,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 // Redux state
 import { connect } from "react-redux";
 import { globalActions } from "../store/globalActions";
+import { accountsActions } from "../store/accountsActions";
 
 // Custom Components
 import EthAccounts from './accountsComponents/EthAccounts'
@@ -46,7 +47,8 @@ const mapState = state => ({
 
 const mapDispatch = dispatch => ({
   setUsername: name => dispatch(globalActions.setUsername(name)),
-  setPassword: password => dispatch(globalActions.setPassword(password))
+  setPassword: password => dispatch(globalActions.setPassword(password)),
+  clearEthAccounts: () => dispatch(accountsActions.clearEthAccounts())
 });
 
 class AccountsPage extends Component {
@@ -68,6 +70,7 @@ class AccountsPage extends Component {
   logoutIdentity = () => {
     this.props.setUsername('')
     this.props.setPassword('')
+    this.props.clearEthAccounts()
   }
 
   closeIdentityDialog = () => {
