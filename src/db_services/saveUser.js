@@ -4,18 +4,34 @@ import config from '../config'
 const SERVER = config.server_url
 const USERS_ENDPOINT = SERVER+"api/accounts/users"
 
-const saveUser = async (post_data) => {
+const saveUser = async (username, password) => {
     try {
-        // let db_get_response = await axios.get(
-        //     USERS_ENDPOINT
-        // )
+        let post_data = {
+            user: username,
+            password: password, 
+        }
+
         let db_post_response = await axios.post(
             USERS_ENDPOINT,
             post_data
           );
-        return db_post_response; 
+
+        // if successfully created new user
+        if (db_post_response.data) {
+            let new_user_id = db_post_response.data.key
+            let new_password = db_post_response.data.value
+            return {
+                user: new_user_id,
+                password: new_password
+            }
+        } else {
+            // user already exists or error
+            console.log('user already exists or error')
+            return false
+        }
     } catch(err) {
         console.log('unable to connect users accounts database: ', USERS_ENDPOINT)
+        return false
     }
     
 }

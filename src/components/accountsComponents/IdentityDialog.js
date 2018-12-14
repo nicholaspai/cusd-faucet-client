@@ -17,6 +17,7 @@ import Switch from '@material-ui/core/Switch'
 
 // REST API Calls
 import saveUser from '../../db_services/saveUser'
+import loginUser from '../../db_services/loginUser'
 
 // Redux state
 import { connect } from "react-redux";
@@ -39,7 +40,8 @@ const mapState = state => ({
 });
   
 const mapDispatch = dispatch => ({
-    setUsername: name => dispatch(globalActions.setUsername(name))
+    setUsername: name => dispatch(globalActions.setUsername(name)),
+    setPassword: name => dispatch(globalActions.setPassword(name))
 });
 
 class IdentityDialog extends Component {
@@ -51,7 +53,7 @@ class IdentityDialog extends Component {
             username: '',
             password: '',
             confirm_password: '',
-            creating_account: false,
+            loading_server: false,
             openSignInDialog: false
         };
     }
@@ -64,48 +66,46 @@ class IdentityDialog extends Component {
 
     // Create a brand new identity
     generateNewAccount = async () => {
-        let new_username = this.state.username
-        let new_password = this.state.password
+        let username = this.state.username
+        let password = this.state.password
         let confirm_password = this.state.confirm_password
 
-        // 1. Add username + password hash object to database if username doesn't exist
         let isValidAccount = Boolean(
-            new_username && 
-            new_password &&
+            username && 
+            password &&
             confirm_password &&
-            (new_password === confirm_password)
+            (password === confirm_password)
         )
-
         if (!isValidAccount) {
             alert('cannot create this account')
             return
         }
 
-        // Save User to database
+        // Attempt to create new user
         try {
             this.setState({
-                saving: true
+                loading_server: true
             })
-            let post_data = {
-                user: new_username,
-                password: new_password, 
+            let new_user = await saveUser(username, password)
+            if (new_user) {
+                // Successfully created new user
+                let new_username = new_user.user
+                console.log('created a new user: ', new_username)
+                // Now, "sign in" new user
+                this.props.setUsername(username)
+                this.props.setPassword(password)
+                // Close
+                this.props.onCloseHandler()
             }
-            console.log('post data: ', post_data)
-            let save_data_result = await saveUser(post_data)
-            console.log('React now can use this data: ', save_data_result)
             this.setState({
-                saving: false
+                loading_server: false
             })
 
-            // 2. Fetch username to global Redux state
-            this.props.setUsername(new_username)
-            // Close
-            this.props.onCloseHandler()
             return
         } catch (err) {
             console.log('ERROR: could not save user data')
             this.setState({
-                saving: false
+                loading_server: false
             })
             return
         }
@@ -113,18 +113,37 @@ class IdentityDialog extends Component {
 
     // Sign in to an existing identity 
     signInOldAccount = async () => {
-        // 1. Try to log in with username+password on database
-        let login_success = false
-        if (!login_success) {
-            alert('could not log in')
+        let username = this.state.username
+        let password = this.state.password
+
+
+        // Attempt to get existing user
+        try {
+            this.setState({
+                loading_server: true
+            })
+            let existing_user = await loginUser(username, password)
+            if (existing_user) {
+                // Successfully logged in new user
+                let existing_username = existing_user.user
+                console.log('signed in existing user: ', existing_username)
+                // Now, "sign in" new user
+                this.props.setUsername(existing_username)
+                // Close
+                this.props.onCloseHandler()
+            }
+            this.setState({
+                loading_server: false
+            })
+
+            return
+        } catch (err) {
+            console.log('ERROR: could not sign in user')
+            this.setState({
+                loading_server: false
+            })
             return
         }
-        // 2. Fetch username to global Redux state
-            // This should also decrypt all encrypted wallet files with the user's password
-
-        // Close
-        this.props.onCloseHandler()
-        return
     }
 
     // Switch between sign in and new account dialogs
@@ -146,7 +165,7 @@ class IdentityDialog extends Component {
             username,
             password,
             confirm_password,
-            creating_account,
+            loading_server,
             openSignInDialog
         } = this.state
 
@@ -202,11 +221,11 @@ class IdentityDialog extends Component {
                     />) : ("")}
                     </DialogContent>
                     <DialogActions>
-                    {creating_account ? (<Loading />) : 
+                    {loading_server ? (<Loading />) : 
                     (<Button onClick={onCloseHandler} color="primary">
                         Nevermind
                     </Button>)}
-                    {creating_account ? 
+                    {loading_server ? 
                     (<Button
                         disabled
                         color="primary"

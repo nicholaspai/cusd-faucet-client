@@ -49,7 +49,8 @@ const styles = theme => ({
 // Redux mappings
 const mapState = state => ({
   eth_accounts: state.accounts.eth_accounts,
-  username: state.global.username
+  username: state.global.username,
+  password: state.global.password
 });
 
 const mapDispatch = dispatch => ({
@@ -61,7 +62,6 @@ class EthAccounts extends Component {
 
     this.state = {
       open_new_account_dialog: false,
-      password: 'CHANGE_THIS_PASSWORD',
       saving: false
     };
   }
@@ -85,7 +85,8 @@ class EthAccounts extends Component {
       new_account_index < this.props.eth_accounts.length 
       ? this.props.eth_accounts[new_account_index] 
       : null)
-    let password = this.state.password
+    let password = this.props.password
+    let chainId = '0' // ETH = 0, EOS = 1
 
     if (identityToAssociateWithAccount && new_account) {
       
@@ -98,14 +99,14 @@ class EthAccounts extends Component {
         // Set up body of API request
         let encrypted_json = await createEncryptedWallet(password, new_account)
         let address_from_encrypted_json = getJsonAddress(encrypted_json)
-        let post_data = {
-          user: identityToAssociateWithAccount,
-          network: '0', // ETH = 0, EOS = 1
-          public_key: address_from_encrypted_json,
-          wallet: JSON.stringify(encrypted_json)
-        }
-        console.log('data to post: ', post_data)
-        let save_data_result = await saveAccountToUser(post_data)
+
+        let save_data_result = await saveAccountToUser(
+          identityToAssociateWithAccount, 
+          password,
+          chainId,
+          address_from_encrypted_json,
+          encrypted_json
+        )
         console.log('React now can use this data: ', save_data_result)
         this.setState({
           saving: false

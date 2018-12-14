@@ -7,6 +7,7 @@ export const initialState = {
     web3_network: '',
     page: PAGES.MAIN,
     username: '',
+    password: '',
   },
 };
 
@@ -28,6 +29,10 @@ export const global = (state = initialState.global, action) => {
     case TYPES.SET_USERNAME:
       return Object.assign({}, state, {
         username: action.string
+      });
+    case TYPES.SET_PASSWORD:
+      return Object.assign({}, state, {
+        password: action.string
       });
     default:
       return state;

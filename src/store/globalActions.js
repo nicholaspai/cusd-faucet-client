@@ -3,7 +3,8 @@ export const TYPES = {
   SET_WEB3: "SET_WEB3",
   SET_WEB3_NETWORK: "SET_WEB3_NETWORK",
   SET_PAGE: "SET_PAGE",
-  SET_USERNAME: "SET_USERNAME"
+  SET_USERNAME: "SET_USERNAME",
+  SET_PASSWORD: "SET_PASSWORD",
 };
 
 // Page options for main site
@@ -37,5 +38,12 @@ export const globalActions = {
     string
   }), 
   // Set User identity key: 'username'
+
+  setPassword: string => ({
+    type: TYPES.SET_PASSWORD,
+    string
+  }), 
+  // Set User identity key: 'password'
+
 };
 
