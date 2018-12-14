@@ -19,10 +19,13 @@ import Switch from '@material-ui/core/Switch'
 import saveUser from '../../db_services/saveUser'
 import loginUser from '../../db_services/loginUser'
 
+// ETH Account Management helpers
+import unlockAccount from '../../eth_services/unlockAccount'
+
 // Redux state
 import { connect } from "react-redux";
 import { globalActions } from '../../store/globalActions';
-import { NETWORKS } from '../../store/accountsActions'
+import { NETWORKS, accountsActions } from '../../store/accountsActions'
 
 // Helpers JSX
 import Loading from '../helpers/Loading'
@@ -42,7 +45,9 @@ const mapState = state => ({
   
 const mapDispatch = dispatch => ({
     setUsername: name => dispatch(globalActions.setUsername(name)),
-    setPassword: password => dispatch(globalActions.setPassword(password))
+    setPassword: password => dispatch(globalActions.setPassword(password)),
+    addEthAccount: newAccount => dispatch(accountsActions.addEthAccount(newAccount)),
+    clearEthAccounts: () => dispatch(accountsActions.clearEthAccounts())
 });
 
 class IdentityDialog extends Component {
@@ -67,6 +72,10 @@ class IdentityDialog extends Component {
 
     // Create a brand new identity
     generateNewAccount = async () => {
+
+        // First clear out old accounts
+        this.props.clearEthAccounts()
+
         let username = this.state.username
         let password = this.state.password
         let confirm_password = this.state.confirm_password
@@ -114,6 +123,10 @@ class IdentityDialog extends Component {
 
     // Sign in to an existing identity 
     signInOldAccount = async () => {
+
+        // First clear out old accounts
+        this.props.clearEthAccounts()
+
         let username = this.state.username
         let password = this.state.password
 
@@ -128,7 +141,6 @@ class IdentityDialog extends Component {
                 // Successfully logged in new user
                 let existing_username = existing_user.user
                 let existing_password = existing_user.password
-                let existing_wallets = existing_user.wallets
 
                 console.log('signed in existing user: ', existing_username)
                 // Now, "sign in" new user
@@ -136,10 +148,20 @@ class IdentityDialog extends Component {
                 this.props.setPassword(existing_password)
 
                 // Set user accounts
+                let existing_wallets = existing_user.wallets
                 let eth_accounts = existing_wallets[NETWORKS.ETH]
-                console.log('user eth accounts: ', eth_accounts)
-                console.log('number of user eth accounts: ', eth_accounts.length)
 
+                if (eth_accounts.length > 0) {
+                    for (var i = 0; i < eth_accounts.length; i++) {
+                        let wallet = eth_accounts[i]
+                        let address = Object.keys(wallet)[0]
+                        console.log('loading wallet #'+i+': '+address)
+                        let encrypted_wallet = JSON.parse(wallet[address])
+                        let decrypted_wallet = await unlockAccount(encrypted_wallet, password)
+                        this.props.addEthAccount(decrypted_wallet)
+                    }
+                }
+                
                 // Close
                 this.props.onCloseHandler()
             }

@@ -15,7 +15,6 @@ import { NETWORKS } from "../../store/accountsActions";
 // Wallet management helpers
 import createEncryptedWallet from '../../eth_services/encryptAccount'
 import getJsonAddress from '../../eth_services/getJsonAddress'
-import unlockAccount from '../../eth_services/unlockAccount'
 import saveAccountToUser from '../../db_services/saveAccountToUser'
 
 const styles = theme => ({
@@ -90,15 +89,11 @@ class SaveEthAccountDialog extends Component {
           encrypted_json
         )
 
-        // FIXME: Move this to IdentityDialog when user signs in, should decrypt all wallets
         if (saved_wallet) {
             // Successfully saved account
-            let wallet = saved_wallet.wallet
             let wallet_key = saved_wallet.wallet_key
 
             console.log('saved wallet to user (' + identityToAssociateWithAccount + '): ' + wallet_key)
-            let unlocked_wallet = await unlockAccount(wallet, password)
-            console.log("decrypted wallet: ", unlocked_wallet)
         } 
 
         this.setState({

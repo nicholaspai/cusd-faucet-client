@@ -20,8 +20,8 @@ const loginUser = async (username, password) => {
         // if successfully signed in user
         if (db_get_response.data) {
             let user_id = db_get_response.data.key
-            let user_password = JSON.parse(db_get_response.data.value).password
-            let user_wallets = JSON.parse(db_get_response.data.value).chainAccounts
+            let user_password = db_get_response.data.value.password
+            let user_wallets = db_get_response.data.value.chainAccounts
             return {
                 user: user_id,
                 password: user_password,
