@@ -53,7 +53,11 @@ class Balances extends Component {
     if (!web3 || !user) return;
     let short_balance = await updateUserBalance(web3, user)
     if (short_balance >= 0 ) {
-        this.props.setEthBalance(short_balance)
+        if (short_balance !== this.props.balance_cusd) {
+          this.props.setEthBalance(short_balance)
+        }
+    } else {
+      this.props.setEthBalance("N/A")
     }
   }
 

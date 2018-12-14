@@ -11,6 +11,8 @@ Test Client at: https://cusd-faucet-ropsten.herokuapp.com/
 4) `npm run build` to make minimified `build/index.html` app
 5) `npm run start` to serve optimized `index.html`
 
+# Features
+
 ![Ropsten Wallet Screenshot](https://github.com/nicholaspai/cusd-faucet-client/blob/master/cusd-faucet-account.gif)
 
 # Ethereum
