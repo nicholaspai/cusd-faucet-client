@@ -13,7 +13,6 @@ const saveAccountToUser = async (username, password, chainId, eth_address, encry
             accountName: eth_address,
             wallet: JSON.stringify(encrypted_json)
         }
-        console.log('data to post: ', post_data)
 
         let db_post_response = await axios.post(
             WALLETS_ENDPOINT,
@@ -23,7 +22,7 @@ const saveAccountToUser = async (username, password, chainId, eth_address, encry
         // if successfully created wallet
         if (db_post_response.data) {
             let new_wallets_key = db_post_response.data.key
-            let new_wallet = db_post_response.data.value
+            let new_wallet = JSON.parse(db_post_response.data.value)
             return {
                 wallet_key: new_wallets_key,
                 wallet: new_wallet

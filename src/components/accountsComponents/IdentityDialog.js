@@ -22,6 +22,7 @@ import loginUser from '../../db_services/loginUser'
 // Redux state
 import { connect } from "react-redux";
 import { globalActions } from '../../store/globalActions';
+import { NETWORKS } from '../../store/accountsActions'
 
 // Helpers JSX
 import Loading from '../helpers/Loading'
@@ -41,7 +42,7 @@ const mapState = state => ({
   
 const mapDispatch = dispatch => ({
     setUsername: name => dispatch(globalActions.setUsername(name)),
-    setPassword: name => dispatch(globalActions.setPassword(name))
+    setPassword: password => dispatch(globalActions.setPassword(password))
 });
 
 class IdentityDialog extends Component {
@@ -126,9 +127,19 @@ class IdentityDialog extends Component {
             if (existing_user) {
                 // Successfully logged in new user
                 let existing_username = existing_user.user
+                let existing_password = existing_user.password
+                let existing_wallets = existing_user.wallets
+
                 console.log('signed in existing user: ', existing_username)
                 // Now, "sign in" new user
                 this.props.setUsername(existing_username)
+                this.props.setPassword(existing_password)
+
+                // Set user accounts
+                let eth_accounts = existing_wallets[NETWORKS.ETH]
+                console.log('user eth accounts: ', eth_accounts)
+                console.log('number of user eth accounts: ', eth_accounts.length)
+
                 // Close
                 this.props.onCloseHandler()
             }

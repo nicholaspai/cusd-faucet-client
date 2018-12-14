@@ -7,12 +7,13 @@ import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button';
-import AddIcon from '@material-ui/icons/Add';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import Clear from '@material-ui/icons/Clear';
 import Tooltip from '@material-ui/core/Tooltip';
 
 // Redux state
 import { connect } from "react-redux";
-import { } from "../store/accountsActions";
+import { globalActions } from "../store/globalActions";
 
 // Custom Components
 import EthAccounts from './accountsComponents/EthAccounts'
@@ -28,7 +29,7 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit * 5,
     marginRight: theme.spacing.unit * 5,
   },
-  section: {
+  button: {
     marginTop: theme.spacing.unit * 2,
     marginBottom: theme.spacing.unit * 2,
     marginLeft: theme.spacing.unit * 2,
@@ -39,10 +40,13 @@ const styles = theme => ({
 
 // Redux mappings
 const mapState = state => ({
-  username: state.global.username
+  username: state.global.username,
+  password: state.global.password
 });
 
 const mapDispatch = dispatch => ({
+  setUsername: name => dispatch(globalActions.setUsername(name)),
+  setPassword: password => dispatch(globalActions.setPassword(password))
 });
 
 class AccountsPage extends Component {
@@ -60,6 +64,12 @@ class AccountsPage extends Component {
     })
   }
 
+  // Clear identity
+  logoutIdentity = () => {
+    this.props.setUsername('')
+    this.props.setPassword('')
+  }
+
   closeIdentityDialog = () => {
     this.setState({
       openIdentityDialog: false
@@ -70,12 +80,14 @@ class AccountsPage extends Component {
 
     const { 
       classes, 
-      username
+      username,
+      password
     } = this.props;
     const {
       openIdentityDialog
     } = this.state;
 
+    const signed_in = (username && password)
     const wallet_name = (username ? username+"'s Account" : "No Account")
     const hover_text = "These burner wallets will self-destruct when you leave the page unless you choose to save them to your account"
 
@@ -83,17 +95,29 @@ class AccountsPage extends Component {
         <div>
         <Paper className={classes.paper} elevation={3}>
             <Tooltip title={hover_text} placement="top">
-              <Typography variant="subtitle1" className={classes.section}> 
+              {/* Create a new account */}
+              <Typography variant="subtitle1" className={classes.button}> 
                   <Button 
                     color="primary" 
                     aria-label="New Account"
                     onClick={this.generateNewIdentity}
                   >
-                    <AddIcon />
+                    <AccountCircle />
                     {wallet_name}
                   </Button>
               </Typography>
             </Tooltip>
+            {/* Sign out of account */}
+            {signed_in && (<Typography variant="subtitle1" className={classes.button}> 
+                <Button 
+                  color="primary" 
+                  aria-label="Logout"
+                  onClick={this.logoutIdentity}
+                >
+                  <Clear />
+                  Logout
+                </Button>
+            </Typography>)}
             <IdentityDialog open={openIdentityDialog} onCloseHandler={this.closeIdentityDialog} />
             {/* ETH  */}
             <EthAccounts />
