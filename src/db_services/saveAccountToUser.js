@@ -9,10 +9,11 @@ const saveAccountToUser = async (username, password, chainId, eth_address, encry
         let post_data = {
             user: username,
             password: password,
-            chainId: chainId,
+            chainId: chainId.toString(),
             accountName: eth_address,
             wallet: JSON.stringify(encrypted_json)
         }
+        console.log(post_data)
 
         let db_post_response = await axios.post(
             WALLETS_ENDPOINT,
