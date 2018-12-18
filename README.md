@@ -1,4 +1,16 @@
 # CUSD Faucet Client: Quick start
+
+## Current Features
+- Sign in to web3 accounts either via third-party web3 providers like MetaMask or the app's native account management system
+- Store encrypted web3 accounts and retrieve the accounts after future sign-ins
+- Mint new testnet CUSD, transfer it, or redeem it
+
+## Planned Features
+- Support for other chains: EOS
+- Connection to a token exchange engine
+
+## Developer setup
+
 Production Client at: https://dripdrip.netlify.com/
 Test Client at: https://cusd-faucet-ropsten.herokuapp.com/
 
@@ -13,7 +25,7 @@ Test Client at: https://cusd-faucet-ropsten.herokuapp.com/
 
 ![Ropsten Wallet Screenshot](https://github.com/nicholaspai/cusd-faucet-client/blob/master/cusd-faucet-account.gif)
 
-# Ethereum
+## Ethereum connection
 Connection via an Infura WebSocket
 
 # React App: 
