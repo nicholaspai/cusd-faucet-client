@@ -15,6 +15,10 @@ export const accounts = (state = initialState.account, action) => {
       return Object.assign({}, state, {
         eth_accounts: state.eth_accounts.concat(action.object)
       });
+    case TYPES.CLEAR_ETH_ACCOUNTS:
+      return Object.assign({}, state, {
+        eth_accounts: []
+      });
     case TYPES.ADD_EOS_ACCOUNT:
       return Object.assign({}, state, {
         eos_accounts: state.eos_accounts.concat(action.object)

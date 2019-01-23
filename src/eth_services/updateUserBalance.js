@@ -2,6 +2,7 @@ import { getCUSD } from './getCUSD'
 
 // Refresh user CUSD balance
 export const updateUserBalance = async (web3, user) => {
+  try {
     if (web3 && user) {
       let cusd = getCUSD(web3)
       if (web3.utils.isAddress(user)) {
@@ -14,4 +15,8 @@ export const updateUserBalance = async (web3, user) => {
     } else {
       return -1
     }
+
+  } catch (err) {
+    return -1
   }
+}

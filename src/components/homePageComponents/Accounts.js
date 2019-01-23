@@ -10,6 +10,9 @@ import Typography from '@material-ui/core/Typography'
 // Redux state
 import { connect } from "react-redux";
 
+// Web3 Services
+import getNetworkNameById from '../../eth_services/getNetworkNameById'
+
 const styles = theme => ({
   paper: {
     paddingTop: theme.spacing.unit * 2,
@@ -23,7 +26,8 @@ const styles = theme => ({
 
 // Redux mappings
 const mapState = state => ({
-  eth_address: state.eth.user_address
+  eth_address: state.eth.user_address,
+  web3_network: state.global.web3_network
 });
 
 const mapDispatch = dispatch => ({
@@ -42,14 +46,16 @@ class Accounts extends Component {
     const { 
       classes, 
       eth_address, 
+      web3_network
     } = this.props;
 
     const user_short = eth_address ? eth_address.substring(0, 8) : "" 
+    const networkName = (web3_network ? getNetworkNameById(web3_network) : "")
 
     return (
         <Paper className={classes.paper} elevation={3}>
             <Typography> 
-                You are connected to Ethereum as: 
+                You are connected to Ethereum ({networkName ? networkName : ""}) as: 
                     {eth_address ? (<a
                     href={"https://ropsten.etherscan.io/address/" + eth_address}
                     target="_blank"

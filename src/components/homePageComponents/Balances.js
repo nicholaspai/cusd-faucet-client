@@ -14,6 +14,9 @@ import { ethActions } from "../../store/ethActions";
 // WEB3 Services
 import { updateUserBalance } from '../../eth_services/updateUserBalance'
 
+// CUSD Currency Logo
+import CarbonLogo from '../helpers/CarbonLogo'
+
 const styles = theme => ({
   paper: {
     paddingTop: theme.spacing.unit * 2,
@@ -50,7 +53,11 @@ class Balances extends Component {
     if (!web3 || !user) return;
     let short_balance = await updateUserBalance(web3, user)
     if (short_balance >= 0 ) {
-        this.props.setEthBalance(short_balance)
+        if (short_balance !== this.props.balance_cusd) {
+          this.props.setEthBalance(short_balance)
+        }
+    } else {
+      this.props.setEthBalance("N/A")
     }
   }
 
@@ -82,7 +89,7 @@ class Balances extends Component {
     return (
           <Paper className={classes.paper} elevation={3}>
             <Typography> 
-              Your CUSD balance: {balance_cusd}
+              Your <CarbonLogo /> balance: {balance_cusd}
             </Typography>
           </Paper>
     );

@@ -81,7 +81,7 @@ class MintButton extends Component {
         let minter_status = await axios.get(
           MINTER_ENDPOINT
         )
-        let minter_balance = minter_status.minter_balance
+        let minter_balance = minter_status.data.minter_balance
         if (minter_balance <= 0) {
           alert('Minter does not have enough eth to mint :(')
           this.setState({

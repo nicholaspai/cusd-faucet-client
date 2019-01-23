@@ -14,7 +14,8 @@ import { NETWORKS } from "../../store/accountsActions";
 
 // Custom Components
 import EtherscanLogo from '../helpers/EtherscanLogo'
-import NewAccountDialog from './NewAccountDialog'
+import NewEthAccountDialog from './NewEthAccountDialog'
+import SaveEthAccountDialog from './SaveEthAccountDialog'
 
 const styles = theme => ({
   paper: {
@@ -31,12 +32,19 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit * 2,
     marginRight: theme.spacing.unit * 2,
     textAlign: 'left'
-  }
+  },
+  facebook2: {
+    color: '#6798e5',
+    animationDuration: '550ms',
+    position: 'absolute',
+  },
 });
 
 // Redux mappings
 const mapState = state => ({
   eth_accounts: state.accounts.eth_accounts,
+  username: state.global.username,
+  password: state.global.password
 });
 
 const mapDispatch = dispatch => ({
@@ -47,7 +55,7 @@ class EthAccounts extends Component {
     super(props);
 
     this.state = {
-      open_new_account_dialog: false
+      open_new_account_dialog: false,
     };
   }
 
@@ -68,15 +76,16 @@ class EthAccounts extends Component {
     const { 
       classes, 
       eth_accounts,
+      username
     } = this.props;
     const {
-      open_new_account_dialog
+      open_new_account_dialog,
     } = this.state
 
     return (
         <Paper className={classes.paper} elevation={3}>
               <Typography variant="body1" className={classes.section}> 
-                  <b>Eth Accounts</b>: 
+                  <b>Eth Wallets</b>: 
               </Typography>
               {/* Add Eth Accounts */}
               <Button 
@@ -89,9 +98,6 @@ class EthAccounts extends Component {
               {/* View Eth Accounts */}
               { eth_accounts.length > 0 ? (
               <div>
-                <Typography> 
-                  Your Ethereum accounts: 
-                </Typography>
                 {eth_accounts.map((account, i) => {
                   return (<Typography key={i}> 
                     <EtherscanLogo /> ({i}): 
@@ -102,10 +108,14 @@ class EthAccounts extends Component {
                     >
                       {" view account"}
                     </a>
+                    {/* save ETH account to signed in user */}
+                    {username && (
+                      <SaveEthAccountDialog account_index={i}/>
+                    )}
                   </Typography>)
                 })}
               </div> ) : ("")}
-              <NewAccountDialog 
+              <NewEthAccountDialog 
                 open={open_new_account_dialog} 
                 onCloseHandler={this.handleClose_AddEthAccount} 
                 network={NETWORKS.ETH}

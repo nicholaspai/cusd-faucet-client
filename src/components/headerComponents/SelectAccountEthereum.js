@@ -9,18 +9,10 @@ import Dialog from '@material-ui/core/Dialog';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Radio from '@material-ui/core/Radio';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import TextField from '@material-ui/core/TextField';
-import CircularProgress from '@material-ui/core/CircularProgress'
 
 // Redux state
 import { connect } from "react-redux";
 import { ethActions } from "../../store/ethActions";
-
-// JSX Helpers
-import Loading from '../helpers/Loading'
-
-// Unlock an account with a password
-import unlockAccountEth from '../../eth_services/unlockAccount'
 
 // Get wallet object capable of signing transactions from a decrypted wallet json
 import createWalletFromUnlockedJson from '../../eth_services/createSignerWallet'
@@ -35,18 +27,12 @@ const mapDispatch = dispatch => ({
 });
 
 const styles = theme => ({
-    facebook2: {
-        color: '#6798e5',
-        animationDuration: '550ms',
-        position: 'absolute',
-        left: 0,
-    },
 });
 
-const findJsonFromAddress = (address, array) => {
+const findWalletFromAddress = (address, array) => {
     for (var i = 0; i < array.length; i++) {
         if (array[i].address === address) {
-            return array[i].json_encrypted
+            return array[i]
         }
     }
 }
@@ -57,9 +43,6 @@ class SelectAccountEthereum extends React.Component {
 
     this.state = {
       value: '',
-      password: '',
-      unlocking: false,
-      password_error: false
     };
   }
 
@@ -69,18 +52,10 @@ class SelectAccountEthereum extends React.Component {
 
   signInToSelectedAccount = async () => {
     let selectedAddress = this.state.value
-    let password = this.state.password
-    let encryptedJson = findJsonFromAddress(selectedAddress, this.props.eth_accounts)
+    let wallet = findWalletFromAddress(selectedAddress, this.props.eth_accounts)
+    let unlockedAccount = wallet
 
     try {
-        this.setState({
-            unlocking: true,
-            password_error: false
-        })
-        let unlockedAccount = await unlockAccountEth(encryptedJson, password)
-        this.setState({
-            unlocking: false
-        })
         // Save account, wallet, and close dialog
         let signer_wallet = createWalletFromUnlockedJson(unlockedAccount) 
         this.props.setEthWallet(signer_wallet)         
@@ -89,9 +64,7 @@ class SelectAccountEthereum extends React.Component {
     } catch (err) {
         this.setState({
             unlocking: false,
-            password_error: true
         })
-        // Alert user that wrong password
         console.error('ERROR: could not unlock account')
     }
   }
@@ -115,15 +88,7 @@ class SelectAccountEthereum extends React.Component {
         ...other } = this.props;
     const {
         value,
-        password,
-        unlocking,
-        password_error
     } = this.state
-    const selectFormHelperText = (
-        password_error ? 
-        "incorrect password" : 
-        "password for: " + value.substring(0,12)+ "..."
-    )
 
     return (
       <Dialog
@@ -147,45 +112,17 @@ class SelectAccountEthereum extends React.Component {
               <FormControlLabel value={account.address} key={account.address} control={<Radio />} label={account.address.substring(0,12)+"..."} />
             ))}
           </RadioGroup>
-          {value && (<TextField
-            autoFocus
-            margin="dense"
-            id="password"
-            label="Password"
-            type="password"
-            onChange={this.handleChangeForm('password')}
-            fullWidth
-            helperText={selectFormHelperText}
-          />)}
         </DialogContent>
         <DialogActions>
-          { unlocking ? <Loading /> :
-          (<Button onClick={onCloseHandler} color="primary">
-            Cancel
-          </Button>) 
-          }
-          { unlocking ?
-            (<Button
-                disabled
-                color="primary"
-            >
-                <CircularProgress
-                    variant="indeterminate"
-                    disableShrink
-                    className={classes.facebook2}
-                    size={24}
-                    thickness={4}
-                />
-            </Button>) 
-            : 
-            (<Button 
+            <Button onClick={onCloseHandler} color="primary">
+                Cancel
+            </Button>
+            <Button 
                 onClick={this.signInToSelectedAccount} 
-                disabled={!password}
                 color="primary"
             >
                 Unlock
-            </Button>)
-          }
+            </Button>
         </DialogActions>
       </Dialog>
     );

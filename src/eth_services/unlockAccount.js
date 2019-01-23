@@ -3,10 +3,10 @@ import { ethers } from 'ethers';
 /** HELPER FUNCTIONS **/
 
 function callback_decrypt(progress) {
-    let percentComplete = parseInt(progress * 100)
-    if ( percentComplete%20 === 0 ) {
-        console.log("Decrypting: " + percentComplete + "% complete");
-    }
+    // let percentComplete = parseInt(progress * 100)
+    // if ( percentComplete%20 === 0 ) {
+    //     console.log("Decrypting: " + percentComplete + "% complete");
+    // }
 }
 
 /** PUBLIC FUNCTIONS **/
