@@ -5,6 +5,7 @@ import withRoot from '../withRoot';
 import { withStyles } from '@material-ui/core/styles';
 
 // Core Wallet Components
+import Networks from './homePageComponents/Networks'
 import Accounts from './homePageComponents/Accounts'
 import MintButton from './homePageComponents/MintButton'
 import Balances from './homePageComponents/Balances'
@@ -26,6 +27,8 @@ class HomePage extends Component {
 
     return (
           <div>
+            {/* NETWORK SELECTOR */}
+            <Networks />
             {/* USER IDENTITY  */}
             <Accounts />
             {/* MINT */}

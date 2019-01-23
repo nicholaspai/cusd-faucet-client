@@ -5,6 +5,7 @@ export const TYPES = {
   SET_PAGE: "SET_PAGE",
   SET_USERNAME: "SET_USERNAME",
   SET_PASSWORD: "SET_PASSWORD",
+  SET_NETWORK: "SET_NETWORK",
 };
 
 // Page options for main site
@@ -12,6 +13,12 @@ export const PAGES = {
   MAIN: 0,
   ACCOUNTS: 1,
   INFO: 2
+}
+
+// Network options for home page
+export const NETWORKS = {
+  ETH: 0,
+  EOS: 1
 }
 
 export const globalActions = {
@@ -44,6 +51,12 @@ export const globalActions = {
     string
   }), 
   // Set User identity key: 'password'
+
+  setNetwork: number => ({
+    type: TYPES.SET_NETWORK,
+    number
+  }),
+  // Set cryptonetwork
 
 };
 

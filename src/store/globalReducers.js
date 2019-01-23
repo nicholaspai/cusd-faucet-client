@@ -1,4 +1,4 @@
-import { TYPES, PAGES } from "./globalActions";
+import { TYPES, PAGES, NETWORKS } from "./globalActions";
 
 // Initial state
 export const initialState = {
@@ -8,6 +8,7 @@ export const initialState = {
     page: PAGES.MAIN,
     username: '',
     password: '',
+    network: NETWORKS.ETH,
   },
 };
 
@@ -33,6 +34,10 @@ export const global = (state = initialState.global, action) => {
     case TYPES.SET_PASSWORD:
       return Object.assign({}, state, {
         password: action.string
+      });
+    case TYPES.SET_NETWORK:
+      return Object.assign({}, state, {
+        network: action.number
       });
     default:
       return state;

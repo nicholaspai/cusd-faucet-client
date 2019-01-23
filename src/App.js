@@ -94,7 +94,7 @@ class App extends Component {
     else {
 
     }
-  }
+  }  
 
   /** ACTIONS TO PERFORM ON LOAD */
   componentDidMount = async () => {
