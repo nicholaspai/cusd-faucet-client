@@ -34,13 +34,6 @@ class HomePage extends Component {
   }
   
 
-  componentDidMount = async () => {
-    // Request user's web3 connection
-    console.log("this.props.network")
-    console.log(this.props.network)
-    if (this.props.network == 1) {await this.setEOS()}
-  }
-
   render() {
     const {
       network 
@@ -54,19 +47,19 @@ class HomePage extends Component {
             {/* USER IDENTITY  */}
               <Accounts /> 
             {/* MINT */
-              network == 0 ?
+              network === 0 ?
               <MintButton /> : <EosMint/>
             }
             {/* USER BALANCES  */
-              network == 0 ?
+              network === 0 ?
               <Balances /> : <Balances />
             }
             {/* TRANSFER */
-              network == 0 ?
+              network === 0 ?
               <TransferButton/> : ""
             }
             {/* BURN */
-              network == 0 ?
+              network === 0 ?
               <BurnButton /> : ""
             }
           </div>

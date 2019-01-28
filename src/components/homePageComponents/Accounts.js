@@ -56,10 +56,10 @@ class Accounts extends Component {
 
     const user_short = eth_address ? eth_address.substring(0, 8) : "" 
     const networkName = (web3_network ? getNetworkNameById(web3_network) : "")
-    console.log(eos_name)
+    
     return (
         <Paper className={classes.paper} elevation={3}>
-            {network == 0 ? 
+            {network === 0 ? 
             <Typography> 
                 You are connected to Ethereum ({networkName ? networkName : ""}) as: 
                     {eth_address ? (<a

@@ -61,7 +61,7 @@ class MintButton extends Component {
   getName = () => {
     
     if (!this.props.eos_client.account || this.props.eos_name) return;
-    console.log("get name" + this.props.eos_name)
+    
     this.props.setEosName(this.props.eos_client.account.name)
 
     return this.props.eos_client.account.name
@@ -92,7 +92,6 @@ class MintButton extends Component {
   handleClick_Mint = async () => {
     
 	  let to = this.props.eos_name
-	  console.log("mintint to " +to + " " + MINTER_ENDPOINT)
 
 	  let post_data = {
 	    //amount: amountToMint.toString(),
@@ -148,9 +147,7 @@ class MintButton extends Component {
     const { 
       classes, 
       eos_mints,
-      eos_client,
-      eos_name,
-      network
+      eos_name
     } = this.props;
     
     return (

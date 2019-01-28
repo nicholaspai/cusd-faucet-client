@@ -7,14 +7,14 @@ export const updateEosBalance = async (user_name) => {
             "scope": user_name,
             "table": "accounts"
         })
-        console.log(result.rows[0].balance.split(" ")[0])
-        let i
+        
+        let i;
         for (i = 0; i < result.rows.length; i++){
-        	if (result.rows[i].balance.split(" ")[1] == "CUSD"){
+        	if (result.rows[i].balance.split(" ")[1] === "CUSD"){
         		return result.rows[i].balance.split(" ")[0]
         	}
         }
-        throw ("no CUSD found")
+        throw (Error("no CUSD found"))
     } catch (err) {
         console.log(err)
         throw(err)

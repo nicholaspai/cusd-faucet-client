@@ -127,8 +127,6 @@ class MintButton extends Component {
       classes, 
       eth_address,
       pending_mints,
-      
-      network
     } = this.props;
     
     return (

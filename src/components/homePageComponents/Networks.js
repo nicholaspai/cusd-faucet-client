@@ -64,24 +64,16 @@ class Networks extends Component {
       //EOS
       if (!this.props.eos_client){
         this.eosio =  new EOSIOClient("CARBON_OASIS")//new EOSIOClient("CARBON_OASIS");
-        console.log(this.eosio)
         this.props.setEOS(this.eosio)
-      } else {
-        console.log("ALREADY SET")
-        console.log(this.props.eos_client.account.name)
-      }
-      //let user_name =  this.eosio.getName();
-      //this.props.setEOS(user_name)
-     // console.log(this.eosio.account.name)
-      //console.log(this.eosio.account.publicKey)
+      } 
     } 
     else if (current === "0") {
       //ETH
       
     }
     else {
-      console.log(current)
-     // throw ("No network")
+      
+      throw (Error("No network"))
 
       
     } 
