@@ -37,6 +37,8 @@ const mapState = state => ({
   eth_address: state.eth.user_address,
   web3: state.global.web3,
   pending_mints: state.eth.pending_mints,
+  
+  network: state.global.network
 });
 
 const mapDispatch = dispatch => ({
@@ -124,7 +126,9 @@ class MintButton extends Component {
     const { 
       classes, 
       eth_address,
-      pending_mints
+      pending_mints,
+      
+      network
     } = this.props;
     
     return (
@@ -145,6 +149,7 @@ class MintButton extends Component {
                 </Button>
               )
             }
+            
             {/* MINT TXNS  */}
             { pending_mints.length > 0 ? (
             <div>

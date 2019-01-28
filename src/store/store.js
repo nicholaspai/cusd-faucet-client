@@ -6,10 +6,12 @@ import logger from "redux-logger"; // Debuggin: prints redux actions to console
 import { eth } from "./ethReducers";
 import { global } from "./globalReducers";
 import { accounts } from "./accountsReducers";
+import { eos } from "./eosReducers";
 
 
 // Add all reducers here to aggregate into one store
 const rootReducer = combineReducers({
+  eos,
   eth,
   global,
   accounts

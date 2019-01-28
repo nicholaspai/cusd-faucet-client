@@ -3,16 +3,26 @@ import withRoot from '../withRoot';
 
 // Material-ui
 import { withStyles } from '@material-ui/core/styles';
-
+import { connect } from "react-redux";
 // Core Wallet Components
 import Networks from './homePageComponents/Networks'
 import Accounts from './homePageComponents/Accounts'
 import MintButton from './homePageComponents/MintButton'
+import EosMint from './homePageComponents/EosMint'
 import Balances from './homePageComponents/Balances'
 import TransferButton from './homePageComponents/TransferButton'
 import BurnButton from './homePageComponents/BurnButton'
 
+
 const styles = theme => ({
+});
+
+// Redux mappings
+const mapState = state => ({
+  network: state.global.network
+});
+
+const mapDispatch = dispatch => ({
 });
 
 class HomePage extends Component {
@@ -22,23 +32,43 @@ class HomePage extends Component {
     this.state = {
     };
   }
+  
+
+  componentDidMount = async () => {
+    // Request user's web3 connection
+    console.log("this.props.network")
+    console.log(this.props.network)
+    if (this.props.network == 1) {await this.setEOS()}
+  }
 
   render() {
+    const {
+      network 
+    } = this.props;
 
     return (
+
           <div>
             {/* NETWORK SELECTOR */}
-            <Networks />
+              <Networks />
             {/* USER IDENTITY  */}
-            <Accounts />
-            {/* MINT */}
-            <MintButton />
-            {/* USER BALANCES  */}
-            <Balances />
-            {/* TRANSFER */}
-            <TransferButton />
-            {/* BURN */}
-            <BurnButton />
+              <Accounts /> 
+            {/* MINT */
+              network == 0 ?
+              <MintButton /> : <EosMint/>
+            }
+            {/* USER BALANCES  */
+              network == 0 ?
+              <Balances /> : <Balances />
+            }
+            {/* TRANSFER */
+              network == 0 ?
+              <TransferButton/> : ""
+            }
+            {/* BURN */
+              network == 0 ?
+              <BurnButton /> : ""
+            }
           </div>
     );
   }
@@ -47,4 +77,4 @@ class HomePage extends Component {
 HomePage.propTypes = {
 };
 
-export default withRoot(withStyles(styles)(HomePage));
+export default withRoot(connect(mapState, mapDispatch)(withStyles(styles)(HomePage)));

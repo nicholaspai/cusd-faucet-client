@@ -13,6 +13,13 @@ import InputLabel from '@material-ui/core/InputLabel'
 import { connect } from "react-redux";
 import { globalActions, NETWORKS } from "../../store/globalActions";
 
+//scatter
+//import * as Eos from 'eosjs'
+//import ScatterJS from 'scatterjs-core';
+//import ScatterEOS from 'scatterjs-plugin-eosjs2';
+//import {JsonRpc, Api} from 'eosjs';
+import EOSIOClient from "../../eos_services/setupEos"
+
 const styles = theme => ({
   paper: {
     paddingTop: theme.spacing.unit * 2,
@@ -30,10 +37,13 @@ const styles = theme => ({
 
 // Redux mappings
 const mapState = state => ({
+  eos_client: state.global.eos_client
 });
 
 const mapDispatch = dispatch => ({
-  setNetwork: NETWORK => dispatch(globalActions.setNetwork(NETWORK))
+  setNetwork: NETWORK => dispatch(globalActions.setNetwork(NETWORK)),
+  setEOS:  client => dispatch(globalActions.setEOS(client))
+
 });
 
 
@@ -45,8 +55,37 @@ class Networks extends Component {
     };
   }
 
+
   handleChange = name => event => {
-    this.props.setNetwork(event.target.value);
+    var current = event.target.value;
+    
+    this.props.setNetwork(current);
+    if (current === "1"){
+      //EOS
+      if (!this.props.eos_client){
+        this.eosio =  new EOSIOClient("CARBON_OASIS")//new EOSIOClient("CARBON_OASIS");
+        console.log(this.eosio)
+        this.props.setEOS(this.eosio)
+      } else {
+        console.log("ALREADY SET")
+        console.log(this.props.eos_client.account.name)
+      }
+      //let user_name =  this.eosio.getName();
+      //this.props.setEOS(user_name)
+     // console.log(this.eosio.account.name)
+      //console.log(this.eosio.account.publicKey)
+    } 
+    else if (current === "0") {
+      //ETH
+      
+    }
+    else {
+      console.log(current)
+     // throw ("No network")
+
+      
+    } 
+
   };
 
   render() {

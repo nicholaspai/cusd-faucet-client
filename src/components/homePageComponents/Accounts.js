@@ -27,7 +27,10 @@ const styles = theme => ({
 // Redux mappings
 const mapState = state => ({
   eth_address: state.eth.user_address,
-  web3_network: state.global.web3_network
+  web3_network: state.global.web3_network,
+  network: state.global.network,
+  eos_name: state.eos.user_name
+  
 });
 
 const mapDispatch = dispatch => ({
@@ -46,14 +49,17 @@ class Accounts extends Component {
     const { 
       classes, 
       eth_address, 
-      web3_network
+      web3_network,
+      network,
+      eos_name
     } = this.props;
 
     const user_short = eth_address ? eth_address.substring(0, 8) : "" 
     const networkName = (web3_network ? getNetworkNameById(web3_network) : "")
-
+    console.log(eos_name)
     return (
         <Paper className={classes.paper} elevation={3}>
+            {network == 0 ? 
             <Typography> 
                 You are connected to Ethereum ({networkName ? networkName : ""}) as: 
                     {eth_address ? (<a
@@ -64,6 +70,18 @@ class Accounts extends Component {
                     {user_short}...
                     </a>) : ("")}
             </Typography>
+            : 
+            <Typography> 
+                You are connected to EOS Jungle testnet as: {eos_name ? (<a
+                    href={"https://jungle.bloks.io/account/" + eos_name}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >
+                    {eos_name}
+                    </a>) : ("")}
+                   
+            </Typography>
+            }
         </Paper>
     )
   }

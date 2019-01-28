@@ -6,6 +6,7 @@ export const TYPES = {
   SET_USERNAME: "SET_USERNAME",
   SET_PASSWORD: "SET_PASSWORD",
   SET_NETWORK: "SET_NETWORK",
+  SET_EOS: "SET_EOS"
 };
 
 // Page options for main site
@@ -52,6 +53,11 @@ export const globalActions = {
   }), 
   // Set User identity key: 'password'
 
+
+  setEOS: object => ({
+    type:TYPES.SET_EOS,
+    object
+  }),
   setNetwork: number => ({
     type: TYPES.SET_NETWORK,
     number

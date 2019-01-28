@@ -41,13 +41,15 @@ const styles = theme => ({
 // Redux mappings
 const mapState = state => ({
   page: state.global.page,
-  web3: state.global.web3
+  web3: state.global.web3,
+  network: state.global.network
 });
 
 const mapDispatch = dispatch => ({
   setWeb3: web3 =>
     dispatch(globalActions.setWeb3(web3)),
-  setWeb3Network: number => dispatch(globalActions.setWeb3Network(number))
+  setWeb3Network: number => dispatch(globalActions.setWeb3Network(number)),
+  setNetwork: number => dispatch(globalActions.setNetwork(number))
 });
 
 class App extends Component {
@@ -71,6 +73,7 @@ class App extends Component {
     // Modern dapp browsers...
     if (window.ethereum) {
         window.web3 = new Web3(window.ethereum);
+        
         try {
             // Request account access if needed
             await window.ethereum.enable()
