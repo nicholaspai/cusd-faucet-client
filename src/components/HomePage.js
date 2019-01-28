@@ -47,19 +47,19 @@ class HomePage extends Component {
             {/* USER IDENTITY  */}
               <Accounts /> 
             {/* MINT */
-              network === 0 ?
+              network == 0 ?
               <MintButton /> : <EosMint/>
             }
             {/* USER BALANCES  */
-              network === 0 ?
+              network == 0 ?
               <Balances /> : <Balances />
             }
             {/* TRANSFER */
-              network === 0 ?
+              network == 0 ?
               <TransferButton/> : ""
             }
             {/* BURN */
-              network === 0 ?
+              network == 0 ?
               <BurnButton /> : ""
             }
           </div>

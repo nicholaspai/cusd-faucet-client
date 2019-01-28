@@ -59,7 +59,7 @@ class Accounts extends Component {
     
     return (
         <Paper className={classes.paper} elevation={3}>
-            {network === 0 ? 
+            {network == 0 ? 
             <Typography> 
                 You are connected to Ethereum ({networkName ? networkName : ""}) as: 
                     {eth_address ? (<a

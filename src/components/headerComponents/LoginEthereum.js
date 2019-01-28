@@ -21,6 +21,7 @@ const styles = theme => ({
 });
 
 const mapState = state => ({
+  network: state.global.network,
   web3: state.global.web3,
   eth_accounts: state.accounts.eth_accounts,
 })
@@ -123,8 +124,11 @@ class LoginEthereum extends Component {
 
   render() {
     const { anchorEl, openSelectDialog } = this.state;
+    const { network } = this.props;
     return (
+        
         <div>
+          { network == 0 ? 
             <Button
                 aria-owns={anchorEl ? 'simple-menu' : undefined}
                 aria-haspopup="true"
@@ -135,6 +139,7 @@ class LoginEthereum extends Component {
             >
                 Sign In to Ethereum
             </Button>
+            :""}
             <Menu
                 id="simple-menu"
                 anchorEl={anchorEl}
@@ -146,7 +151,9 @@ class LoginEthereum extends Component {
                 <MenuItem onClick={this.logout}>Logout</MenuItem>
             </Menu>
             <SelectAccountEthereum open={openSelectDialog} onCloseHandler={this.closeSelectDialog}/>
+        
         </div>
+        
     );
   }
 }
