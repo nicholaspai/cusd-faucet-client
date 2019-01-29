@@ -88,7 +88,7 @@ class Accounts extends Component {
                     >
                     Download Scatter
                     </a>): (<a
-                    href={"https://get-scatter.com/download"}
+                    href={"https://github.com/stablecarbon/cusd_onboarding/blob/master/eos/docs/startup.md"}
                     target="_blank"
                     rel="noopener noreferrer"
                     >

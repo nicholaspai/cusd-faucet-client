@@ -37,8 +37,7 @@ export default class EOSIOClient extends React.Component {
         const requiredFields = {
           accounts: [network] // We defined this above
         };
-        
-        scatter.getIdentity(requiredFields).then((res) => console.log(res));
+      
         scatter.getIdentity(requiredFields).then(() => {
           
           this.account = scatter.identity.accounts.find(
@@ -46,15 +45,10 @@ export default class EOSIOClient extends React.Component {
             
           );
           
-          
           const rpc = new JsonRpc(endpoint);    
           
           this.eos = scatter.eos(network, Api, { rpc });   
         });
-        
-        console.log(this)
-
-
         window.ScatterJS = null;
       });
 
