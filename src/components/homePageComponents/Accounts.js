@@ -29,7 +29,8 @@ const mapState = state => ({
   eth_address: state.eth.user_address,
   web3_network: state.global.web3_network,
   network: state.global.network,
-  eos_name: state.eos.user_name
+  eos_name: state.eos.user_name,
+  scatter_state: state.eos.scatter_state
   
 });
 
@@ -51,7 +52,8 @@ class Accounts extends Component {
       eth_address, 
       web3_network,
       network,
-      eos_name
+      eos_name,
+      scatter_state
     } = this.props;
 
     const user_short = eth_address ? eth_address.substring(0, 8) : "" 
@@ -71,6 +73,7 @@ class Accounts extends Component {
                     </a>) : ("")}
             </Typography>
             : 
+
             <Typography> 
                 You are connected to EOS Jungle testnet as: {eos_name ? (<a
                     href={"https://jungle.bloks.io/account/" + eos_name}
@@ -78,7 +81,19 @@ class Accounts extends Component {
                     rel="noopener noreferrer"
                     >
                     {eos_name}
-                    </a>) : ("")}
+                    </a>) : (scatter_state == "MISSING" ? (<a
+                    href={"https://get-scatter.com/download"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >
+                    Download Scatter
+                    </a>): (<a
+                    href={"https://github.com/stablecarbon/cusd_onboarding/blob/master/eos/docs/startup.md"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >
+                    Create Account
+                    </a>))}
                    
             </Typography>
             }

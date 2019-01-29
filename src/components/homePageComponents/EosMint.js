@@ -60,7 +60,8 @@ class MintButton extends Component {
   // Refresh user CUSD balance
   getName = () => {
     
-    if (!this.props.eos_client.account || this.props.eos_name) return;
+    if (!this.props.eos_client.account) return;
+    if (this.props.eos_name) return;
     
     this.props.setEosName(this.props.eos_client.account.name)
 

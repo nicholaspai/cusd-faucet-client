@@ -26,22 +26,29 @@ export default class EOSIOClient extends React.Component {
     ScatterJS.plugins(new ScatterEOS());
     try {
       ScatterJS.scatter.connect(this.contractAccount).then(connected => {
-        if (!connected) return console.log("Issue Connecting");
+        if (!connected) {
+          console.log("Issue Connecting")
+          this.noScatter= true
+          return;
+        } else {
+          this.noScatter = false
+        }
         const scatter = ScatterJS.scatter;
         const requiredFields = {
           accounts: [network] // We defined this above
         };
-     
+      
         scatter.getIdentity(requiredFields).then(() => {
+          
           this.account = scatter.identity.accounts.find(
             x => x.blockchain === "eos"
+            
           );
           
           const rpc = new JsonRpc(endpoint);    
           
           this.eos = scatter.eos(network, Api, { rpc });   
         });
-
         window.ScatterJS = null;
       });
 

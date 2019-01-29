@@ -12,6 +12,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 // Redux state
 import { connect } from "react-redux";
 import { globalActions, NETWORKS } from "../../store/globalActions";
+import { eosActions } from "../../store/eosActions";
 
 //scatter
 //import * as Eos from 'eosjs'
@@ -37,12 +38,15 @@ const styles = theme => ({
 
 // Redux mappings
 const mapState = state => ({
-  eos_client: state.global.eos_client
+  eos_client: state.global.eos_client,
+  network: state.global.network,
+  scatter_state: state.eos.scatter_state
 });
 
 const mapDispatch = dispatch => ({
   setNetwork: NETWORK => dispatch(globalActions.setNetwork(NETWORK)),
-  setEOS:  client => dispatch(globalActions.setEOS(client))
+  setEOS:  client => dispatch(globalActions.setEOS(client)),
+  setScatterState: string => dispatch(eosActions.setScatterState(string))
 
 });
 
@@ -55,6 +59,40 @@ class Networks extends Component {
     };
   }
 
+  // Refresh user CUSD balance
+  _checkScatterConnection = async () => {
+      
+      if (this.props.eos_client) {
+        if((this.props.eos_client.noScatter == true) && (this.props.scatter_state =='') ){
+          this.props.setScatterState("MISSING")
+          clearInterval(this.state.intervalId);
+
+        } 
+      }
+  }
+
+  /** CONTINUOUS TIMER BEGINNING AT MOUNT */
+  componentDidMount = async () => {
+    var intervalId = setInterval(this.timer, 1000);
+    // store intervalId in the state so it can be accessed later:
+    this.setState({intervalId: intervalId});
+  }
+
+  // @dev Put anything that you want to continually compute here
+  timer = async () => {
+
+    if (this.props.network == "1"){
+      // Update user balance
+      
+      await this._checkScatterConnection()
+    } 
+  }
+
+  componentWillUnmount = () => {
+    // use intervalId from the state to clear the interval
+    clearInterval(this.state.intervalId);
+  }
+  
 
   handleChange = name => event => {
     var current = event.target.value;
@@ -63,8 +101,11 @@ class Networks extends Component {
     if (current === "1"){
       //EOS
       if (!this.props.eos_client){
-        this.eosio =  new EOSIOClient("CARBON_OASIS")//new EOSIOClient("CARBON_OASIS");
-        this.props.setEOS(this.eosio)
+        
+          this.eosio =  new EOSIOClient("CARBON_OASIS")//new EOSIOClient("CARBON_OASIS");
+        
+          this.props.setEOS(this.eosio)
+       
       } 
     } 
     else if (current === "0") {

@@ -9,6 +9,7 @@ export const initialState = {
     eos_mints: [],
     pending_transfers: [],
     pending_burns: [],
+    scatter_state:'',
   },
 };
 
@@ -31,6 +32,11 @@ export const eos = (state = initialState.eos, action) => {
       return Object.assign({}, state, {
         balance_cusd: action.string
       });
+    case TYPES.SET_SCATTER_STATE:
+      return Object.assign({}, state, {
+        scatter_state: action.string
+      });
+
     default:
       return state;
   }
