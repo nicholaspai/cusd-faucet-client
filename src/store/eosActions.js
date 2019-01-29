@@ -4,6 +4,7 @@ export const TYPES = {
   SET_EOS_NAME: "SET_EOS_NAME",
   CONCAT_EOS_MINTS: "CONCAT_EOS_MINTS",
   SET_EOS_BALANCE: "SET_EOS_BALANCE",
+  SET_SCATTER_STATE: "SET_SCATTER_STATE"
 };
 
 export const eosActions = {
@@ -21,6 +22,10 @@ export const eosActions = {
   }),
   setEosBalance: string => ({
     type: TYPES.SET_EOS_BALANCE,
+    string
+  }),
+  setScatterState: string => ({
+    type:TYPES.SET_SCATTER_STATE,
     string
   }),
 

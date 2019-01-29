@@ -12,6 +12,7 @@ import EosMint from './homePageComponents/EosMint'
 import Balances from './homePageComponents/Balances'
 import TransferButton from './homePageComponents/TransferButton'
 import BurnButton from './homePageComponents/BurnButton'
+import EosBurn from './homePageComponents/EosBurn'
 
 
 const styles = theme => ({
@@ -60,7 +61,7 @@ class HomePage extends Component {
             }
             {/* BURN */
               network == 0 ?
-              <BurnButton /> : ""
+              <BurnButton /> : ""//<EosBurn />
             }
           </div>
     );
