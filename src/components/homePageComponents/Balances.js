@@ -88,7 +88,8 @@ class Balances extends Component {
   // @dev Put anything that you want to continually compute here
   timer = async () => {
 
-    if (this.props.network === "0"){
+
+    if (this.props.network == "0"){
       // Update user balance
       
       await this._updateUserBalance(this.props.eth_address)
