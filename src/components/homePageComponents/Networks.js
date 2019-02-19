@@ -13,6 +13,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 import { connect } from "react-redux";
 import { globalActions, NETWORKS } from "../../store/globalActions";
 import { eosActions } from "../../store/eosActions";
+import { tronActions } from "../../store/tronActions";
 
 //scatter
 //import * as Eos from 'eosjs'
@@ -46,8 +47,8 @@ const mapState = state => ({
 const mapDispatch = dispatch => ({
   setNetwork: NETWORK => dispatch(globalActions.setNetwork(NETWORK)),
   setEOS:  client => dispatch(globalActions.setEOS(client)),
-  setScatterState: string => dispatch(eosActions.setScatterState(string))
-
+  setScatterState: string => dispatch(eosActions.setScatterState(string)),
+  setTronAddress: string => dispatch(tronActions.setTronAddress(string))
 });
 
 
@@ -93,30 +94,30 @@ class Networks extends Component {
     clearInterval(this.state.intervalId);
   }
   
-
+  // FIXME: @joel I think we should move all network setup logic (e.g. EOSIOClient stuff) to a separate module,
+  // in the name of "one module one function" and keeping our code base simple, let's stick to keeping
+  // this module's purpose only to toggle networks 
   handleChange = name => event => {
     var current = event.target.value;
-    
     this.props.setNetwork(current);
     if (current === "1"){
       //EOS
       if (!this.props.eos_client){
-        
           this.eosio =  new EOSIOClient("CARBON_OASIS")//new EOSIOClient("CARBON_OASIS");
-        
           this.props.setEOS(this.eosio)
-       
       } 
     } 
     else if (current === "0") {
       //ETH
-      
+    }
+    else if (current === "2") {
+      //TRON
+      // FIXME: Hard coded for now to use a sample Tron address
+      const user_address_tron = "TFN2N7MdZ8uwa4yr9sKbWnZTorDdWHeyMB"
+      this.props.setTronAddress(user_address_tron)
     }
     else {
-      
       throw (Error("No network"))
-
-      
     } 
 
   };
@@ -143,6 +144,7 @@ class Networks extends Component {
                 >
                     <option value={NETWORKS.ETH}>ETH</option>
                     <option value={NETWORKS.EOS}>EOS</option>
+                    <option value={NETWORKS.TRON}>TRON</option>
                 </Select>
             </FormControl>
         </Paper>

@@ -25,7 +25,9 @@ const styles = theme => ({
 });
 
 const mapState = state => ({
-  user_address: state.eth.user_address
+  user_address: state.eth.user_address,
+  network: state.global.network,
+  user_address_tron: state.tron.user_address
 })
 
 const mapDispatch = dispatch => ({
@@ -47,10 +49,13 @@ class Header extends Component {
   render() {
     const { 
       classes, 
-      user_address 
+      user_address,
+      network,
+      user_address_tron
     } = this.props;
 
     const short_name = user_address ? user_address.substring(0,8) : ""
+    const short_name_tron = user_address_tron ? user_address_tron.substring(0,8) : ""
 
     return (
         <AppBar position="static">
@@ -65,7 +70,8 @@ class Header extends Component {
                   🍶
                   </span>
                 </Button> 
-                {short_name}
+                {network == 0 && short_name}
+                {network == 2 && short_name_tron}
             </Typography>
             {/* REQUEST USER SIGNATURE */}
             <LoginEthereum />

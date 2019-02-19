@@ -7,11 +7,13 @@ import { eth } from "./ethReducers";
 import { global } from "./globalReducers";
 import { accounts } from "./accountsReducers";
 import { eos } from "./eosReducers";
+import { tron } from "./tronReducers";
 
 
 // Add all reducers here to aggregate into one store
 const rootReducer = combineReducers({
   eos,
+  tron,
   eth,
   global,
   accounts

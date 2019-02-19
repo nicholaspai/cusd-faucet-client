@@ -30,8 +30,8 @@ const mapState = state => ({
   web3_network: state.global.web3_network,
   network: state.global.network,
   eos_name: state.eos.user_name,
-  scatter_state: state.eos.scatter_state
-  
+  scatter_state: state.eos.scatter_state,
+  tron_address: state.tron.user_address
 });
 
 const mapDispatch = dispatch => ({
@@ -50,18 +50,23 @@ class Accounts extends Component {
     const { 
       classes, 
       eth_address, 
+      tron_address,
       web3_network,
       network,
       eos_name,
       scatter_state
     } = this.props;
 
+    // ETH
     const user_short = eth_address ? eth_address.substring(0, 8) : "" 
     const networkName = (web3_network ? getNetworkNameById(web3_network) : "")
+
+    // Tron
+    const user_short_tron = tron_address ? tron_address.substring(0, 8) : ""
     
     return (
         <Paper className={classes.paper} elevation={3}>
-            {network == 0 ? 
+            {network == 0 && (
             <Typography> 
                 You are connected to Ethereum ({networkName ? networkName : ""}) as: 
                     {eth_address ? (<a
@@ -71,9 +76,8 @@ class Accounts extends Component {
                     >
                     {user_short}...
                     </a>) : ("")}
-            </Typography>
-            : 
-
+            </Typography>)}
+            {network == 1 && (
             <Typography> 
                 You are connected to EOS Jungle testnet as: {eos_name ? (<a
                     href={"https://jungle.bloks.io/account/" + eos_name}
@@ -94,9 +98,19 @@ class Accounts extends Component {
                     >
                     Create Account
                     </a>))}
-                   
+              </Typography>)}
+            {network == 2 && (
+            <Typography> 
+                You are connected to Tron (Shasta) as: 
+                    {tron_address ? (<a
+                    href={"https://shasta.tronscan.org/#/address/" + tron_address}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >
+                    {user_short_tron}...
+                    </a>) : ("")}
             </Typography>
-            }
+            )}
         </Paper>
     )
   }

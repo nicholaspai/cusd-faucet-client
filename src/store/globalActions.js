@@ -19,7 +19,8 @@ export const PAGES = {
 // Network options for home page
 export const NETWORKS = {
   ETH: 0,
-  EOS: 1
+  EOS: 1,
+  TRON: 2
 }
 
 export const globalActions = {

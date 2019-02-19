@@ -68,7 +68,7 @@ class LoginEthereum extends Component {
       let accounts = await web3.eth.getAccounts()
       let user = accounts[0]
 
-      let messageToSign = "I am cryptograhically signing this message" 
+      let messageToSign = "I am cryptographically signing this message" 
 
       let sig = await signMessage(web3, messageToSign, user)
       let signer = await recoverMessageSigner(
