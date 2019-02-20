@@ -113,8 +113,8 @@ class Networks extends Component {
     else if (current === "2") {
       //TRON
       // FIXME: Hard coded for now to use a sample Tron address
-      const user_address_tron = "TFN2N7MdZ8uwa4yr9sKbWnZTorDdWHeyMB"
-      this.props.setTronAddress(user_address_tron)
+      // const user_address_tron = "TFN2N7MdZ8uwa4yr9sKbWnZTorDdWHeyMB"
+      // this.props.setTronAddress(user_address_tron)
     }
     else {
       throw (Error("No network"))

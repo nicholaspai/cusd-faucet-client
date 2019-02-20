@@ -10,6 +10,7 @@ export const initialState = {
     password: '',
     network: NETWORKS.ETH,
     eos_client: '',
+    tronWeb: '',
   },
 };
 
@@ -43,6 +44,10 @@ export const global = (state = initialState.global, action) => {
     case TYPES.SET_EOS:
       return Object.assign({}, state, {
         eos_client:action.object
+      });
+    case TYPES.SET_TRONWEB:
+      return Object.assign({}, state, {
+        tronWeb: action.object
       });
     default:
       return state;

@@ -10,9 +10,12 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from "react-redux";
 import { globalActions, PAGES } from "./store/globalActions";
 
-// WEB3 Services
+// Web3 Services
 import Web3 from 'web3';
 import getDefaultWeb3 from './eth_services/getDefaultWeb3'
+
+// Tron-web Services
+import getDefaultTronWeb from './tron_services/getDefaultTronWeb'
 
 // Core Wallet Pages + Header
 import Header from './components/Header'
@@ -42,10 +45,12 @@ const styles = theme => ({
 const mapState = state => ({
   page: state.global.page,
   web3: state.global.web3,
-  network: state.global.network
+  network: state.global.network,
+  tronWeb: state.global.tronWeb,
 });
 
 const mapDispatch = dispatch => ({
+  setTronWeb: tronweb => dispatch(globalActions.setTronWeb(tronweb)),
   setWeb3: web3 =>
     dispatch(globalActions.setWeb3(web3)),
   setWeb3Network: number => dispatch(globalActions.setWeb3Network(number)),
@@ -99,10 +104,32 @@ class App extends Component {
     }
   }  
 
+  /** SET UP TRONWEB */
+  // Detect or set window.tronweb Tron connection
+  setGlobalTronWeb = async () => {
+    // Set default tronweb in case browser cannot inject tronweb
+    let default_tronweb = await getDefaultTronWeb()
+    this.props.setTronWeb(default_tronweb)
+
+    // Now, replace tronweb with injected tronweb if possible
+    let installed = window.tronWeb
+    // Detected Tron dapp browser! 
+    if (installed) {
+        this.props.setTronWeb(window.tronWeb)
+    }
+    // Non-dapp browsers, inject tronweb on behalf of user
+    else {
+      window.tronWeb = this.props.tronWeb
+    }
+
+}
+
   /** ACTIONS TO PERFORM ON LOAD */
   componentDidMount = async () => {
     // Request user's web3 connection
     await this.setGlobalWeb3() 
+    // Request user's tronweb connection
+    await this.setGlobalTronWeb()
   }
 
   render() {

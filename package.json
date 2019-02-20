@@ -25,6 +25,7 @@
     "scatterjs-plugin-eosjs": "^1.5.0",
     "scatterjs-plugin-eosjs2": "^1.5.0",
     "serve": "^10.1.1",
+    "tronweb": "^2.1.32",
     "web3": "^1.0.0-beta.36"
   },
   "scripts": {

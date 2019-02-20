@@ -55,14 +55,14 @@ class Header extends Component {
     } = this.props;
 
     const short_name = user_address ? user_address.substring(0,8) : ""
-    const short_name_tron = user_address_tron ? user_address_tron.substring(0,8) : ""
+    const short_name_tron = user_address_tron ? user_address_tron.base58.substring(0,8) : ""
 
     return (
         <AppBar position="static">
           <Toolbar>
             <HeaderMenu />
             <Typography variant="h6" color="inherit" className={classes.grow}>
-                Ropsten Faucet 
+                CUSD Faucet 
                 <Button 
                   onClick={this.goToMainPage}
                 >

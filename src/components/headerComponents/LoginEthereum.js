@@ -15,6 +15,7 @@ import { recoverMessageSigner } from '../../eth_services/recoverMessageSigner'
 // Redux state
 import { connect } from "react-redux";
 import { ethActions } from "../../store/ethActions";
+import { tronActions } from "../../store/tronActions"
 import SelectAccountEthereum from "./SelectAccountEthereum"
 
 const styles = theme => ({
@@ -24,11 +25,13 @@ const mapState = state => ({
   network: state.global.network,
   web3: state.global.web3,
   eth_accounts: state.accounts.eth_accounts,
+  tronWeb: state.global.tronWeb,
 })
 
 const mapDispatch = dispatch => ({
   setEthAddress: address => dispatch(ethActions.setEthAddress(address)),
-  setEthWallet: wallet => dispatch(ethActions.setEthWallet(wallet))
+  setEthWallet: wallet => dispatch(ethActions.setEthWallet(wallet)),
+  setTronAddress: address => dispatch(tronActions.setTronAddress(address))
 });
 
 class LoginEthereum extends Component {
@@ -46,6 +49,19 @@ class LoginEthereum extends Component {
   handleClick_LoginMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
+
+  /** DETECT IF USER IS LOGGED IN TO TRON */
+  handleClick_LoginMenu_Tron = () => {
+    if (!this.props.tronWeb) {
+      alert('No TronWeb injected!')
+    }
+    let loggedIn = this.props.tronWeb.ready
+    if (loggedIn) {
+      this.props.setTronAddress(this.props.tronWeb.defaultAddress)
+    } else {
+      alert('Please install and login to a Tron network provider like the TronLink browser extension!')
+    }
+  }
 
   /** LOGIN HANDLERS */
   // Ask user to authenticate their keypair
@@ -138,6 +154,15 @@ class LoginEthereum extends Component {
                 color="primary"
             >
                 Sign In to Ethereum
+            </Button>
+            :""}
+          { network == 2 ? 
+            <Button
+                onClick={this.handleClick_LoginMenu_Tron}
+                variant="contained"
+                color="primary"
+            >
+                Sign In to Tron
             </Button>
             :""}
             <Menu

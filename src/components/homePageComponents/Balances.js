@@ -11,10 +11,14 @@ import Typography from '@material-ui/core/Typography'
 import { connect } from "react-redux";
 import { ethActions } from "../../store/ethActions";
 import { eosActions } from "../../store/eosActions";
+import { tronActions } from "../../store/tronActions";
 
 // WEB3 Services
 import { updateUserBalance } from '../../eth_services/updateUserBalance'
+// EOS Services
 import { updateEosBalance } from '../../eos_services/updateEosBalance'
+// Tron Services
+import { updateTronBalance } from '../../tron_services/updateTronBalance'
 
 // CUSD Currency Logo
 import CarbonLogo from '../helpers/CarbonLogo'
@@ -38,12 +42,16 @@ const mapState = state => ({
   eos_client: state.global.eos_client,
   eos_name: state.eos.user_name,
   eos_balance_cusd: state.eos.balance_cusd,
-  network: state.global.network
+  network: state.global.network,
+  tron_address: state.tron.user_address,
+  tronWeb: state.global.tronWeb,
+  balance_cusd_tron: state.tron.balance_cusd
 });
 
 const mapDispatch = dispatch => ({
   setEthBalance: balance => dispatch(ethActions.setEthBalance(balance)),
-  setEosBalance: balance => dispatch(eosActions.setEosBalance(balance))
+  setEosBalance: balance => dispatch(eosActions.setEosBalance(balance)),
+  setTronBalance: balance => dispatch(tronActions.setTronBalance(balance)),
 });
 
 class Balances extends Component {
@@ -55,6 +63,8 @@ class Balances extends Component {
   }
 
   // Refresh user CUSD balance
+
+  // On Ethereum:
   _updateUserBalance = async (user) => {
     let web3 = this.props.web3
     if (!web3 || !user) return;
@@ -68,7 +78,8 @@ class Balances extends Component {
     }
   }
 
-  _updateEosBalance = async (client) => {
+  // On EOS:
+  _updateEosBalance = async () => {
       if (this.props.eos_name) { 
         let oldBalance = this.props.eos_balance_cusd
         let newBalance = await updateEosBalance(this.props.eos_name)
@@ -76,6 +87,21 @@ class Balances extends Component {
          this.props.setEosBalance(newBalance)
        }
       }
+  }
+
+  // On Tron:
+  _updateTronBalance = async (user) => {
+    let tronWeb = this.props.tronWeb
+    if (!tronWeb || !user) return;
+    let short_balance = await updateTronBalance(tronWeb, user)
+    if (short_balance >= 0 ) {
+        if (short_balance !== this.props.balance_cusd_tron) {
+          this.props.setTronBalance(short_balance)
+        }
+    } else {
+      this.props.setTronBalance("N/A")
+    }
+
   }
 
   /** CONTINUOUS TIMER BEGINNING AT MOUNT */
@@ -89,12 +115,14 @@ class Balances extends Component {
   timer = async () => {
 
 
-    if (this.props.network == "0"){
+    if (this.props.network == 0){
       // Update user balance
-      
       await this._updateUserBalance(this.props.eth_address)
-    } else {
+    } else if (this.props.network == 1) {
       await this._updateEosBalance(this.props.eos_client)
+    } else if (this.props.network == 2) {
+      // @dev Tron Smart contracts deal with Hex addresses, like Solidity
+      await this._updateTronBalance(this.props.tron_address.hex)
     }
   }
 
@@ -109,15 +137,25 @@ class Balances extends Component {
       classes, 
       balance_cusd,
       eos_balance_cusd,
+      balance_cusd_tron,
       network
     } = this.props;
+
+    let balance
+    if (network == 0) {
+      balance = balance_cusd
+    } else if (network == 1) {
+      balance = eos_balance_cusd
+    } else if (network == 2) {
+      balance = balance_cusd_tron
+    }
 
     return (
           
           <Paper className={classes.paper} elevation={3}>
           {/*h*/}
             <Typography> 
-              Your <CarbonLogo /> balance: {network === "1" ? eos_balance_cusd:balance_cusd}
+              Your <CarbonLogo /> balance: {balance}
             </Typography>
           
           </Paper>

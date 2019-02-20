@@ -9,6 +9,7 @@ import Networks from './homePageComponents/Networks'
 import Accounts from './homePageComponents/Accounts'
 import MintButton from './homePageComponents/MintButton'
 import EosMint from './homePageComponents/EosMint'
+import TronMint from './homePageComponents/tron/MintButton'
 import Balances from './homePageComponents/Balances'
 import TransferButton from './homePageComponents/TransferButton'
 import BurnButton from './homePageComponents/BurnButton'
@@ -47,9 +48,12 @@ class HomePage extends Component {
               <Networks />
             {/* USER IDENTITY  */}
               <Accounts /> 
-            {/* MINT */
+            {/* MINT -- FIXME: This is super ugly lol */
               network == 0 ?
-              <MintButton /> : <EosMint/>
+              <MintButton /> : 
+              ( network == 1 ? <EosMint/> :
+                (network == 2 ? <TronMint /> : "" )
+              )
             }
             {/* USER BALANCES  */
               network == 0 ?

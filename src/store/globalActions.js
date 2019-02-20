@@ -1,5 +1,6 @@
 // List of all actions that can be dispatched to redux store
 export const TYPES = {
+  SET_TRONWEB: "SET_TRONWEB",
   SET_WEB3: "SET_WEB3",
   SET_WEB3_NETWORK: "SET_WEB3_NETWORK",
   SET_PAGE: "SET_PAGE",
@@ -59,6 +60,14 @@ export const globalActions = {
     type:TYPES.SET_EOS,
     object
   }),
+  // Set EOS object
+
+  setTronWeb: object => ({
+    type: TYPES.SET_TRONWEB,
+    object
+  }), 
+  // Set TronWeb object
+
   setNetwork: number => ({
     type: TYPES.SET_NETWORK,
     number

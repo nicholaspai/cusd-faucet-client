@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import withRoot from '../../withRoot';
+import withRoot from '../../../withRoot';
 import PropTypes from 'prop-types';
 
 // Material-ui
@@ -10,16 +10,16 @@ import Typography from '@material-ui/core/Typography'
 
 // Redux state
 import { connect } from "react-redux";
-import { ethActions } from "../../store/ethActions";
+import { tronActions } from "../../../store/tronActions";
 
 // Custom Components
-import EtherscanLogo from '../helpers/EtherscanLogo'
+import EtherscanLogo from '../../helpers/EtherscanLogo'
 
 // REST API server
 import axios from 'axios'
-import config from "../../config"
+import config from "../../../config"
 const SERVER = config.server_url
-const MINTER_ENDPOINT = SERVER+"api/faucet/minter"
+const MINTER_ENDPOINT = SERVER+"api/tron/cusd/mint"
 
 const styles = theme => ({
   paper: {
@@ -34,15 +34,13 @@ const styles = theme => ({
 
 // Redux mappings
 const mapState = state => ({
-  eth_address: state.eth.user_address,
-  web3: state.global.web3,
-  pending_mints: state.eth.pending_mints,
-  
-  network: state.global.network
+  tron_address: state.tron.user_address,
+  tronWeb: state.global.tronWeb,
+  pending_mints: state.tron.pending_mints,
 });
 
 const mapDispatch = dispatch => ({
-  concatPendingMints: newMint => dispatch(ethActions.concatPendingMints(newMint)),
+  concatPendingMints: newMint => dispatch(tronActions.concatPendingMints(newMint)),
 });
 
 class MintButton extends Component {
@@ -50,7 +48,7 @@ class MintButton extends Component {
     super(props);
 
     this.state = {
-      amount_to_mint: "10.3141",
+      amount_to_mint: 10,
       minting: false,
     };
   }
@@ -59,19 +57,15 @@ class MintButton extends Component {
 
   // Mint new CUSD to user
   handleClick_Mint = async () => {
-    let web3 = this.props.web3
-    if (web3) {
-      let amountToMint = web3.utils.toWei(this.state.amount_to_mint, 'ether')
+    let tronWeb = this.props.tronWeb
+    if (tronWeb) {
+      // TODO: Tron contracts only deal with integers, need to be able to convert decimals
+      let amountToMint = this.state.amount_to_mint
   
-      let to = this.props.eth_address
-      if (!web3.utils.isAddress(to)) {
+      let to = this.props.tron_address.base58
+      if (!tronWeb.isAddress(to)) {
         console.error('invalid user address: ', to)
         return
-      }
-
-      let post_data = {
-        amount: amountToMint.toString(),
-        user: to
       }
 
       this.setState({
@@ -79,43 +73,40 @@ class MintButton extends Component {
       })
 
       try {
-        // TODO: Each pending mint should have a Number:mint_id, and a status: pending, failed, success
+        // First, test out minter endpoint via GET
         let minter_status = await axios.get(
           MINTER_ENDPOINT
         )
-        let minter_balance = minter_status.data.minter_balance
-        if (minter_balance <= 0) {
-          alert('Minter does not have enough eth to mint :(')
+        if (!minter_status.data.isValidMinter) {
+          alert('Minter is temporarily unavailable :(')
           this.setState({
             minting: false
           })
-        }
 
-        // API CALL
-        let response
-        try {
-          response = await axios.post(
-            MINTER_ENDPOINT,
-            post_data
-          );
-        } catch (err) {
-          this.setState({
-            minting: false
-          })
-          console.error("please be patient in between transactions") ;
-          return ; 
         }
+        // Second, request minter to mint new CUSD via POST
+        let post_data = {
+          amount: amountToMint.toString(),
+          account: to
+        }
+        let response = await axios.post(
+          MINTER_ENDPOINT,
+          post_data
+        );
 
-        let pending_hash = response.data.pending_hash
+        let pending_hash = response.data.transaction_hash
         this.props.concatPendingMints(pending_hash)
         this.setState({
           minting: false
         })
       } catch (err) {
+        console.error('Minting failed, please try again in 5 minutes')
         this.setState({
           minting: false
         })
       }
+    } else {
+      alert('no tronweb detected')
     }
   }
 
@@ -125,14 +116,14 @@ class MintButton extends Component {
 
     const { 
       classes, 
-      eth_address,
+      tron_address,
       pending_mints,
     } = this.props;
     
     return (
           <Paper className={classes.paper} elevation={3}>
             {/* MINT BUTTON  */}
-            { !eth_address ?
+            { !tron_address ?
               (
                 <Button disabled>Please sign in to get CUSD!</Button>
               )
@@ -158,11 +149,11 @@ class MintButton extends Component {
                 return (<Typography key={i}> 
                   <EtherscanLogo /> ({i}): 
                   <a
-                    href={"https://ropsten.etherscan.io/tx/" + pending_hash}
+                    href={"https://shasta.tronscan.org/#/transaction/" + pending_hash}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {" track on Etherscan"}
+                    {" track on Tronscan"}
                   </a>
                 </Typography>)
               })}

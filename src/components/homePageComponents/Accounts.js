@@ -62,7 +62,7 @@ class Accounts extends Component {
     const networkName = (web3_network ? getNetworkNameById(web3_network) : "")
 
     // Tron
-    const user_short_tron = tron_address ? tron_address.substring(0, 8) : ""
+    const user_short_tron = tron_address ? tron_address.base58.substring(0, 8) : ""
     
     return (
         <Paper className={classes.paper} elevation={3}>

@@ -156,7 +156,7 @@ class TransferButton extends Component {
           {/* TRANSFER CUSD  */}
               { !eth_address ?
               (
-              <Button disabled>Please sign in trade CUSD!</Button>
+              <Button disabled>Please sign in to send CUSD!</Button>
               )
               : (
               <div>
