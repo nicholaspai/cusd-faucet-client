@@ -103,7 +103,7 @@ class Accounts extends Component {
             <Typography> 
                 You are connected to Tron (Shasta) as: 
                     {tron_address ? (<a
-                    href={"https://shasta.tronscan.org/#/address/" + tron_address}
+                    href={"https://shasta.tronscan.org/#/address/" + tron_address.base58}
                     target="_blank"
                     rel="noopener noreferrer"
                     >
