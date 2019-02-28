@@ -6,7 +6,8 @@ export const initialState = {
     user_address: '',
     balance_cusd: '',
     pending_mints: [],
-
+    pending_burns: [],
+    pending_transfers: [],
   },
 };
 
@@ -21,11 +22,18 @@ export const tron = (state = initialState.tron, action) => {
       return Object.assign({}, state, {
         balance_cusd: action.string
       });
-    case TYPES.CONCAT_PENDING_MINTS:
+    case TYPES.CONCAT_PENDING_MINTS_TRON:
       return Object.assign({}, state, {
         pending_mints: state.pending_mints.concat(action.object)
       });
-
+    case TYPES.CONCAT_PENDING_BURNS_TRON:
+      return Object.assign({}, state, {
+        pending_burns: state.pending_burns.concat(action.object)
+      });
+    case TYPES.CONCAT_PENDING_TRANSFERS_TRON:
+      return Object.assign({}, state, {
+        pending_transfers: state.pending_transfers.concat(action.object)
+      });
     default:
       return state;
   }

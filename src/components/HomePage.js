@@ -12,8 +12,10 @@ import EosMint from './homePageComponents/EosMint'
 import TronMint from './homePageComponents/tron/MintButton'
 import Balances from './homePageComponents/Balances'
 import TransferButton from './homePageComponents/TransferButton'
+import TronTransfer from './homePageComponents/tron/TransferButton'
 import BurnButton from './homePageComponents/BurnButton'
 import EosBurn from './homePageComponents/EosBurn'
+import TronBurn from './homePageComponents/tron/BurnButton'
 
 
 const styles = theme => ({
@@ -61,11 +63,15 @@ class HomePage extends Component {
             }
             {/* TRANSFER */
               network == 0 ?
-              <TransferButton/> : ""
+              <TransferButton/> : 
+              ( network == 2 ? <TronTransfer/> : ""
+              )
             }
             {/* BURN */
               network == 0 ?
-              <BurnButton /> : ""//<EosBurn />
+              <BurnButton /> : 
+              ( network == 2 ? <TronBurn/> : ""
+              )
             }
           </div>
     );

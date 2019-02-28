@@ -21,6 +21,9 @@ import { tronActions } from "../../store/tronActions";
 //import ScatterEOS from 'scatterjs-plugin-eosjs2';
 //import {JsonRpc, Api} from 'eosjs';
 import EOSIOClient from "../../eos_services/setupEos"
+import getDefaultTronWeb from '../../tron_services/getDefaultTronWeb'
+import Web3 from 'web3';
+import getDefaultWeb3 from '../../eth_services/getDefaultWeb3'
 
 const styles = theme => ({
   paper: {
@@ -41,14 +44,21 @@ const styles = theme => ({
 const mapState = state => ({
   eos_client: state.global.eos_client,
   network: state.global.network,
-  scatter_state: state.eos.scatter_state
+  scatter_state: state.eos.scatter_state,
+  tronWeb: state.global.tronWeb,
+  web3: state.global.web3,
+
 });
 
 const mapDispatch = dispatch => ({
   setNetwork: NETWORK => dispatch(globalActions.setNetwork(NETWORK)),
   setEOS:  client => dispatch(globalActions.setEOS(client)),
   setScatterState: string => dispatch(eosActions.setScatterState(string)),
-  setTronAddress: string => dispatch(tronActions.setTronAddress(string))
+  setTronAddress: string => dispatch(tronActions.setTronAddress(string)),
+  setTronWeb: tronweb => dispatch(globalActions.setTronWeb(tronweb)),
+  setWeb3: web3 =>
+    dispatch(globalActions.setWeb3(web3)),
+  setWeb3Network: number => dispatch(globalActions.setWeb3Network(number)),
 });
 
 
@@ -60,7 +70,7 @@ class Networks extends Component {
     };
   }
 
-  // Refresh user CUSD balance
+  /** SET UP eosjs */
   _checkScatterConnection = async () => {
       
       if (this.props.eos_client) {
@@ -72,6 +82,63 @@ class Networks extends Component {
       }
   }
 
+  /** SET UP TronWeb */
+  _checkTronConnection = async () => {
+    // Set tronweb to injected tronweb if possible
+    let installed = window.tronWeb
+    // Detected Tron dapp browser! 
+    if (installed) {
+        this.props.setTronWeb(window.tronWeb)
+
+        // TODO: Set address now
+    } 
+    else {
+      let default_tronweb = await getDefaultTronWeb()
+      // Create default tronweb in case browser cannot inject tronweb
+      this.props.setTronWeb(default_tronweb)
+
+      // Non-dapp browsers, inject tronweb on behalf of user
+      window.tronWeb = this.props.tronWeb
+    }
+  }
+
+    /** SET UP Web3 */
+  _checkEthereumConnection = async () => {
+
+    // Set default web3 in case browser cannot inject web3
+    let default_web3 = await getDefaultWeb3()
+    this.props.setWeb3(default_web3.web3)
+    this.props.setWeb3Network(default_web3.network)
+
+    // Now, replace web3 with injected web3 if possible
+    // Modern dapp browsers...
+    if (window.ethereum) {
+        window.web3 = new Web3(window.ethereum);
+        
+        try {
+            // Request account access if needed
+            await window.ethereum.enable()
+            // Store web3 instance in redux store
+            this.props.setWeb3(window.web3)
+            let network = await window.web3.eth.net.getId()
+            this.props.setWeb3Network(network)
+        } catch (error) {
+            // User denied account access... setting fallback web3 object to access web3 
+            console.log('user denied ethereum account access')
+        }
+    }
+    // Legacy dapp browsers...
+    else if (window.web3) {
+        window.web3 = new Web3(window.web3.currentProvider);
+        this.props.setWeb3(window.web3)
+        let network = await window.web3.eth.net.getId()
+        this.props.setWeb3Network(network)
+    }
+    // Non-dapp browsers...
+    else {
+    }
+  }  
+
   /** CONTINUOUS TIMER BEGINNING AT MOUNT */
   componentDidMount = async () => {
     var intervalId = setInterval(this.timer, 1000);
@@ -82,21 +149,22 @@ class Networks extends Component {
   // @dev Put anything that you want to continually compute here
   timer = async () => {
 
-    if (this.props.network == "1"){
-      // Update user balance
-      
+    if (this.props.network == "1"){      
       await this._checkScatterConnection()
-    } 
+    } else if (this.props.network == "2") {
+      await this._checkTronConnection()
+    } else if (this.props.network == "0") {
+      await this._checkEthereumConnection()
+    }
   }
 
   componentWillUnmount = () => {
     // use intervalId from the state to clear the interval
     clearInterval(this.state.intervalId);
   }
-  
-  // FIXME: @joel I think we should move all network setup logic (e.g. EOSIOClient stuff) to a separate module,
-  // in the name of "one module one function" and keeping our code base simple, let's stick to keeping
-  // this module's purpose only to toggle networks 
+
+
+
   handleChange = name => event => {
     var current = event.target.value;
     this.props.setNetwork(current);
@@ -111,14 +179,11 @@ class Networks extends Component {
       //ETH
     }
     else if (current === "2") {
-      //TRON
-      // FIXME: Hard coded for now to use a sample Tron address
-      // const user_address_tron = "TFN2N7MdZ8uwa4yr9sKbWnZTorDdWHeyMB"
-      // this.props.setTronAddress(user_address_tron)
-    }
-    else {
-      throw (Error("No network"))
-    } 
+      //SET TRON CONNECTION      
+      }
+      else {
+        throw (Error("No network"))
+      } 
 
   };
 

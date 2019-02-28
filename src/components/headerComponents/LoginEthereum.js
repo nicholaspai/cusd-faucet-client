@@ -53,13 +53,14 @@ class LoginEthereum extends Component {
   /** DETECT IF USER IS LOGGED IN TO TRON */
   handleClick_LoginMenu_Tron = () => {
     if (!this.props.tronWeb) {
-      alert('No TronWeb injected!')
+      alert('Switch to a Tron dApp browser to use this faucet for the time being, apologies!')
+      return
     }
     let loggedIn = this.props.tronWeb.ready
-    if (loggedIn) {
+    if (loggedIn && this.props.tronWeb.defaultAddress) {
       this.props.setTronAddress(this.props.tronWeb.defaultAddress)
     } else {
-      alert('Please install and login to a Tron network provider like the TronLink browser extension!')
+      alert('You are connected to Tron, but we cannot detect your address! Please login to your Tron wallet to use this faucet-- if you are on desktop then try installing the TronLink browser extension')
     }
   }
 

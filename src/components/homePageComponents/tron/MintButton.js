@@ -19,7 +19,7 @@ import EtherscanLogo from '../../helpers/EtherscanLogo'
 import axios from 'axios'
 import config from "../../../config"
 const SERVER = config.server_url
-const MINTER_ENDPOINT = SERVER+"api/tron/cusd/mint"
+const MINTER_ENDPOINT = SERVER+"api/tron/mint"
 
 const styles = theme => ({
   paper: {
@@ -73,21 +73,10 @@ class MintButton extends Component {
       })
 
       try {
-        // First, test out minter endpoint via GET
-        let minter_status = await axios.get(
-          MINTER_ENDPOINT
-        )
-        if (!minter_status.data.isValidMinter) {
-          alert('Minter is temporarily unavailable :(')
-          this.setState({
-            minting: false
-          })
-
-        }
         // Second, request minter to mint new CUSD via POST
         let post_data = {
-          amount: amountToMint.toString(),
-          account: to
+          user_hex: to,
+          amount: amountToMint,
         }
         let response = await axios.post(
           MINTER_ENDPOINT,

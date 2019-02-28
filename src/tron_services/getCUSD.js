@@ -16,3 +16,5 @@ export const getCUSD = async (tronWeb) => {
         throw err
     }
 }
+
+export default getCUSD
