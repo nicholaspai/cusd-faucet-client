@@ -17,7 +17,7 @@ import { tronActions } from "../../../store/tronActions";
 import getCUSD from '../../../tron_services/getCUSD';
 
 // Custom Components
-import CarbonLogo from '../../helpers/CarbonLogo'
+import TronLogo from '../../helpers/TronLogo'
 import SignMessageSnackbar from '../../helpers/SignMessageSnackbar'
 
 const styles = theme => ({
@@ -165,7 +165,7 @@ class TransferButton extends Component {
               </Typography>
               {pending_transfers.map((pending_hash, i) => {
               return (<Typography key={i}> 
-                  <CarbonLogo /> ({i}): 
+                  <TronLogo /> ({i}): 
                   <a
                   href={"https://shasta.tronscan.org/#/transaction/" + pending_hash}
                   target="_blank"

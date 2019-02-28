@@ -13,7 +13,7 @@ import { connect } from "react-redux";
 import { tronActions } from "../../../store/tronActions";
 
 // Custom Components
-import EtherscanLogo from '../../helpers/EtherscanLogo'
+import TronLogo from '../../helpers/TronLogo'
 
 // REST API server
 import axios from 'axios'
@@ -136,7 +136,7 @@ class MintButton extends Component {
               </Typography>
               {pending_mints.map((pending_hash, i) => {
                 return (<Typography key={i}> 
-                  <EtherscanLogo /> ({i}): 
+                  <TronLogo /> ({i}): 
                   <a
                     href={"https://shasta.tronscan.org/#/transaction/" + pending_hash}
                     target="_blank"
