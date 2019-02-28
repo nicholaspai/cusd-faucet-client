@@ -89,12 +89,10 @@ class Networks extends Component {
     // Detected Tron dapp browser! 
     if (installed) {
         this.props.setTronWeb(window.tronWeb)
-
-        // TODO: Set address now
     } 
     else {
-      let default_tronweb = await getDefaultTronWeb()
       // Create default tronweb in case browser cannot inject tronweb
+      let default_tronweb = await getDefaultTronWeb()
       this.props.setTronWeb(default_tronweb)
 
       // Non-dapp browsers, inject tronweb on behalf of user
@@ -179,7 +177,7 @@ class Networks extends Component {
       //ETH
     }
     else if (current === "2") {
-      //SET TRON CONNECTION      
+      //TRON  
       }
       else {
         throw (Error("No network"))
@@ -207,9 +205,9 @@ class Networks extends Component {
                     id: 'age-native-simple',
                     }}
                 >
-                    <option value={NETWORKS.ETH}>ETH</option>
-                    <option value={NETWORKS.EOS}>EOS</option>
-                    <option value={NETWORKS.TRON}>TRON</option>
+                    <option value={NETWORKS.ETH}>ETH (Ropsten)</option>
+                    <option value={NETWORKS.EOS}>EOS (Jungle)</option>
+                    <option value={NETWORKS.TRON}>TRON (Shasta)</option>
                 </Select>
             </FormControl>
         </Paper>
