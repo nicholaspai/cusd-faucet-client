@@ -62,7 +62,7 @@ class BurnButton extends Component {
   handleClick_Burn = async () => {
     let tronWeb = this.props.tronWeb
     if (tronWeb) {
-        let amountToBurn = this.state.amount_to_burn
+        let amountToBurn = (parseFloat(this.state.amount_to_burn)*(10**18)).toString()
         this.setState({
             burning: true
         })
