@@ -59,9 +59,9 @@ class MintButton extends Component {
   handleClick_Mint = async () => {
     let tronWeb = this.props.tronWeb
     if (tronWeb) {
-      // TODO: Tron contracts only deal with integers, need to be able to convert decimals
-      let amountToMint = this.state.amount_to_mint
-  
+      // Tron contracts only deal with integers, need to be able to convert decimals
+      let amountToMint = (parseFloat(this.state.amount_to_mint)*(10**18)).toString()
+
       let to = this.props.tron_address.base58
       if (!tronWeb.isAddress(to)) {
         console.error('invalid user address: ', to)
