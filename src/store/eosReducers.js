@@ -7,8 +7,6 @@ export const initialState = {
     user_name: '',
     balance_cusd: '',
     eos_mints: [],
-    pending_transfers: [],
-    pending_burns: [],
     scatter_state:'',
   },
 };

@@ -12,9 +12,15 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { signMessage } from '../../eth_services/signMessage'
 import { recoverMessageSigner } from '../../eth_services/recoverMessageSigner'
 
+// EOS services
+import {Api} from 'eosjs';
+import { rpc, EOS_NETWORK } from '../../eos_services/getDefaultEosJS'
+
 // Redux state
 import { connect } from "react-redux";
 import { ethActions } from "../../store/ethActions";
+import { eosActions } from "../../store/eosActions";
+import { globalActions } from "../../store/globalActions";
 import { tronActions } from "../../store/tronActions"
 import SelectAccountEthereum from "./SelectAccountEthereum"
 
@@ -26,12 +32,15 @@ const mapState = state => ({
   web3: state.global.web3,
   eth_accounts: state.accounts.eth_accounts,
   tronWeb: state.global.tronWeb,
+  scatter_state: state.eos.scatter_state
 })
 
 const mapDispatch = dispatch => ({
   setEthAddress: address => dispatch(ethActions.setEthAddress(address)),
   setEthWallet: wallet => dispatch(ethActions.setEthWallet(wallet)),
-  setTronAddress: address => dispatch(tronActions.setTronAddress(address))
+  setTronAddress: address => dispatch(tronActions.setTronAddress(address)),
+  setEOS:  client => dispatch(globalActions.setEOS(client)),
+  setEosName: name => dispatch(eosActions.setEosName(name)),
 });
 
 class LoginEthereum extends Component {
@@ -45,7 +54,7 @@ class LoginEthereum extends Component {
     };
   }
 
-  /** ASK USER TO SELECT LOGIN METHOD */
+  /** ASK USER TO SELECT LOGIN METHOD FOR ETHEREUM */
   handleClick_LoginMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
@@ -61,6 +70,30 @@ class LoginEthereum extends Component {
       this.props.setTronAddress(this.props.tronWeb.defaultAddress)
     } else {
       alert('You are connected to Tron, but we cannot detect your address! Please login to your Tron wallet to use this faucet-- if you are on desktop then try installing the TronLink browser extension')
+    }
+  }
+
+  /** DETECT IF USER IS LOGGED IN TO EOS */
+  handleClick_LoginMenu_Eos = async () => {
+    if (!this.props.scatter_state) {
+      alert(`Scatter not detected or not signed in`)
+      return
+    } else {
+      let scatter = this.props.scatter_state
+      // Set up eosJS signature provider and client
+      const eos = scatter.eos(EOS_NETWORK, Api, { rpc })
+      this.props.setEOS(eos)
+  
+      // Now we need to get an identity from the user.
+      // TODO: Log out of identity first to enable user to switch Scatter accounts
+      // We're also going to require an account that is connected to the network we're using.
+      let identity = await scatter.getIdentity({ accounts: [EOS_NETWORK]})
+      // Always use the accounts you got back from Scatter. Never hardcode them even if you are prompting
+      // the user for their account name beforehand. They could still give you a different account.
+      const account = identity.accounts.find(x => x.blockchain === 'eos');
+      if (account) {
+        this.props.setEosName(account.name)
+      }      
     }
   }
 
@@ -155,6 +188,18 @@ class LoginEthereum extends Component {
                 color="primary"
             >
                 Sign In to Ethereum
+            </Button>
+            :""}
+          { network == 1 ? 
+            <Button
+                aria-owns={anchorEl ? 'simple-menu' : undefined}
+                aria-haspopup="true"
+                onClick={this.handleClick_LoginMenu_Eos}
+                disabled={this.state.signing_in}
+                variant="contained"
+                color="primary"
+            >
+                Sign In to EOS
             </Button>
             :""}
           { network == 2 ? 

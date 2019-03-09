@@ -16,11 +16,11 @@ import { eosActions } from "../../store/eosActions";
 import { tronActions } from "../../store/tronActions";
 
 //scatter
-//import * as Eos from 'eosjs'
-//import ScatterJS from 'scatterjs-core';
-//import ScatterEOS from 'scatterjs-plugin-eosjs2';
-//import {JsonRpc, Api} from 'eosjs';
-import EOSIOClient from "../../eos_services/setupEos"
+import ScatterJS from 'scatterjs-core';
+import ScatterEOS from 'scatterjs-plugin-eosjs2';
+// import * as Eos from 'eosjs'
+import {Api} from 'eosjs';
+import { rpc, EOS_NETWORK } from '../../eos_services/getDefaultEosJS'
 import getDefaultTronWeb from '../../tron_services/getDefaultTronWeb'
 import Web3 from 'web3';
 import getDefaultWeb3 from '../../eth_services/getDefaultWeb3'
@@ -53,6 +53,7 @@ const mapState = state => ({
 const mapDispatch = dispatch => ({
   setNetwork: NETWORK => dispatch(globalActions.setNetwork(NETWORK)),
   setEOS:  client => dispatch(globalActions.setEOS(client)),
+  setEosName: name => dispatch(eosActions.setEosName(name)),
   setScatterState: string => dispatch(eosActions.setScatterState(string)),
   setTronAddress: string => dispatch(tronActions.setTronAddress(string)),
   setTronWeb: tronweb => dispatch(globalActions.setTronWeb(tronweb)),
@@ -72,14 +73,58 @@ class Networks extends Component {
 
   /** SET UP eosjs */
   _checkScatterConnection = async () => {
-      
-      if (this.props.eos_client) {
-        if((this.props.eos_client.noScatter == true) && (this.props.scatter_state =='') ){
-          this.props.setScatterState("MISSING")
-          clearInterval(this.state.intervalId);
+    // tell ScatterJS which plugins you are using.
+    ScatterJS.plugins( new ScatterEOS())
 
-        } 
-      }
+    // attempt to connect to Scatter app
+    const APP_NAME="CUSD_OASIS"
+    let connected = await ScatterJS.scatter.connect(APP_NAME)
+    if (connected) {
+      let scatter = ScatterJS.scatter
+      this.props.setScatterState(scatter)
+
+      // // Set up eosJS signature provider and client
+      // const eos = scatter.eos(EOS_NETWORK, Api, { rpc })
+      // this.props.setEOS(eos)
+
+      // // Now we need to get an identity from the user.
+      // // We're also going to require an account that is connected to the network we're using.
+      // let identity = await scatter.getIdentity({ accounts: [EOS_NETWORK]})
+      // // Always use the accounts you got back from Scatter. Never hardcode them even if you are prompting
+      // // the user for their account name beforehand. They could still give you a different account.
+      // const account = identity.accounts.find(x => x.blockchain === 'eos');
+      // if (account) {
+      //   this.props.setEosName(account.name)
+      // }
+
+      // Finally, replace window's default ScatterJS object
+      window.ScatterJS = null
+
+    //   console.log(await eos.transact({
+    //   actions: [{
+    //     account: "carbon12nick",
+    //     name: "transfer",
+    //     authorization: [{
+    //       actor: account.name,
+    //       permission: "active",
+    //     }],
+    //     data: {
+    //       from: account.name,
+    //       to: "testdaniel13",
+    //       quantity: "0.01 CUSD",
+    //       memo: "test",
+    //     },
+    //   }]
+    // }, {
+    //   blocksBehind: 3,
+    //   expireSeconds: 30,
+    //   broadcast:true
+    // }))
+
+    } else {
+      // console.log(`Scatter not detected`)
+
+    }
   }
 
   /** SET UP TronWeb */
@@ -168,10 +213,6 @@ class Networks extends Component {
     this.props.setNetwork(current);
     if (current === "1"){
       //EOS
-      if (!this.props.eos_client){
-          this.eosio =  new EOSIOClient("CARBON_OASIS")//new EOSIOClient("CARBON_OASIS");
-          this.props.setEOS(this.eosio)
-      } 
     } 
     else if (current === "0") {
       //ETH

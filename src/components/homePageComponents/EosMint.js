@@ -57,30 +57,11 @@ class MintButton extends Component {
     };
   }
 
-  // Refresh user CUSD balance
-  getName = () => {
-    
-    if (!this.props.eos_client.account) return;
-    if (this.props.eos_name) return;
-    
-    this.props.setEosName(this.props.eos_client.account.name)
-
-    return this.props.eos_client.account.name
-    
-  }
-
   /** CONTINUOUS TIMER BEGINNING AT MOUNT */
   componentDidMount = async () => {
     var intervalId = setInterval(this.timer, 1000);
     // store intervalId in the state so it can be accessed later:
     this.setState({intervalId: intervalId});
-  }
-
-  // @dev Put anything that you want to continually compute here
-  timer = async () => {
-
-    // Update user balance 
-    await this.getName()
   }
 
   componentWillUnmount = () => {
@@ -92,13 +73,13 @@ class MintButton extends Component {
   // Mint new CUSD to user
   handleClick_Mint = async () => {
     
-	  let to = this.props.eos_name
-
+    let to = this.props.eos_name
+    if (!to) { return; } // user not signed in
 	  let post_data = {
-	    //amount: amountToMint.toString(),
 	    user: to,
       amount: this.state.amount_to_mint.toString(),
-	  }
+    }
+    console.log(post_data)
 
 	  this.setState({
 	    minting: true
