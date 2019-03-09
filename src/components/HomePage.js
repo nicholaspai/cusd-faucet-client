@@ -14,7 +14,7 @@ import Balances from './homePageComponents/Balances'
 import TransferButton from './homePageComponents/TransferButton'
 import TronTransfer from './homePageComponents/tron/TransferButton'
 import BurnButton from './homePageComponents/BurnButton'
-// import EosBurn from './homePageComponents/eos/BurnButton'
+import EosBurn from './homePageComponents/eos/BurnButton'
 // import EosTransfer from './homePageComponents/eos/TransferButton'
 import TronBurn from './homePageComponents/tron/BurnButton'
 
@@ -72,9 +72,9 @@ class HomePage extends Component {
             {/* BURN */
               network == 0 ?
               <BurnButton /> : 
-              // ( network == 1 ? <EosBurn/> :
+              ( network == 1 ? <EosBurn/> :
                 (network == 2 ? <TronBurn /> : "" )
-              // )
+              )
             }
           </div>
     );

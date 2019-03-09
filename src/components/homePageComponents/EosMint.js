@@ -34,17 +34,14 @@ const styles = theme => ({
 
 // Redux mappings
 const mapState = state => ({
-  
-  
-  eos_mints: state.eos.eos_mints,
+  pending_mints: state.eos.pending_mints,
   eos_client: state.global.eos_client,
   eos_name: state.eos.user_name,
   network: state.global.network
 });
 
 const mapDispatch = dispatch => ({
-  concatEosMints: newMint => dispatch(eosActions.concatEosMints(newMint)),
-  setEosName: name => dispatch(eosActions.setEosName(name))
+  concatPendingMints: newMint => dispatch(eosActions.concatPendingMints(newMint)),
 });
 
 class MintButton extends Component {
@@ -109,7 +106,7 @@ class MintButton extends Component {
 
 	    let pending_hash = response.data.transaction_id
 
-	    this.props.concatEosMints(pending_hash)
+	    this.props.concatPendingMints(pending_hash)
 	    this.setState({
 	      minting: false
 	    })
@@ -128,7 +125,7 @@ class MintButton extends Component {
 
     const { 
       classes, 
-      eos_mints,
+      pending_mints,
       eos_name
     } = this.props;
     
@@ -152,12 +149,12 @@ class MintButton extends Component {
             }
             
             {/* MINT TXNS  */}
-            { eos_mints.length > 0 ? (
+            { pending_mints.length > 0 ? (
             <div>
               <Typography> 
                 Your mint transactions: 
               </Typography>
-              {eos_mints.map((pending_hash, i) => {
+              {pending_mints.map((pending_hash, i) => {
                 return (<Typography key={i}> 
                   <BloksLogo /> ({i}): 
                   <a
