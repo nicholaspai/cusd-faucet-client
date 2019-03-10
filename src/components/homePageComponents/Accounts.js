@@ -85,19 +85,7 @@ class Accounts extends Component {
                     rel="noopener noreferrer"
                     >
                     {eos_name}
-                    </a>) : (scatter_state == "MISSING" ? (<a
-                    href={"https://get-scatter.com/download"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >
-                    Download Scatter
-                    </a>): (<a
-                    href={"https://github.com/stablecarbon/cusd_onboarding/blob/master/eos/docs/startup.md"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >
-                    Create Account
-                    </a>))}
+                    </a>) : ("")}
               </Typography>)}
             {network == 2 && (
             <Typography> 

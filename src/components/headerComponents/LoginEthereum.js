@@ -41,6 +41,7 @@ const mapDispatch = dispatch => ({
   setTronAddress: address => dispatch(tronActions.setTronAddress(address)),
   setEOS:  client => dispatch(globalActions.setEOS(client)),
   setEosName: name => dispatch(eosActions.setEosName(name)),
+  setScatterState: string => dispatch(eosActions.setScatterState(string)),
 });
 
 class LoginEthereum extends Component {
@@ -73,27 +74,33 @@ class LoginEthereum extends Component {
     }
   }
 
-  /** DETECT IF USER IS LOGGED IN TO EOS */
+  /** Request user's EOS identity through Scatter */
   handleClick_LoginMenu_Eos = async () => {
-    if (!this.props.scatter_state) {
-      alert(`Scatter not detected or not signed in`)
-      return
-    } else {
-      let scatter = this.props.scatter_state
-      // Set up eosJS signature provider and client
-      const eos = scatter.eos(EOS_NETWORK, Api, { rpc })
+    if (!this.props.scatter_state) { return; }
+    if (this.props.scatter_state.identity) {
+      // User already signed in, forget their previous identity
+      await this.props.scatter_state.logout()
+    } 
+    
+    // Now, request user to connect their identity for app usage
+    // After a user has approved giving you permission to access their Identity you no longer have to call getIdentity() if the user refreshes the page. 
+    // Instead you can check if an Identity exists on the scatter object itself. 
+    // This also means that you don't have to save the Identity within your shared 
+    // services along-side your Scatter reference, 
+    // you can simply save your Scatter reference and 
+    // pull the identity from within it.
+    //
+    // n.b. this is the reason why we call logout() on each button press to allow user to switch their identity
+    let identity = await this.props.scatter_state.login({ accounts: [EOS_NETWORK]})
+    if (!identity) { return console.error(`No Scatter identity found on this network`)}
+
+    const account = this.props.scatter_state.identity.accounts.find(x => x.blockchain === 'eos');
+    if (account && account.name) {
+      // Create eosJS client object
+      const eos = this.props.scatter_state.eos(EOS_NETWORK, Api, {rpc, beta3:true})
       this.props.setEOS(eos)
-  
-      // Now we need to get an identity from the user.
-      // TODO: Log out of identity first to enable user to switch Scatter accounts
-      // We're also going to require an account that is connected to the network we're using.
-      let identity = await scatter.getIdentity({ accounts: [EOS_NETWORK]})
-      // Always use the accounts you got back from Scatter. Never hardcode them even if you are prompting
-      // the user for their account name beforehand. They could still give you a different account.
-      const account = identity.accounts.find(x => x.blockchain === 'eos');
-      if (account) {
-        this.props.setEosName(account.name)
-      }      
+      // Save user's account name (full account details are in account)
+      this.props.setEosName(account.name)
     }
   }
 

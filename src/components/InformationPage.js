@@ -45,14 +45,14 @@ class InformationPage extends Component {
         <Paper className={classes.paper} elevation={3}>
             <Typography variant="body1" className={classes.section}> 
                 <b>A Universal Wallet for a Global Digital Market</b>: This is the embodiment of our cross-chain open-source wallet initiative where we intend to link user 
-                identities with cryptonetwork accounts. We support: Ethereum, EOS.
+                identities with cryptonetwork accounts. We support the following cryptonetwork testnets: Ethereum (Ropsten), EOS (Jungle), and Tron (Shasta).
             </Typography>
             <Typography variant="body1" className={classes.section}> 
-                <b>CUSD Ropsten Faucet</b>: Mint, transfer, and redeem CUSD via our token faucet. CUSD on Ropsten was <i>made for developers</i> and experimental minds 
-                curious how cryptoeconomics succeed at scale. Being able to assume that 1 CUSD == $1 will make fiscal forecasting simpler. 👩🏽‍🚀
+                <b>CUSD Testnet Faucet</b>: Mint, transfer, and redeem CUSD via our token faucet on a testnet. CUSD was <i>made for developers</i> and experimental minds 
+                curious how cryptoeconomics succeed at scale 👩🏽‍🚀
             </Typography>
             <Typography variant="body1" className={classes.section}> 
-                <b>MetaTransactions</b>: We are powered by "metatransactions", in which users do not have to pay ETH transaction fees on this portal.  We pay your ETH gas fees, you pay us back in CUSD. 🧞‍
+                <b>Ethereum MetaTransactions</b>: We are powered by "metatransactions", in which users do not have to pay ETH transaction fees on this portal.  We pay your ETH gas fees, you pay us back in CUSD. 🧞‍
             </Typography>
             <Typography variant="body1" className={classes.section}> 
                 <b>Account Management</b>: No cryptonetwork account? No problem, you can create a <i>burner</i> account

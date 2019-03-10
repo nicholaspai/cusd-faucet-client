@@ -13,8 +13,8 @@ import TextField from '@material-ui/core/TextField'
 import { connect } from "react-redux";
 import { eosActions } from "../../../store/eosActions";
 
-// Eos services
-import getCUSD from '../../../tron_services/getCUSD';
+// EOS services
+import { CONTRACT_CODE, CURRENCY_PRECISION, transactionOptions } from '../../../eos_services/getDefaultEosJS'
 
 // Custom Components
 import BloksLogo from '../../helpers/BloksLogo'
@@ -60,50 +60,41 @@ class BurnButton extends Component {
 
   // Redeem CUSD by burning
   handleClick_Burn = async () => {
-    let resultWithConfig = await this.props.eos_api.transact({
-      actions: [
-        {
-          account: "carbon12nick",
-          name: "burn",
-          authorization: [
+    let amount = parseFloat(this.state.amount_to_burn)
+    if (this.props.eos_api) {
+      this.setState({
+          burning: true
+      })
+      try {
+        let resultWithConfig = await this.props.eos_api.transact({
+          actions: [
             {
-              actor: this.props.eos_name,
-              permission: "active"
+              account: CONTRACT_CODE,
+              name: "burn",
+              authorization: [
+                {
+                  actor: this.props.eos_name,
+                  permission: "active"
+                }
+              ],
+              data: {
+                from: this.props.eos_name,
+                quantity: amount.toFixed(CURRENCY_PRECISION) + " CUSD",
+                memo: "Carbon Jungle Faucet: burning " + amount.toFixed(CURRENCY_PRECISION) + " CUSD"
+              }
             }
-          ],
-          data: {
-            from: this.props.eos_name,
-            quantity: this.state.amount_to_burn.toString(),
-            memo: "CARBON FAUCET: burning " + this.state.amount_to_burn.toString()
-          }
-        }
-      ]
-    }, {
-      blocksBehind: 3,
-      expireSeconds: 30,
-      broadcast:true
-    })
-    console.log(resultWithConfig)
-
-    // let tronWeb = this.props.tronWeb
-    // if (tronWeb) {
-    //     let amountToBurn = (parseFloat(this.state.amount_to_burn)*(10**18)).toString()
-    //     this.setState({
-    //         burning: true
-    //     })
-    //     try {
-    //         let cusd = await getCUSD(tronWeb)
-    //         let pending_hash = await cusd.burn(amountToBurn).send()
-    //         this.props.concatPendingBurns(pending_hash.toString()) // @dev always .toString() tron smart contract return values
-    //         this.setState({
-    //             burning: false
-    //         })
-    //     } catch (err) {
-    //         this.setState({
-    //             burning: false
-    //         })
-    //     }
-    // }
+          ]
+        }, transactionOptions)
+        this.props.concatPendingBurns(resultWithConfig.transaction_id)
+        this.setState({
+            burning: false
+        })
+      } catch (err) {
+        this.setState({
+          burning: false
+        })
+      }
+    }
   }
 
   /** END BUTTON CLICK HANDLERS */

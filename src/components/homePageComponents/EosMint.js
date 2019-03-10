@@ -134,7 +134,7 @@ class MintButton extends Component {
             {/* MINT BUTTON  */}
             { !eos_name ?
               (
-                <Button disabled>Please sign in gets CUSD!</Button>
+                <Button disabled>Please sign in to get CUSD!</Button>
               )
               : (
                 <Button

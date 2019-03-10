@@ -15,7 +15,7 @@ import TransferButton from './homePageComponents/TransferButton'
 import TronTransfer from './homePageComponents/tron/TransferButton'
 import BurnButton from './homePageComponents/BurnButton'
 import EosBurn from './homePageComponents/eos/BurnButton'
-// import EosTransfer from './homePageComponents/eos/TransferButton'
+import EosTransfer from './homePageComponents/eos/TransferButton'
 import TronBurn from './homePageComponents/tron/BurnButton'
 
 
@@ -51,7 +51,7 @@ class HomePage extends Component {
               <Networks />
             {/* USER IDENTITY  */}
               <Accounts /> 
-            {/* MINT -- FIXME: This is super ugly lol */
+            {/* MINT  */
               network == 0 ?
               <MintButton /> : 
               ( network == 1 ? <EosMint/> :
@@ -65,9 +65,9 @@ class HomePage extends Component {
             {/* TRANSFER */
               network == 0 ?
               <TransferButton/> : 
-              // ( network == 1 ? <EosTransfer/> :
+              ( network == 1 ? <EosTransfer/> :
                 (network == 2 ? <TronTransfer /> : "" )
-              // )
+              )
             }
             {/* BURN */
               network == 0 ?

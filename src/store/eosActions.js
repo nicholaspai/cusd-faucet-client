@@ -4,6 +4,7 @@ export const TYPES = {
   SET_EOS_NAME: "SET_EOS_NAME",
   CONCAT_PENDING_MINTS_EOS: "CONCAT_PENDING_MINTS_EOS",
   CONCAT_PENDING_BURNS_EOS: "CONCAT_PENDING_BURNS_EOS",
+  CONCAT_PENDING_TRANSFERS_EOS: "CONCAT_PENDING_TRANSFERS_EOS",
   SET_EOS_BALANCE: "SET_EOS_BALANCE",
   SET_SCATTER_STATE: "SET_SCATTER_STATE"
 };
@@ -23,6 +24,10 @@ export const eosActions = {
   }),
   concatPendingBurns: object => ({
     type: TYPES.CONCAT_PENDING_BURNS_EOS,
+    object
+  }),
+  concatPendingTransfers: object => ({
+    type: TYPES.CONCAT_PENDING_TRANSFERS_EOS,
     object
   }),
   setEosBalance: string => ({
