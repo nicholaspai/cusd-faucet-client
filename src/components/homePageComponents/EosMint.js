@@ -34,17 +34,14 @@ const styles = theme => ({
 
 // Redux mappings
 const mapState = state => ({
-  
-  
-  eos_mints: state.eos.eos_mints,
+  pending_mints: state.eos.pending_mints,
   eos_client: state.global.eos_client,
   eos_name: state.eos.user_name,
   network: state.global.network
 });
 
 const mapDispatch = dispatch => ({
-  concatEosMints: newMint => dispatch(eosActions.concatEosMints(newMint)),
-  setEosName: name => dispatch(eosActions.setEosName(name))
+  concatPendingMints: newMint => dispatch(eosActions.concatPendingMints(newMint)),
 });
 
 class MintButton extends Component {
@@ -57,30 +54,11 @@ class MintButton extends Component {
     };
   }
 
-  // Refresh user CUSD balance
-  getName = () => {
-    
-    if (!this.props.eos_client.account) return;
-    if (this.props.eos_name) return;
-    
-    this.props.setEosName(this.props.eos_client.account.name)
-
-    return this.props.eos_client.account.name
-    
-  }
-
   /** CONTINUOUS TIMER BEGINNING AT MOUNT */
   componentDidMount = async () => {
     var intervalId = setInterval(this.timer, 1000);
     // store intervalId in the state so it can be accessed later:
     this.setState({intervalId: intervalId});
-  }
-
-  // @dev Put anything that you want to continually compute here
-  timer = async () => {
-
-    // Update user balance 
-    await this.getName()
   }
 
   componentWillUnmount = () => {
@@ -92,13 +70,13 @@ class MintButton extends Component {
   // Mint new CUSD to user
   handleClick_Mint = async () => {
     
-	  let to = this.props.eos_name
-
+    let to = this.props.eos_name
+    if (!to) { return; } // user not signed in
 	  let post_data = {
-	    //amount: amountToMint.toString(),
 	    user: to,
       amount: this.state.amount_to_mint.toString(),
-	  }
+    }
+    console.log(post_data)
 
 	  this.setState({
 	    minting: true
@@ -128,7 +106,7 @@ class MintButton extends Component {
 
 	    let pending_hash = response.data.transaction_id
 
-	    this.props.concatEosMints(pending_hash)
+	    this.props.concatPendingMints(pending_hash)
 	    this.setState({
 	      minting: false
 	    })
@@ -147,7 +125,7 @@ class MintButton extends Component {
 
     const { 
       classes, 
-      eos_mints,
+      pending_mints,
       eos_name
     } = this.props;
     
@@ -156,7 +134,7 @@ class MintButton extends Component {
             {/* MINT BUTTON  */}
             { !eos_name ?
               (
-                <Button disabled>Please sign in gets CUSD!</Button>
+                <Button disabled>Please sign in to get CUSD!</Button>
               )
               : (
                 <Button
@@ -171,12 +149,12 @@ class MintButton extends Component {
             }
             
             {/* MINT TXNS  */}
-            { eos_mints.length > 0 ? (
+            { pending_mints.length > 0 ? (
             <div>
               <Typography> 
                 Your mint transactions: 
               </Typography>
-              {eos_mints.map((pending_hash, i) => {
+              {pending_mints.map((pending_hash, i) => {
                 return (<Typography key={i}> 
                   <BloksLogo /> ({i}): 
                   <a

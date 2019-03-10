@@ -12,9 +12,15 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { signMessage } from '../../eth_services/signMessage'
 import { recoverMessageSigner } from '../../eth_services/recoverMessageSigner'
 
+// EOS services
+import {Api} from 'eosjs';
+import { rpc, EOS_NETWORK } from '../../eos_services/getDefaultEosJS'
+
 // Redux state
 import { connect } from "react-redux";
 import { ethActions } from "../../store/ethActions";
+import { eosActions } from "../../store/eosActions";
+import { globalActions } from "../../store/globalActions";
 import { tronActions } from "../../store/tronActions"
 import SelectAccountEthereum from "./SelectAccountEthereum"
 
@@ -26,12 +32,16 @@ const mapState = state => ({
   web3: state.global.web3,
   eth_accounts: state.accounts.eth_accounts,
   tronWeb: state.global.tronWeb,
+  scatter_state: state.eos.scatter_state
 })
 
 const mapDispatch = dispatch => ({
   setEthAddress: address => dispatch(ethActions.setEthAddress(address)),
   setEthWallet: wallet => dispatch(ethActions.setEthWallet(wallet)),
-  setTronAddress: address => dispatch(tronActions.setTronAddress(address))
+  setTronAddress: address => dispatch(tronActions.setTronAddress(address)),
+  setEOS:  client => dispatch(globalActions.setEOS(client)),
+  setEosName: name => dispatch(eosActions.setEosName(name)),
+  setScatterState: string => dispatch(eosActions.setScatterState(string)),
 });
 
 class LoginEthereum extends Component {
@@ -45,7 +55,7 @@ class LoginEthereum extends Component {
     };
   }
 
-  /** ASK USER TO SELECT LOGIN METHOD */
+  /** ASK USER TO SELECT LOGIN METHOD FOR ETHEREUM */
   handleClick_LoginMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
@@ -61,6 +71,36 @@ class LoginEthereum extends Component {
       this.props.setTronAddress(this.props.tronWeb.defaultAddress)
     } else {
       alert('You are connected to Tron, but we cannot detect your address! Please login to your Tron wallet to use this faucet-- if you are on desktop then try installing the TronLink browser extension')
+    }
+  }
+
+  /** Request user's EOS identity through Scatter */
+  handleClick_LoginMenu_Eos = async () => {
+    if (!this.props.scatter_state) { return; }
+    if (this.props.scatter_state.identity) {
+      // User already signed in, forget their previous identity
+      await this.props.scatter_state.logout()
+    } 
+    
+    // Now, request user to connect their identity for app usage
+    // After a user has approved giving you permission to access their Identity you no longer have to call getIdentity() if the user refreshes the page. 
+    // Instead you can check if an Identity exists on the scatter object itself. 
+    // This also means that you don't have to save the Identity within your shared 
+    // services along-side your Scatter reference, 
+    // you can simply save your Scatter reference and 
+    // pull the identity from within it.
+    //
+    // n.b. this is the reason why we call logout() on each button press to allow user to switch their identity
+    let identity = await this.props.scatter_state.login({ accounts: [EOS_NETWORK]})
+    if (!identity) { return console.error(`No Scatter identity found on this network`)}
+
+    const account = this.props.scatter_state.identity.accounts.find(x => x.blockchain === 'eos');
+    if (account && account.name) {
+      // Create eosJS client object
+      const eos = this.props.scatter_state.eos(EOS_NETWORK, Api, {rpc, beta3:true})
+      this.props.setEOS(eos)
+      // Save user's account name (full account details are in account)
+      this.props.setEosName(account.name)
     }
   }
 
@@ -155,6 +195,18 @@ class LoginEthereum extends Component {
                 color="primary"
             >
                 Sign In to Ethereum
+            </Button>
+            :""}
+          { network == 1 ? 
+            <Button
+                aria-owns={anchorEl ? 'simple-menu' : undefined}
+                aria-haspopup="true"
+                onClick={this.handleClick_LoginMenu_Eos}
+                disabled={this.state.signing_in}
+                variant="contained"
+                color="primary"
+            >
+                Sign In to EOS
             </Button>
             :""}
           { network == 2 ? 

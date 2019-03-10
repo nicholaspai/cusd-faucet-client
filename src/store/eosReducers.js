@@ -6,9 +6,9 @@ export const initialState = {
     client: '',
     user_name: '',
     balance_cusd: '',
-    eos_mints: [],
-    pending_transfers: [],
+    pending_mints: [],
     pending_burns: [],
+    pending_transfers: [],
     scatter_state:'',
   },
 };
@@ -24,9 +24,17 @@ export const eos = (state = initialState.eos, action) => {
       return Object.assign({}, state, {
         user_name: action.string
       });
-    case TYPES.CONCAT_EOS_MINTS:
+    case TYPES.CONCAT_PENDING_MINTS_EOS:
       return Object.assign({}, state, {
-        eos_mints: state.eos_mints.concat(action.object)
+        pending_mints: state.pending_mints.concat(action.object)
+      });
+    case TYPES.CONCAT_PENDING_BURNS_EOS:
+      return Object.assign({}, state, {
+        pending_burns: state.pending_burns.concat(action.object)
+      });
+    case TYPES.CONCAT_PENDING_TRANSFERS_EOS:
+      return Object.assign({}, state, {
+        pending_transfers: state.pending_transfers.concat(action.object)
       });
     case TYPES.SET_EOS_BALANCE:
       return Object.assign({}, state, {

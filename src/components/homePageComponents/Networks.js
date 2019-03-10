@@ -16,11 +16,8 @@ import { eosActions } from "../../store/eosActions";
 import { tronActions } from "../../store/tronActions";
 
 //scatter
-//import * as Eos from 'eosjs'
-//import ScatterJS from 'scatterjs-core';
-//import ScatterEOS from 'scatterjs-plugin-eosjs2';
-//import {JsonRpc, Api} from 'eosjs';
-import EOSIOClient from "../../eos_services/setupEos"
+import ScatterJS from 'scatterjs-core';
+import ScatterEOS from 'scatterjs-plugin-eosjs2';
 import getDefaultTronWeb from '../../tron_services/getDefaultTronWeb'
 import Web3 from 'web3';
 import getDefaultWeb3 from '../../eth_services/getDefaultWeb3'
@@ -53,6 +50,7 @@ const mapState = state => ({
 const mapDispatch = dispatch => ({
   setNetwork: NETWORK => dispatch(globalActions.setNetwork(NETWORK)),
   setEOS:  client => dispatch(globalActions.setEOS(client)),
+  setEosName: name => dispatch(eosActions.setEosName(name)),
   setScatterState: string => dispatch(eosActions.setScatterState(string)),
   setTronAddress: string => dispatch(tronActions.setTronAddress(string)),
   setTronWeb: tronweb => dispatch(globalActions.setTronWeb(tronweb)),
@@ -70,16 +68,26 @@ class Networks extends Component {
     };
   }
 
-  /** SET UP eosjs */
+  /** Connect App to Scatter for EOS api connection */
   _checkScatterConnection = async () => {
-      
-      if (this.props.eos_client) {
-        if((this.props.eos_client.noScatter == true) && (this.props.scatter_state =='') ){
-          this.props.setScatterState("MISSING")
-          clearInterval(this.state.intervalId);
+    if (this.props.scatter_state) {
+      // Scatter already set
+      return
+    } else {
+      // tell ScatterJS which plugins you are using.
+      ScatterJS.plugins( new ScatterEOS())
 
-        } 
+      // attempt to connect to Scatter app
+      const APP_NAME="CUSD_OASIS"
+      let connected = await ScatterJS.scatter.connect(APP_NAME)
+      if (connected) {
+            let scatter = ScatterJS.scatter
+            this.props.setScatterState(scatter)
+            // replace window's default ScatterJS object
+            window.ScatterJS = null
       }
+      return
+    }
   }
 
   /** SET UP TronWeb */
@@ -168,10 +176,6 @@ class Networks extends Component {
     this.props.setNetwork(current);
     if (current === "1"){
       //EOS
-      if (!this.props.eos_client){
-          this.eosio =  new EOSIOClient("CARBON_OASIS")//new EOSIOClient("CARBON_OASIS");
-          this.props.setEOS(this.eosio)
-      } 
     } 
     else if (current === "0") {
       //ETH

@@ -1,11 +1,11 @@
-import {rpc} from './setupEos'
+import {rpc, CONTRACT_CODE} from './getDefaultEosJS'
 // Refresh user CUSD balance
 export const updateEosBalance = async (user_name) => {
   try {
         const result = await rpc.get_table_rows({
-            "code": "carbonjungle",
+            "code": CONTRACT_CODE,
             "scope": user_name,
-            "table": "accounts"
+            "table": "accounts" // accounts table stores balances
         })
         
         let i;
@@ -14,7 +14,6 @@ export const updateEosBalance = async (user_name) => {
         		return result.rows[i].balance.split(" ")[0]
         	}
         }
-        throw (Error("no CUSD found"))
     } catch (err) {
         console.log(err)
         throw(err)
