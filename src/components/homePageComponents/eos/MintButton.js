@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import withRoot from '../../withRoot';
+import withRoot from '../../../withRoot';
 import PropTypes from 'prop-types';
 
 // Material-ui
@@ -10,14 +10,14 @@ import Typography from '@material-ui/core/Typography'
 
 // Redux state
 import { connect } from "react-redux";
-import { eosActions } from "../../store/eosActions";
+import { eosActions } from "../../../store/eosActions";
 
 // Custom Components
-import BloksLogo from '../helpers/BloksLogo'
+import BloksLogo from '../../helpers/BloksLogo'
 
 // REST API server
 import axios from 'axios'
-import config from "../../config"
+import config from "../../../config"
 const SERVER = config.server_url
 const MINTER_ENDPOINT = SERVER+"api/eos/faucet"
 
