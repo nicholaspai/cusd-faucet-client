@@ -1,34 +1,25 @@
 # CUSD Faucet Client: Quick start
 
 ## Current Features
-- Sign in to web3 accounts either via third-party web3 providers like MetaMask or the app's native account management system
-- Store encrypted web3 accounts and retrieve the accounts after future sign-ins
-- Mint new testnet CUSD, transfer it, or redeem it
+- Mint, transfer, or redeem CUSD on supported cryptonetworks: Ethereum (Ropsten), EOS (Jungle), and Tron (Shasta)
+- Store encrypted cryptocurrency accounts and retrieve saved accounts
 
 ## Planned Features
-- Support for other chains: EOS
-- Connection to a token exchange engine
+- Connection to a testnet token exchange marketplace
 
 ## Developer setup
-
-Production Client at: https://dripdrip.netlify.com/
-Test Client at: https://cusd-faucet-ropsten.herokuapp.com/
+Production Client at: https://faucet.carbon.money/
 
 1) `npm i` to install dependencies
 2) `npm run start-test` to start local ropsten CUSD faucet
-
 3) Choice of REST server:
 - Change `server_url` link in `./src/config.js` to select server for broadcasting web3 transactions and managing accounts
-
 4) `npm run build` to make minimified `build/index.html` app
 5) `npm run start` to serve optimized `index.html`
 
 # Features
 
 ![Ropsten Wallet Screenshot](https://github.com/nicholaspai/cusd-faucet-client/blob/master/cusd-faucet-account.gif)
-
-## Ethereum connection
-Connection via an Infura WebSocket
 
 # React App: 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
