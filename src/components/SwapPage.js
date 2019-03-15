@@ -8,6 +8,11 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 
+// Swap components
+import SwapFormDialog from './swapPageComponents/SwapFormDialog'
+import SwapBalances from './swapPageComponents/SwapBalances'
+import SwapAccounts from './swapPageComponents/SwapAccounts'
+
 const styles = theme => ({
   paper: {
     paddingTop: theme.spacing.unit * 2,
@@ -31,7 +36,15 @@ class SwapPage extends Component {
     super(props);
 
     this.state = {
+      openEosForm: false
     };
+  }
+
+  handleOpenEosForm = () => {
+    this.setState({ openEosForm: true });
+  }
+  handleCloseEosForm = () => {
+    this.setState({ openEosForm: false });
   }
 
   render() {
@@ -44,12 +57,20 @@ class SwapPage extends Component {
         <div>
         <Paper className={classes.paper} elevation={3}>
             <Typography variant="body1" className={classes.section}> 
-                <b>(Beta)</b> Swap CUSD with any cryptocurrency on our supported networks
+                <b>(Beta)</b> Swap CUSD with any cryptocurrency on our supported networks.
             </Typography>
-            <Button variant="contained" className={classes.section}> 
-                EOS
+            <Button variant="contained" className={classes.section} onClick={this.handleOpenEosForm}> 
+                EOS (requires a mainnet connection)
             </Button>
         </Paper>
+        <SwapFormDialog 
+          open={this.state.openEosForm} 
+          handleClose={this.handleCloseEosForm}
+          baseCurrency="EOS"
+          quoteCurrency="CUSD"
+        />
+        <SwapAccounts />
+        <SwapBalances />
         </div>
     )
   }

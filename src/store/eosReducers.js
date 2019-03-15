@@ -10,7 +10,7 @@ export const initialState = {
     pending_burns: [],
     pending_transfers: [],
     scatter_state:'',
-  },
+  }
 };
 
 // User Eos account state

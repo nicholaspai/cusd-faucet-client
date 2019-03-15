@@ -14,13 +14,13 @@ import { recoverMessageSigner } from '../../eth_services/recoverMessageSigner'
 
 // EOS services
 import {Api} from 'eosjs';
-import { rpc, EOS_NETWORK } from '../../eos_services/getDefaultEosJS'
+import { rpc, EOS_NETWORK, rpcMainnet, EOS_NETWORK_MAINNET } from '../../eos_services/getDefaultEosJS'
 
 // Redux state
 import { connect } from "react-redux";
 import { ethActions } from "../../store/ethActions";
 import { eosActions } from "../../store/eosActions";
-import { globalActions } from "../../store/globalActions";
+import { globalActions, PAGES } from "../../store/globalActions";
 import { tronActions } from "../../store/tronActions"
 import SelectAccountEthereum from "./SelectAccountEthereum"
 
@@ -32,7 +32,8 @@ const mapState = state => ({
   web3: state.global.web3,
   eth_accounts: state.accounts.eth_accounts,
   tronWeb: state.global.tronWeb,
-  scatter_state: state.eos.scatter_state
+  scatter_state: state.eos.scatter_state,
+  page: state.global.page
 })
 
 const mapDispatch = dispatch => ({
@@ -103,7 +104,36 @@ class LoginWeb3 extends Component {
       this.props.setEosName(account.name)
     }
   }
+  handleClick_LoginMenu_Eos_Mainnet = async () => {
+    if (!this.props.scatter_state) { return; }
+    if (this.props.scatter_state.identity) {
+      // User already signed in, forget their previous identity
+      await this.props.scatter_state.logout()
+    } 
+    
+    // Now, request user to connect their identity for app usage
+    // After a user has approved giving you permission to access their Identity you no longer have to call getIdentity() if the user refreshes the page. 
+    // Instead you can check if an Identity exists on the scatter object itself. 
+    // This also means that you don't have to save the Identity within your shared 
+    // services along-side your Scatter reference, 
+    // you can simply save your Scatter reference and 
+    // pull the identity from within it.
+    //
+    // n.b. this is the reason why we call logout() on each button press to allow user to switch their identity
+    let identity = await this.props.scatter_state.login({ accounts: [EOS_NETWORK_MAINNET]})
+    if (!identity) { return console.error(`No Scatter identity found on this network`)}
 
+    const account = this.props.scatter_state.identity.accounts.find(x => x.blockchain === 'eos');
+    if (account && account.name) {
+      // Create eosJS client object
+      const eos = this.props.scatter_state.eos(EOS_NETWORK_MAINNET, Api, {rpc:rpcMainnet, beta3:true})
+      console.log(await eos.rpc.get_info())
+      this.props.setEOS(eos)
+      // Save user's account name (full account details are in account)
+      this.props.setEosName(account.name)
+    }
+  }
+  
   /** 
       Ethereum Login Handlers:
       There are multiple choices for connecting to the Ethereum network
@@ -184,11 +214,10 @@ class LoginWeb3 extends Component {
 
   render() {
     const { anchorEl, openSelectDialog } = this.state;
-    const { network } = this.props;
+    const { network, page } = this.props;
     return (
-        
         <div>
-          { network === 0 ? 
+          { page === PAGES.MAIN && network === 0 ? 
             <Button
                 aria-owns={anchorEl ? 'simple-menu' : undefined}
                 aria-haspopup="true"
@@ -200,7 +229,7 @@ class LoginWeb3 extends Component {
                 Sign In to Ethereum
             </Button>
             :""}
-          { network === 1 ? 
+          { page === PAGES.MAIN && network === 1 ? 
             <Button
                 aria-owns={anchorEl ? 'simple-menu' : undefined}
                 aria-haspopup="true"
@@ -212,7 +241,7 @@ class LoginWeb3 extends Component {
                 Sign In to EOS
             </Button>
             :""}
-          { network === 2 ? 
+          { page === PAGES.MAIN && network === 2 ? 
             <Button
                 onClick={this.handleClick_LoginMenu_Tron}
                 variant="contained"
@@ -221,6 +250,18 @@ class LoginWeb3 extends Component {
                 Sign In to Tron
             </Button>
             :""}
+          { page === PAGES.SWAP ? (
+            <Button
+                aria-owns={anchorEl ? 'simple-menu' : undefined}
+                aria-haspopup="true"
+                onClick={this.handleClick_LoginMenu_Eos_Mainnet}
+                disabled={this.state.signing_in}
+                variant="contained"
+                color="primary"
+            >
+                Sign In to EOS Mainnet
+            </Button>
+          ):""}
             {/* Ethereum Login options */}
             <Menu
                 id="simple-menu"
@@ -233,9 +274,7 @@ class LoginWeb3 extends Component {
                 <MenuItem onClick={this.logout}>Logout</MenuItem>
             </Menu>
             <SelectAccountEthereum open={openSelectDialog} onCloseHandler={this.closeSelectDialog}/>
-        
         </div>
-        
     );
   }
 }
