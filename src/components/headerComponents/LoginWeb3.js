@@ -44,7 +44,7 @@ const mapDispatch = dispatch => ({
   setScatterState: string => dispatch(eosActions.setScatterState(string)),
 });
 
-class LoginEthereum extends Component {
+class LoginWeb3 extends Component {
   constructor(props) {
     super(props);
 
@@ -56,7 +56,7 @@ class LoginEthereum extends Component {
   }
 
   /** ASK USER TO SELECT LOGIN METHOD FOR ETHEREUM */
-  handleClick_LoginMenu = event => {
+  handleClick_LoginMenu_Ethereum = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
@@ -104,7 +104,10 @@ class LoginEthereum extends Component {
     }
   }
 
-  /** LOGIN HANDLERS */
+  /** 
+      Ethereum Login Handlers:
+      There are multiple choices for connecting to the Ethereum network
+   */
   // Ask user to authenticate their keypair
   loginMetaMask = async () => {
     this.setState({
@@ -185,11 +188,11 @@ class LoginEthereum extends Component {
     return (
         
         <div>
-          { network == 0 ? 
+          { network === 0 ? 
             <Button
                 aria-owns={anchorEl ? 'simple-menu' : undefined}
                 aria-haspopup="true"
-                onClick={this.handleClick_LoginMenu}
+                onClick={this.handleClick_LoginMenu_Ethereum}
                 disabled={this.state.signing_in}
                 variant="contained"
                 color="primary"
@@ -197,7 +200,7 @@ class LoginEthereum extends Component {
                 Sign In to Ethereum
             </Button>
             :""}
-          { network == 1 ? 
+          { network === 1 ? 
             <Button
                 aria-owns={anchorEl ? 'simple-menu' : undefined}
                 aria-haspopup="true"
@@ -209,7 +212,7 @@ class LoginEthereum extends Component {
                 Sign In to EOS
             </Button>
             :""}
-          { network == 2 ? 
+          { network === 2 ? 
             <Button
                 onClick={this.handleClick_LoginMenu_Tron}
                 variant="contained"
@@ -218,6 +221,7 @@ class LoginEthereum extends Component {
                 Sign In to Tron
             </Button>
             :""}
+            {/* Ethereum Login options */}
             <Menu
                 id="simple-menu"
                 anchorEl={anchorEl}
@@ -236,8 +240,8 @@ class LoginEthereum extends Component {
   }
 }
 
-LoginEthereum.propTypes = {
+LoginWeb3.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default connect(mapState, mapDispatch)(withRoot(withStyles(styles)(LoginEthereum)));
+export default connect(mapState, mapDispatch)(withRoot(withStyles(styles)(LoginWeb3)));

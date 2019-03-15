@@ -50,6 +50,11 @@ class HeaderMenu extends React.Component {
       this.props.setPage(PAGES.INFO)
       this.handleClose()
   }
+
+  goToSwapPage = () => {
+      this.props.setPage(PAGES.SWAP)
+      this.handleClose()
+  }
   /** END PAGE SELECTOR */
 
 
@@ -84,6 +89,7 @@ class HeaderMenu extends React.Component {
                   <MenuItem onClick={this.goToMainPage}>Home</MenuItem>
                   <MenuItem onClick={this.goToAccountsPage}>Accounts</MenuItem>
                   <MenuItem onClick={this.goToInfoPage}>Information</MenuItem>
+                  <MenuItem onClick={this.goToSwapPage}><b>beta</b> Swap</MenuItem>
                 </Menu>
         </div>
 

@@ -30,7 +30,6 @@ const mapState = state => ({
   web3_network: state.global.web3_network,
   network: state.global.network,
   eos_name: state.eos.user_name,
-  scatter_state: state.eos.scatter_state,
   tron_address: state.tron.user_address
 });
 
@@ -54,7 +53,6 @@ class Accounts extends Component {
       web3_network,
       network,
       eos_name,
-      scatter_state
     } = this.props;
 
     // ETH
@@ -66,7 +64,7 @@ class Accounts extends Component {
     
     return (
         <Paper className={classes.paper} elevation={3}>
-            {network == 0 && (
+            {network === 0 && (
             <Typography> 
                 You are connected to Ethereum ({networkName ? networkName : ""}) as: 
                     {eth_address ? (<a
@@ -77,7 +75,7 @@ class Accounts extends Component {
                     {user_short}...
                     </a>) : ("")}
             </Typography>)}
-            {network == 1 && (
+            {network === 1 && (
             <Typography> 
                 You are connected to EOS Jungle testnet as: {eos_name ? (<a
                     href={"https://jungle.bloks.io/account/" + eos_name}
@@ -87,7 +85,7 @@ class Accounts extends Component {
                     {eos_name}
                     </a>) : ("")}
               </Typography>)}
-            {network == 2 && (
+            {network === 2 && (
             <Typography> 
                 You are connected to Tron (Shasta) as: 
                     {tron_address ? (<a

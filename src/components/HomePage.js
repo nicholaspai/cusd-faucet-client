@@ -52,28 +52,28 @@ class HomePage extends Component {
             {/* USER IDENTITY  */}
               <Accounts /> 
             {/* MINT  */
-              network == 0 ?
+              network === 0 ?
               <MintButton /> : 
-              ( network == 1 ? <EosMint/> :
-                (network == 2 ? <TronMint /> : "" )
+              ( network === 1 ? <EosMint/> :
+                (network === 2 ? <TronMint /> : "" )
               )
             }
             {/* USER BALANCES  */
-              network == 0 ?
+              network === 0 ?
               <Balances /> : <Balances />
             }
             {/* TRANSFER */
-              network == 0 ?
+              network === 0 ?
               <TransferButton/> : 
-              ( network == 1 ? <EosTransfer/> :
-                (network == 2 ? <TronTransfer /> : "" )
+              ( network === 1 ? <EosTransfer/> :
+                (network === 2 ? <TronTransfer /> : "" )
               )
             }
             {/* BURN */
-              network == 0 ?
+              network === 0 ?
               <BurnButton /> : 
-              ( network == 1 ? <EosBurn/> :
-                (network == 2 ? <TronBurn /> : "" )
+              ( network === 1 ? <EosBurn/> :
+                (network === 2 ? <TronBurn /> : "" )
               )
             }
           </div>

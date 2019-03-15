@@ -14,7 +14,8 @@ export const TYPES = {
 export const PAGES = {
   MAIN: 0,
   ACCOUNTS: 1,
-  INFO: 2
+  INFO: 2,
+  SWAP: 3,
 }
 
 // Network options for home page

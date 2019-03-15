@@ -155,11 +155,11 @@ class Networks extends Component {
   // @dev Put anything that you want to continually compute here
   timer = async () => {
 
-    if (this.props.network == "1"){      
+    if (this.props.network === 1){      
       await this._checkScatterConnection()
-    } else if (this.props.network == "2") {
+    } else if (this.props.network === 2) {
       await this._checkTronConnection()
-    } else if (this.props.network == "0") {
+    } else if (this.props.network === 0) {
       await this._checkEthereumConnection()
     }
   }
@@ -172,20 +172,22 @@ class Networks extends Component {
 
 
   handleChange = name => event => {
-    var current = event.target.value;
+    var current = parseFloat(event.target.value);
+
+    // @dev network must be of type Number
     this.props.setNetwork(current);
-    if (current === "1"){
+    if (current === 1){
       //EOS
     } 
-    else if (current === "0") {
+    else if (current === 0) {
       //ETH
     }
-    else if (current === "2") {
-      //TRON  
-      }
-      else {
-        throw (Error("No network"))
-      } 
+    else if (current === 2) {
+    //TRON  
+    }
+    else {
+      throw (Error(`Invalid network provided: ${current}`))
+    } 
 
   };
 
@@ -203,10 +205,10 @@ class Networks extends Component {
                 <Select
                     native
                     value={this.state.age}
-                    onChange={this.handleChange('age')}
+                    onChange={this.handleChange('network')}
                     inputProps={{
-                    name: 'age',
-                    id: 'age-native-simple',
+                    name: 'network',
+                    id: 'network-native-simple',
                     }}
                 >
                     <option value={NETWORKS.ETH}>ETH (Ropsten)</option>

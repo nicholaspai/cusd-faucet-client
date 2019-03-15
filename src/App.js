@@ -8,13 +8,18 @@ import { withStyles } from '@material-ui/core/styles';
 
 // Redux state
 import { connect } from "react-redux";
-import { globalActions, PAGES } from "./store/globalActions";
+import { PAGES } from "./store/globalActions";
+
+/** @dev How to add new pages to the Faucet */
+// 1) Add the page mapping in store/globalActions.PAGES
+// 2) Add the page option logic and component to the header menu in components/headerComponents/HeaderMenu
 
 // Core Wallet Pages + Header
 import Header from './components/Header'
 import HomePage from './components/HomePage'
 import AccountsPage from './components/AccountsPage'
 import InformationPage from './components/InformationPage'
+import SwapPage from './components/SwapPage'
 
 const styles = theme => ({
   root: {
@@ -29,6 +34,10 @@ const styles = theme => ({
     paddingTop: theme.spacing.unit * 5,
   },
   accounts: {
+    textAlign: 'center',
+    paddingTop: theme.spacing.unit * 5,
+  },
+  swap: {
     textAlign: 'center',
     paddingTop: theme.spacing.unit * 5,
   }
@@ -77,6 +86,11 @@ class App extends Component {
         { page === PAGES.ACCOUNTS ? (
           <div className={classes.accounts}>
             <AccountsPage />
+          </div>
+        ): ("")}
+        { page === PAGES.SWAP ? (
+          <div className={classes.swap}>
+            <SwapPage />
           </div>
         ): ("")}
       </div>

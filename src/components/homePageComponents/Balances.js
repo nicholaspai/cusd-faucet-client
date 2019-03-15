@@ -115,12 +115,12 @@ class Balances extends Component {
   timer = async () => {
 
 
-    if (this.props.network == 0){
+    if (this.props.network === 0){
       // Update user balance
       await this._updateUserBalance(this.props.eth_address)
-    } else if (this.props.network == 1) {
+    } else if (this.props.network === 1) {
       await this._updateEosBalance(this.props.eos_client)
-    } else if (this.props.network == 2) {
+    } else if (this.props.network === 2) {
       // @dev Tron Smart contracts deal with Hex addresses, like Solidity
       await this._updateTronBalance(this.props.tron_address.hex)
     }
@@ -142,11 +142,11 @@ class Balances extends Component {
     } = this.props;
 
     let balance
-    if (network == 0) {
+    if (network === 0) {
       balance = balance_cusd
-    } else if (network == 1) {
+    } else if (network === 1) {
       balance = eos_balance_cusd
-    } else if (network == 2) {
+    } else if (network === 2) {
       balance = balance_cusd_tron
     }
 

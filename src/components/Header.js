@@ -16,7 +16,7 @@ import { globalActions, PAGES } from '../store/globalActions'
 
 // Custom Components
 import HeaderMenu from './headerComponents/HeaderMenu'
-import LoginEthereum from './headerComponents/LoginEthereum'
+import LoginWeb3 from './headerComponents/LoginWeb3'
 
 const styles = theme => ({
   grow: {
@@ -70,11 +70,11 @@ class Header extends Component {
                   🍶
                   </span>
                 </Button> 
-                {network == 0 && short_name}
-                {network == 2 && short_name_tron}
+                {network === 0 && short_name}
+                {network === 2 && short_name_tron}
             </Typography>
             {/* REQUEST USER SIGNATURE */}
-            <LoginEthereum />
+            <LoginWeb3 />
           </Toolbar>
         </AppBar>
     );
