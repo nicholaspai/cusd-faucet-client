@@ -77,6 +77,7 @@ class LoginWeb3 extends Component {
   }
 
   /** Request user's EOS identity through Scatter */
+  // TODO: Need to find a way to refactor these methods, but need to be able to pass in a param to an onClick handler in the DOM
   handleClick_LoginMenu_Eos = async () => {
     if (!this.props.scatter_state) { return; }
     if (this.props.scatter_state.identity) {
@@ -93,15 +94,18 @@ class LoginWeb3 extends Component {
     // pull the identity from within it.
     //
     // n.b. this is the reason why we call logout() on each button press to allow user to switch their identity
-    let identity = await this.props.scatter_state.login({ accounts: [EOS_NETWORK]})
+    const NETWORK = EOS_NETWORK
+    let identity = await this.props.scatter_state.login({ accounts: [NETWORK]})
     if (!identity) { return console.error(`No Scatter identity found on this network`)}
 
     const account = this.props.scatter_state.identity.accounts.find(x => x.blockchain === 'eos');
     if (account && account.name) {
       // Create eosJS client object
-      const eos = this.props.scatter_state.eos(EOS_NETWORK, Api, {rpc, beta3:true})
+      const RPC = rpc
+      const eos = this.props.scatter_state.eos(EOS_NETWORK, Api, {rpc:RPC, beta3:true})
       this.props.setEOS(eos)
-      this.props.setEosNetwork("jungle")
+      const NETWORK_NAME = "jungle"
+      this.props.setEosNetwork(NETWORK_NAME)
       // Save user's account name (full account details are in account)
       this.props.setEosName(account.name)
     }
@@ -122,15 +126,18 @@ class LoginWeb3 extends Component {
     // pull the identity from within it.
     //
     // n.b. this is the reason why we call logout() on each button press to allow user to switch their identity
-    let identity = await this.props.scatter_state.login({ accounts: [EOS_NETWORK_MAINNET]})
+    const NETWORK = EOS_NETWORK_MAINNET
+    let identity = await this.props.scatter_state.login({ accounts: [NETWORK]})
     if (!identity) { return console.error(`No Scatter identity found on this network`)}
 
     const account = this.props.scatter_state.identity.accounts.find(x => x.blockchain === 'eos');
     if (account && account.name) {
       // Create eosJS client object
-      const eos = this.props.scatter_state.eos(EOS_NETWORK_MAINNET, Api, {rpc:rpcMainnet, beta3:true})
+      const RPC = rpcMainnet
+      const eos = this.props.scatter_state.eos(EOS_NETWORK_MAINNET, Api, {rpc:RPC, beta3:true})
       this.props.setEOS(eos)
-      this.props.setEosNetwork("mainnet")
+      const NETWORK_NAME = "mainnet"
+      this.props.setEosNetwork(NETWORK_NAME)
       // Save user's account name (full account details are in account)
       this.props.setEosName(account.name)
     }
