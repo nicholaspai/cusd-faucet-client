@@ -60,7 +60,7 @@ class SwapPage extends Component {
                 <b>(Beta)</b> Swap CUSD with any cryptocurrency on our supported networks.
             </Typography>
             <Button variant="contained" className={classes.section} onClick={this.handleOpenEosForm}> 
-                EOS (requires a mainnet connection)
+                EOS
             </Button>
         </Paper>
         <SwapFormDialog 

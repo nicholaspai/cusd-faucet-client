@@ -153,6 +153,61 @@ const roundUp = (num, precision) => {
     return Math.ceil(num * precision) / precision
 }
 
+export const postBid = async function (api, user, quantity, price, symbol, code) {
+    if (
+        !symbol ||
+        !code ||
+        !api || 
+        !user ||
+        !quantity ||
+        !price ||
+        quantity <= 0 ||
+        price <= 0) 
+    {
+        console.error(`invalid params to dexeos::postBid`)
+        return
+    }
+    
+    let total
+    try {
+        // DEXEOS max precision = 8
+        price = await roundUp(price, 8)
+        const memo = {
+            "type":"buy",
+            "quantity": quantity,
+            "price": price, 
+            "code": code, 
+            "symbol": symbol
+          };
+
+          let transferSymbol = "EOS"
+          total = Math.ceil(parseFloat((price * quantity * 10000).toFixed(12))) / 10000
+          total = total.toFixed(4)
+          total += " " + transferSymbol; // quantity*price is total EOS we transfer for buys
+
+          const resultWithConfig = await api.transact({
+            actions: [{
+                account: "eosio.token",
+                name: "transfer",
+                authorization: [{
+                    actor: user,
+                    permission: 'active',
+                }],
+                data: {
+                    from: user,
+                    to: "dexeoswallet",
+                    quantity: total,
+                    memo: JSON.stringify(memo)
+                }
+            }]
+        }, transactionOptions)
+        alert(`...successfully posted CUSD-EOS bid! [quantity: ${total}, price: ${price}, tx_id: ${resultWithConfig.transaction_id}]`)
+        return resultWithConfig
+    } catch (err) {
+        alert(`...posting bid failed [quantity: ${total}, price: ${price}]`)
+    }
+}
+
 export const postAsk = async function (api, user, quantity, price, symbol, code) {
     // Check params
     if (
@@ -199,11 +254,10 @@ export const postAsk = async function (api, user, quantity, price, symbol, code)
                     memo: JSON.stringify(memo)
                 }
             }]
-        }, 
-        transactionOptions)
-        console.log(`...successfully posted offer! [quantity: ${quantity}, price: ${price}, tx_id: ${resultWithConfig.transaction_id}]`)
+        }, transactionOptions)
+        alert(`...successfully posted CUSD-EOS offer! [quantity: ${quantity}, price: ${price}, tx_id: ${resultWithConfig.transaction_id}]`)
         return resultWithConfig
     } catch (err) {
-        console.error(`...posting offer failed [quantity: ${quantity}, price: ${price}]`)
+        alert(`...posting offer failed [quantity: ${quantity}, price: ${price}]`)
     }
 }

@@ -20,7 +20,7 @@ import { eosActions } from "../../store/eosActions";
 import { globalActions } from "../../store/globalActions"
 
 // Exchange services, used to query market prices
-import { getInvertedInsideMarket, postAsk } from '../../exchange_services/dexeos'
+import { getInvertedInsideMarket, postAsk, postBid } from '../../exchange_services/dexeos'
 
 // Scatter client for EOS
 import ScatterJS from 'scatterjs-core';
@@ -49,7 +49,7 @@ const mapState = state => ({
   eos_name: state.eos.user_name,
   eos_api: state.global.eos_client,
   scatter_state: state.eos.scatter_state,
-
+  eos_network: state.eos.network
 });
 
 const mapDispatch = dispatch => ({
@@ -84,11 +84,12 @@ class SwapFormDialog extends Component {
 
   // @dev Put anything that you want to continually compute here
   timer = async () => {
-    await this._checkScatterConnection()
+    await this.checkScatterConnection()
+    await this.updateInsideMarket(this.state.orderAmountOfCusd, this.state.orderType)
   }
   
   /** Save Scatter object for the first time if possible */
-  _checkScatterConnection = async () => {
+  checkScatterConnection = async () => {
     if (this.props.scatter_state) {
       // Scatter already set
       return
@@ -108,51 +109,6 @@ class SwapFormDialog extends Component {
       return
     }
   }
-
-  /** Request user's EOS identity through Scatter */
-  // _loginEos = async () => {
-  //   if (!this.props.scatter_state) { return; }
-  //   if (this.props.scatter_state.identity) {
-  //     // User already signed in, forget their previous identity
-  //     // @dev: for simplicity, don't log out here. User can always just switch Pages and come back
-  //     // to the swap page to login
-  //     // await this.props.scatter_state.logout()
-
-  //     const account = this.props.scatter_state.identity.accounts.find(x => x.blockchain === 'eos');
-  //     if (account && account.name) {
-  //       // Create eosJS client object
-  //       let rpc = rpcMainnet
-  //       const eosMainnet = this.props.scatter_state.eos(EOS_NETWORK_MAINNET, Api, {rpc, beta3:true})
-  //       this.props.setEOS(eosMainnet)
-  //       // Save user's account name (full account details are in account)
-  //       this.props.setEosName(account.name)
-  //     }
-  //     return;
-  //   } 
-    
-  //   // Now, request user to connect their identity for app usage
-  //   // After a user has approved giving you permission to access their Identity you no longer have to call getIdentity() if the user refreshes the page. 
-  //   // Instead you can check if an Identity exists on the scatter object itself. 
-  //   // This also means that you don't have to save the Identity within your shared 
-  //   // services along-side your Scatter reference, 
-  //   // you can simply save your Scatter reference and 
-  //   // pull the identity from within it.
-  //   //
-  //   // n.b. this is the reason why we call logout() on each button press to allow user to switch their identity
-  //   let identity = await this.props.scatter_state.login({ accounts: [EOS_NETWORK_MAINNET]})
-  //   if (!identity) { return console.error(`No Scatter identity found on this network`)}
-
-  //   const account = this.props.scatter_state.identity.accounts.find(x => x.blockchain === 'eos');
-  //   if (account && account.name) {
-  //     // Create eosJS client object
-  //     let rpc = rpcMainnet
-  //     const eosMainnet = this.props.scatter_state.eos(EOS_NETWORK_MAINNET, Api, {rpc, beta3:true})
-  //     this.props.setEOS(eosMainnet)
-  //     // Save user's account name (full account details are in account)
-  //     this.props.setEosName(account.name)
-  //   }
-  // }
-
   componentWillUnmount = () => {
     // use intervalId from the state to clear the interval
     clearInterval(this.state.intervalId);
@@ -176,6 +132,12 @@ class SwapFormDialog extends Component {
     let contractCode = "stablecarbon"
     let eosjsApi = this.props.eos_api
     let eosjsAccount = this.props.eos_name
+    let eos_network = this.props.eos_network
+
+    if (eos_network !== "mainnet") {
+      alert('Please connect an EOS mainnet account to continue')
+      return;
+    }
 
     if (direction === "Buy") {
       // If customer wants to Buy EOS then they need to Sell CUSD quoted in EOS, 
@@ -184,49 +146,50 @@ class SwapFormDialog extends Component {
     } else if (direction === "Sell") {
       // If customer wants to Sell EOS then they need to Buy CUSD quoted in EOS, 
       // So they will post a Buy to Dexeos API
-
+      await postBid(eosjsApi, eosjsAccount, amount, price, quoteCurrency, contractCode)
     } 
+  }
+
+  updateInsideMarket = async (orderAmount, orderType) => {
+    this.getInsideMarketDexeos(orderAmount).then(insideMarket => {
+        let insideBid = insideMarket.bid
+        let insideAsk = insideMarket.ask
+
+        // If customer wants to buy, then need to find a willing seller
+        // If customer wants to sell, needs to sell to a willing buyer
+        if (orderType === "Buy") {
+          if (insideAsk) {
+            this.setState({
+              insideMarket: insideAsk
+            })
+          } else {
+            this.setState({
+              insideMarket: "order size too large"
+            })
+          }
+        } else if (orderType === "Sell") {
+          if (insideBid) {
+            this.setState({
+              insideMarket: insideBid
+            })
+          } else {
+            this.setState({
+              insideMarket: "order size too large"
+            })
+          }
+        }
+      })
   }
 
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value,
     });
-
-    // Calculate and set inside market on orderTypeChange:
-    if (name === "orderType") {
-      let orderAmount = this.state.orderAmountOfCusd
-      this.getInsideMarketDexeos(orderAmount).then(insideMarket => {
-        let insideBid = insideMarket.bid
-        let insideAsk = insideMarket.ask
-
-        // If customer wants to buy, then need to find a willing seller
-        // If customer wants to sell, needs to sell to a willing buyer
-        if (event.target.value === "Buy") {
-          if (insideAsk) {
-            this.setState({
-              insideMarket: insideAsk
-            })
-          } else {
-            alert('Market cannot fulfill this order amount, please try again soon')
-          }
-        } else if (event.target.value === "Sell") {
-          if (insideBid) {
-            this.setState({
-              insideMarket: insideBid
-            })
-          } else {
-            alert('Market cannot fulfill this order amount, please try again soon')
-          }
-        }
-      })
-    }
   };
 
-  handleSubmitEos = () => {
-    alert('Sign the order transaction using Scatter to complete your order!')
+  handleSubmitEos = async () => {
+    await this.postOrders(1/this.state.insideMarket, this.state.orderAmountOfCusd, this.state.orderType)
     this.props.handleClose()
-    this.postOrders(1/this.state.insideMarket, this.state.orderAmountOfCusd, this.state.orderType)
   }
 
   render() {
@@ -258,7 +221,10 @@ class SwapFormDialog extends Component {
           <DialogTitle id="form-dialog-title">{baseCurrency}/{quoteCurrency} Order details</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Almost there! To complete your order, just fill out a few details
+              Almost there! To complete your order, just fill out a few details. 
+              Ensure that you have the order type correct. 
+              If you select "Buy", then you are buying EOS by selling CUSD.
+              If you select "Sell", then you are selling EOS by buying CUSD.
             </DialogContentText>
             <form className={classes.container} noValidate autoComplete="off">
               <TextField

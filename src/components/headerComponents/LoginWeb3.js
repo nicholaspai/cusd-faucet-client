@@ -42,6 +42,7 @@ const mapDispatch = dispatch => ({
   setTronAddress: address => dispatch(tronActions.setTronAddress(address)),
   setEOS:  client => dispatch(globalActions.setEOS(client)),
   setEosName: name => dispatch(eosActions.setEosName(name)),
+  setEosNetwork: network => dispatch(eosActions.setEosNetwork(network)),
   setScatterState: string => dispatch(eosActions.setScatterState(string)),
 });
 
@@ -100,6 +101,7 @@ class LoginWeb3 extends Component {
       // Create eosJS client object
       const eos = this.props.scatter_state.eos(EOS_NETWORK, Api, {rpc, beta3:true})
       this.props.setEOS(eos)
+      this.props.setEosNetwork("jungle")
       // Save user's account name (full account details are in account)
       this.props.setEosName(account.name)
     }
@@ -127,8 +129,8 @@ class LoginWeb3 extends Component {
     if (account && account.name) {
       // Create eosJS client object
       const eos = this.props.scatter_state.eos(EOS_NETWORK_MAINNET, Api, {rpc:rpcMainnet, beta3:true})
-      console.log(await eos.rpc.get_info())
       this.props.setEOS(eos)
+      this.props.setEosNetwork("mainnet")
       // Save user's account name (full account details are in account)
       this.props.setEosName(account.name)
     }

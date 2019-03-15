@@ -10,6 +10,7 @@ export const initialState = {
     pending_burns: [],
     pending_transfers: [],
     scatter_state:'',
+    network:'',
   }
 };
 
@@ -44,7 +45,10 @@ export const eos = (state = initialState.eos, action) => {
       return Object.assign({}, state, {
         scatter_state: action.string
       });
-
+    case TYPES.SET_EOS_NETWORK:
+      return Object.assign({}, state, {
+        network: action.string
+      });
     default:
       return state;
   }
