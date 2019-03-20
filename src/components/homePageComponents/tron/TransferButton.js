@@ -64,7 +64,7 @@ class TransferButton extends Component {
   handleClick_Transfer = async () => {
     let tronWeb = this.props.tronWeb
     if (tronWeb) {
-        let amountToTransfer = (parseFloat(this.state.amount_to_transfer)*(10**18)).toString()
+        let amountToTransfer = (window.BigInt(parseFloat(this.state.amount_to_transfer)*(10**18))).toString()
         let to = this.state.transfer_to
         let to_base58 = tronWeb.address.fromHex(to)
         let verified = tronWeb.isAddress(to) && tronWeb.isAddress(to_base58)
