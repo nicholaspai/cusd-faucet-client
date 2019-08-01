@@ -10,7 +10,7 @@ export const getCUSD = async (tronWeb) => {
 
     try {
         let contract_base58_address = tronWeb.address.fromHex(ADDRESS) 
-        let cusd = await tronWeb.contract().at(contract_base58_address)
+        let cusd = await tronWeb.contract().at('TQF3guBM1T8JWgLX9M6B3xTBJEoew1bfBp')
         return cusd
     } catch (err) {
         throw err
