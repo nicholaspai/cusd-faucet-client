@@ -11,12 +11,15 @@ import Typography from '@material-ui/core/Typography'
 import { connect } from "react-redux";
 import { ethActions } from "../../store/ethActions";
 import { eosActions } from "../../store/eosActions";
+import { telosActions } from "../../store/telosActions";
 import { tronActions } from "../../store/tronActions";
 
 // WEB3 Services
 import { updateUserBalance } from '../../eth_services/updateUserBalance'
 // EOS Services
 import { updateEosBalance } from '../../eos_services/updateEosBalance'
+// TELOS Services
+import { updateTelosBalance } from '../../telos_services/updateTelosBalance'
 // Tron Services
 import { updateTronBalance } from '../../tron_services/updateTronBalance'
 
@@ -42,6 +45,9 @@ const mapState = state => ({
   eos_client: state.global.eos_client,
   eos_name: state.eos.user_name,
   eos_balance_cusd: state.eos.balance_cusd,
+  telos_client: state.global.telos_client,
+  telos_name: state.telos.user_name,
+  telos_balance_cusd: state.telos.balance_cusd,
   network: state.global.network,
   tron_address: state.tron.user_address,
   tronWeb: state.global.tronWeb,
@@ -51,6 +57,7 @@ const mapState = state => ({
 const mapDispatch = dispatch => ({
   setEthBalance: balance => dispatch(ethActions.setEthBalance(balance)),
   setEosBalance: balance => dispatch(eosActions.setEosBalance(balance)),
+  setTelosBalance: balance => dispatch(telosActions.setTelosBalance(balance)),
   setTronBalance: balance => dispatch(tronActions.setTronBalance(balance)),
 });
 
@@ -89,6 +96,17 @@ class Balances extends Component {
       }
   }
 
+  // On Telos:
+  _updateTelosBalance = async () => {
+    if (this.props.telos_name) { 
+      let oldBalance = this.props.telos_balance_cusd
+      let newBalance = await updateTelosBalance(this.props.telos_name)
+      if (oldBalance !== newBalance){
+       this.props.setTelosBalance(newBalance)
+     }
+    }
+}
+
   // On Tron:
   _updateTronBalance = async (user) => {
     let tronWeb = this.props.tronWeb
@@ -123,6 +141,8 @@ class Balances extends Component {
     } else if (this.props.network === 2) {
       // @dev Tron Smart contracts deal with Hex addresses, like Solidity
       await this._updateTronBalance(this.props.tron_address.hex)
+    } else if (this.props.network === 3) {
+      await this._updateTelosBalance()
     }
   }
 
@@ -137,6 +157,7 @@ class Balances extends Component {
       classes, 
       balance_cusd,
       eos_balance_cusd,
+      telos_balance_cusd,
       balance_cusd_tron,
       network
     } = this.props;
@@ -148,6 +169,8 @@ class Balances extends Component {
       balance = eos_balance_cusd
     } else if (network === 2) {
       balance = balance_cusd_tron
+    } else if (network === 3) {
+      balance = telos_balance_cusd
     }
 
     return (

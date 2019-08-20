@@ -9,6 +9,7 @@ import Networks from './homePageComponents/Networks'
 import Accounts from './homePageComponents/Accounts'
 import MintButton from './homePageComponents/MintButton'
 import EosMint from './homePageComponents/eos/MintButton'
+import TelosMint from './homePageComponents/telos/MintButton'
 import TronMint from './homePageComponents/tron/MintButton'
 import Balances from './homePageComponents/Balances'
 import TransferButton from './homePageComponents/TransferButton'
@@ -55,7 +56,9 @@ class HomePage extends Component {
               network === 0 ?
               <MintButton /> : 
               ( network === 1 ? <EosMint/> :
-                (network === 2 ? <TronMint /> : "" )
+                (network === 2 ? <TronMint /> : 
+                  (network === 3 ? <TelosMint /> : "" )
+                )
               )
             }
             {/* USER BALANCES  */

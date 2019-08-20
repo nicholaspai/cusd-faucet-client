@@ -30,6 +30,7 @@ const mapState = state => ({
   web3_network: state.global.web3_network,
   network: state.global.network,
   eos_name: state.eos.user_name,
+  telos_name: state.telos.user_name,
   tron_address: state.tron.user_address
 });
 
@@ -53,6 +54,7 @@ class Accounts extends Component {
       web3_network,
       network,
       eos_name,
+      telos_name,
     } = this.props;
 
     // ETH
@@ -96,6 +98,17 @@ class Accounts extends Component {
                     {user_short_tron}...
                     </a>) : ("")}
             </Typography>
+            )}
+            {network === 3 && (
+            <Typography> 
+                You are connected to TELOS testnet as: {telos_name ? (<a
+                    href={"https://telos-test.bloks.io/account/" + telos_name}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >
+                    {telos_name}
+                    </a>) : ("")}
+              </Typography>
             )}
         </Paper>
     )

@@ -5,6 +5,7 @@ export const initialState = {
   account: {
       eth_accounts: [],
       eos_accounts: [],
+      telos_accounts: [],
   },
 };
 
@@ -22,6 +23,10 @@ export const accounts = (state = initialState.account, action) => {
     case TYPES.ADD_EOS_ACCOUNT:
       return Object.assign({}, state, {
         eos_accounts: state.eos_accounts.concat(action.object)
+      });
+    case TYPES.ADD_TELOS_ACCOUNT:
+      return Object.assign({}, state, {
+        eos_accounts: state.telos_accounts.concat(action.object)
       });
     default:
       return state;

@@ -74,6 +74,7 @@ class BurnButton extends Component {
                 burning: false
             })
         } catch (err) {
+            console.error(err)
             this.setState({
                 burning: false
             })

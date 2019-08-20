@@ -13,6 +13,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 import { connect } from "react-redux";
 import { globalActions, NETWORKS } from "../../store/globalActions";
 import { eosActions } from "../../store/eosActions";
+import { telosActions } from "../../store/telosActions";
 import { tronActions } from "../../store/tronActions";
 
 //scatter
@@ -40,17 +41,19 @@ const styles = theme => ({
 // Redux mappings
 const mapState = state => ({
   eos_client: state.global.eos_client,
+  eos_client: state.global.telos_client,
   network: state.global.network,
   scatter_state: state.eos.scatter_state,
   tronWeb: state.global.tronWeb,
   web3: state.global.web3,
-
 });
 
 const mapDispatch = dispatch => ({
   setNetwork: NETWORK => dispatch(globalActions.setNetwork(NETWORK)),
   setEOS:  client => dispatch(globalActions.setEOS(client)),
+  setTELOS:  client => dispatch(globalActions.setTELOS(client)),
   setEosName: name => dispatch(eosActions.setEosName(name)),
+  setTelosName: name => dispatch(telosActions.setTelosName(name)),
   setScatterState: string => dispatch(eosActions.setScatterState(string)),
   setTronAddress: string => dispatch(tronActions.setTronAddress(string)),
   setTronWeb: tronweb => dispatch(globalActions.setTronWeb(tronweb)),
@@ -155,7 +158,7 @@ class Networks extends Component {
   // @dev Put anything that you want to continually compute here
   timer = async () => {
 
-    if (this.props.network === 1){      
+    if (this.props.network === 1 || this.props.network === 3){      
       await this._checkScatterConnection()
     } else if (this.props.network === 2) {
       await this._checkTronConnection()
@@ -184,6 +187,9 @@ class Networks extends Component {
     }
     else if (current === 2) {
     //TRON  
+    }
+    else if (current === 3) {
+      //TELOS  
     }
     else {
       throw (Error(`Invalid network provided: ${current}`))
@@ -214,6 +220,7 @@ class Networks extends Component {
                     <option value={NETWORKS.ETH}>ETH (Ropsten)</option>
                     <option value={NETWORKS.EOS}>EOS (Jungle)</option>
                     <option value={NETWORKS.TRON}>TRON (Shasta)</option>
+                    <option value={NETWORKS.TELOS}>TELOS (Testnet)</option>
                 </Select>
             </FormControl>
         </Paper>
