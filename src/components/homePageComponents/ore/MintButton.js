@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography'
 
 // Redux state
 import { connect } from "react-redux";
-import { telosActions } from "../../../store/telosActions";
+import { oreActions } from "../../../store/oreActions";
 
 // Custom Components
 import BloksLogo from '../../helpers/BloksLogo'
@@ -19,7 +19,7 @@ import BloksLogo from '../../helpers/BloksLogo'
 import axios from 'axios'
 import config from "../../../config"
 const SERVER = config.server_url
-const MINTER_ENDPOINT = SERVER+"api/telos/faucet"
+const MINTER_ENDPOINT = SERVER+"api/ore/faucet"
 
 const styles = theme => ({
   paper: {
@@ -34,14 +34,14 @@ const styles = theme => ({
 
 // Redux mappings
 const mapState = state => ({
-  pending_mints: state.telos.pending_mints,
-  telos_client: state.global.telos_client,
-  telos_name: state.telos.user_name,
+  pending_mints: state.ore.pending_mints,
+  ore_client: state.global.ore_client,
+  ore_name: state.ore.user_name,
   network: state.global.network
 });
 
 const mapDispatch = dispatch => ({
-  concatPendingMints: newMint => dispatch(telosActions.concatPendingMints(newMint)),
+  concatPendingMints: newMint => dispatch(oreActions.concatPendingMints(newMint)),
 });
 
 class MintButton extends Component {
@@ -70,7 +70,7 @@ class MintButton extends Component {
   // Mint new CUSD to user
   handleClick_Mint = async () => {
     
-    let to = this.props.telos_name
+    let to = this.props.ore_name
     if (!to) { return; } // user not signed in
 	  let post_data = {
 	    user: to,
@@ -126,15 +126,15 @@ class MintButton extends Component {
     const { 
       classes, 
       pending_mints,
-      telos_name
+      ore_name
     } = this.props;
     
     return (
           <Paper className={classes.paper} elevation={3}>
             {/* MINT BUTTON  */}
-            { !telos_name ?
+            { !ore_name ?
               (
-                <Button disabled>Please sign in to get TLOSD!</Button>
+                <Button disabled>Please sign in to get ORED!</Button>
               )
               : (
                 <Button
@@ -143,7 +143,7 @@ class MintButton extends Component {
                   variant="contained"
                   color="secondary"
                 >
-                  Mint me {this.state.amount_to_mint} TLOSD
+                  Mint me {this.state.amount_to_mint} ORED
                 </Button>
               )
             }
@@ -158,11 +158,11 @@ class MintButton extends Component {
                 return (<Typography key={i}> 
                   <BloksLogo /> ({i}): 
                   <a
-                    href={"https://telos-test.bloks.io/transaction/" + pending_hash}
+                    href={"https://staging-explorer-dot-open-rights-exchange.appspot.com/transactions/" + pending_hash}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {" track on bloks.io"}
+                    {" track on block explorer"}
                   </a>
                 </Typography>)
               })}

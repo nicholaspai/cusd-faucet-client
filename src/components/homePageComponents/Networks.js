@@ -13,7 +13,6 @@ import InputLabel from '@material-ui/core/InputLabel'
 import { connect } from "react-redux";
 import { globalActions, NETWORKS } from "../../store/globalActions";
 import { eosActions } from "../../store/eosActions";
-import { telosActions } from "../../store/telosActions";
 import { tronActions } from "../../store/tronActions";
 
 //scatter
@@ -50,10 +49,6 @@ const mapState = state => ({
 
 const mapDispatch = dispatch => ({
   setNetwork: NETWORK => dispatch(globalActions.setNetwork(NETWORK)),
-  setEOS:  client => dispatch(globalActions.setEOS(client)),
-  setTELOS:  client => dispatch(globalActions.setTELOS(client)),
-  setEosName: name => dispatch(eosActions.setEosName(name)),
-  setTelosName: name => dispatch(telosActions.setTelosName(name)),
   setScatterState: string => dispatch(eosActions.setScatterState(string)),
   setTronAddress: string => dispatch(tronActions.setTronAddress(string)),
   setTronWeb: tronweb => dispatch(globalActions.setTronWeb(tronweb)),
@@ -190,6 +185,9 @@ class Networks extends Component {
     }
     else if (current === 3) {
       //TELOS  
+    } 
+    else if (current === 4) {
+      //ORE  
     }
     else {
       throw (Error(`Invalid network provided: ${current}`))
@@ -221,6 +219,7 @@ class Networks extends Component {
                     <option value={NETWORKS.EOS}>EOS (Jungle)</option>
                     <option value={NETWORKS.TRON}>TRON (Shasta)</option>
                     <option value={NETWORKS.TELOS}>TELOS (Testnet)</option>
+                    <option value={NETWORKS.ORE}>ORE (Staging)</option>
                 </Select>
             </FormControl>
         </Paper>

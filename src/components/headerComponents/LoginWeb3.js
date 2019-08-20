@@ -16,19 +16,21 @@ import { recoverMessageSigner } from '../../eth_services/recoverMessageSigner'
 import {Api} from 'eosjs';
 import { rpc, EOS_NETWORK, rpcMainnet, EOS_NETWORK_MAINNET } from '../../eos_services/getDefaultEosJS'
 import { rpcTelos, TELOS_NETWORK } from '../../telos_services/getDefaultEosJS'
+import { rpcOre, ORE_NETWORK } from '../../ore_services/getDefaultEosJS'
 
 // Redux state
 import { connect } from "react-redux";
 import { ethActions } from "../../store/ethActions";
 import { eosActions } from "../../store/eosActions";
 import { telosActions } from "../../store/telosActions";
+import { oreActions } from "../../store/oreActions";
 import { globalActions, PAGES } from "../../store/globalActions";
 import { tronActions } from "../../store/tronActions"
 import SelectAccountEthereum from "./SelectAccountEthereum"
 
 const styles = theme => ({
 });
-
+ 
 const mapState = state => ({
   network: state.global.network,
   web3: state.global.web3,
@@ -48,6 +50,9 @@ const mapDispatch = dispatch => ({
   setTELOS:  client => dispatch(globalActions.setTELOS(client)),
   setTelosName: name => dispatch(telosActions.setTelosName(name)),
   setTelosNetwork: network => dispatch(telosActions.setTelosNetwork(network)),
+  setORE:  client => dispatch(globalActions.setORE(client)),
+  setOreName: name => dispatch(oreActions.setOreName(name)),
+  setOreNetwork: network => dispatch(oreActions.setOreNetwork(network)),
   setScatterState: string => dispatch(eosActions.setScatterState(string)),
 });
 
@@ -115,7 +120,7 @@ class LoginWeb3 extends Component {
       this.props.setEosName(account.name)
     }
   }
-   /** Request user's EOS identity through Scatter */
+  /** Request user's EOS identity through Scatter */
   // TODO: Need to find a way to refactor these methods, but need to be able to pass in a param to an onClick handler in the DOM
   handleClick_LoginMenu_Telos = async () => {
     if (!this.props.scatter_state) { return; }
@@ -147,6 +152,40 @@ class LoginWeb3 extends Component {
       this.props.setTelosNetwork(NETWORK_NAME)
       // Save user's account name (full account details are in account)
       this.props.setTelosName(account.name)
+    }
+  }
+  /** Request user's EOS identity through Scatter */
+  // TODO: Need to find a way to refactor these methods, but need to be able to pass in a param to an onClick handler in the DOM
+  handleClick_LoginMenu_Ore = async () => {
+    if (!this.props.scatter_state) { return; }
+    if (this.props.scatter_state.identity) {
+      // User already signed in, forget their previous identity
+      await this.props.scatter_state.logout()
+    } 
+    
+    // Now, request user to connect their identity for app usage
+    // After a user has approved giving you permission to access their Identity you no longer have to call getIdentity() if the user refreshes the page. 
+    // Instead you can check if an Identity exists on the scatter object itself. 
+    // This also means that you don't have to save the Identity within your shared 
+    // services along-side your Scatter reference, 
+    // you can simply save your Scatter reference and 
+    // pull the identity from within it.
+    //
+    // n.b. this is the reason why we call logout() on each button press to allow user to switch their identity
+    const NETWORK = ORE_NETWORK
+    let identity = await this.props.scatter_state.login({ accounts: [NETWORK]})
+    if (!identity) { return console.error(`No Scatter identity found on this network`)}
+
+    const account = this.props.scatter_state.identity.accounts.find(x => x.blockchain === 'eos');
+    if (account && account.name) {
+      // Create eosJS client object
+      const RPC = rpcOre
+      const ore = this.props.scatter_state.eos(EOS_NETWORK, Api, {rpc:RPC, beta3:true})
+      this.props.setORE(ore)
+      const NETWORK_NAME = "staging"
+      this.props.setOreNetwork(NETWORK_NAME)
+      // Save user's account name (full account details are in account)
+      this.props.setOreName(account.name)
     }
   }
   handleClick_LoginMenu_Eos_Mainnet = async () => {
@@ -299,6 +338,18 @@ class LoginWeb3 extends Component {
                 color="primary"
             >
                 Sign In to TELOS
+            </Button>
+            :""}
+          { page === PAGES.MAIN && network === 4 ? 
+            <Button
+                aria-owns={anchorEl ? 'simple-menu' : undefined}
+                aria-haspopup="true"
+                onClick={this.handleClick_LoginMenu_Ore}
+                disabled={this.state.signing_in}
+                variant="contained"
+                color="primary"
+            >
+                Sign In to ORE
             </Button>
             :""}
           { page === PAGES.MAIN && network === 2 ? 

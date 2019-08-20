@@ -8,6 +8,7 @@ import { global } from "./globalReducers";
 import { accounts } from "./accountsReducers";
 import { eos } from "./eosReducers";
 import { telos } from "./telosReducers";
+import { ore } from "./oreReducers";
 import { tron } from "./tronReducers";
 
 
@@ -15,6 +16,7 @@ import { tron } from "./tronReducers";
 const rootReducer = combineReducers({
   eos,
   telos,
+  ore,
   tron,
   eth,
   global,

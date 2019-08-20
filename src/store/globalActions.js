@@ -8,7 +8,8 @@ export const TYPES = {
   SET_PASSWORD: "SET_PASSWORD",
   SET_NETWORK: "SET_NETWORK",
   SET_EOS: "SET_EOS",
-  SET_TELOS: "SET_TELOS"
+  SET_TELOS: "SET_TELOS",
+  SET_ORE: "SET_ORE"
 };
 
 // Page options for main site
@@ -24,7 +25,8 @@ export const NETWORKS = {
   ETH: 0,
   EOS: 1,
   TRON: 2,
-  TELOS: 3
+  TELOS: 3,
+  ORE: 4
 }
 
 export const globalActions = {
@@ -69,7 +71,13 @@ export const globalActions = {
     type:TYPES.SET_TELOS,
     object
   }),
-  // Set EOS object
+  // Set TELOS object
+
+  setORE: object => ({
+    type:TYPES.SET_ORE,
+    object
+  }),
+  // Set ORE object
 
   setTronWeb: object => ({
     type: TYPES.SET_TRONWEB,

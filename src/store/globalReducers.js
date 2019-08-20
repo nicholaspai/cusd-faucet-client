@@ -11,6 +11,7 @@ export const initialState = {
     network: NETWORKS.ETH,
     eos_client: '',
     telos_client: '',
+    ore_client: '',
     tronWeb: '',
   },
 };
@@ -49,6 +50,10 @@ export const global = (state = initialState.global, action) => {
     case TYPES.SET_TELOS:
       return Object.assign({}, state, {
         eos_client:action.object
+      });
+    case TYPES.SET_ORE:
+      return Object.assign({}, state, {
+        ore_client:action.object
       });
     case TYPES.SET_TRONWEB:
       return Object.assign({}, state, {

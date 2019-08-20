@@ -31,6 +31,7 @@ const mapState = state => ({
   network: state.global.network,
   eos_name: state.eos.user_name,
   telos_name: state.telos.user_name,
+  ore_name: state.ore.user_name,
   tron_address: state.tron.user_address
 });
 
@@ -55,6 +56,7 @@ class Accounts extends Component {
       network,
       eos_name,
       telos_name,
+      ore_name
     } = this.props;
 
     // ETH
@@ -107,6 +109,17 @@ class Accounts extends Component {
                     rel="noopener noreferrer"
                     >
                     {telos_name}
+                    </a>) : ("")}
+              </Typography>
+            )}
+            {network === 4 && (
+            <Typography> 
+                You are connected to ORE staging net as: {ore_name ? (<a
+                    href={"https://staging-explorer-dot-open-rights-exchange.appspot.com/accounts/" + ore_name}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >
+                    {ore_name}
                     </a>) : ("")}
               </Typography>
             )}

@@ -12,6 +12,7 @@ import { connect } from "react-redux";
 import { ethActions } from "../../store/ethActions";
 import { eosActions } from "../../store/eosActions";
 import { telosActions } from "../../store/telosActions";
+import { oreActions } from "../../store/oreActions";
 import { tronActions } from "../../store/tronActions";
 
 // WEB3 Services
@@ -20,6 +21,8 @@ import { updateUserBalance } from '../../eth_services/updateUserBalance'
 import { updateEosBalance } from '../../eos_services/updateEosBalance'
 // TELOS Services
 import { updateTelosBalance } from '../../telos_services/updateTelosBalance'
+// ORE Services
+import { updateOreBalance } from '../../ore_services/updateOreBalance'
 // Tron Services
 import { updateTronBalance } from '../../tron_services/updateTronBalance'
 
@@ -47,7 +50,10 @@ const mapState = state => ({
   eos_balance_cusd: state.eos.balance_cusd,
   telos_client: state.global.telos_client,
   telos_name: state.telos.user_name,
-  telos_balance_cusd: state.telos.balance_cusd,
+  telos_balance_tlosd: state.telos.balance_tlosd,
+  ore_client: state.global.ore_client,
+  ore_name: state.ore.user_name,
+  ore_balance_ored: state.ore.balance_ored,
   network: state.global.network,
   tron_address: state.tron.user_address,
   tronWeb: state.global.tronWeb,
@@ -58,6 +64,7 @@ const mapDispatch = dispatch => ({
   setEthBalance: balance => dispatch(ethActions.setEthBalance(balance)),
   setEosBalance: balance => dispatch(eosActions.setEosBalance(balance)),
   setTelosBalance: balance => dispatch(telosActions.setTelosBalance(balance)),
+  setOreBalance: balance => dispatch(oreActions.setOreBalance(balance)),
   setTronBalance: balance => dispatch(tronActions.setTronBalance(balance)),
 });
 
@@ -99,13 +106,24 @@ class Balances extends Component {
   // On Telos:
   _updateTelosBalance = async () => {
     if (this.props.telos_name) { 
-      let oldBalance = this.props.telos_balance_cusd
+      let oldBalance = this.props.telos_balance_tlosd
       let newBalance = await updateTelosBalance(this.props.telos_name)
       if (oldBalance !== newBalance){
        this.props.setTelosBalance(newBalance)
      }
     }
-}
+  }
+
+  // On Ore:
+  _updateOreBalance = async () => {
+    if (this.props.ore_name) { 
+      let oldBalance = this.props.ore_balance_ored
+      let newBalance = await updateOreBalance(this.props.ore_name)
+      if (oldBalance !== newBalance){
+       this.props.setOreBalance(newBalance)
+     }
+    }
+  }
 
   // On Tron:
   _updateTronBalance = async (user) => {
@@ -143,6 +161,8 @@ class Balances extends Component {
       await this._updateTronBalance(this.props.tron_address.hex)
     } else if (this.props.network === 3) {
       await this._updateTelosBalance()
+    } else if (this.props.network === 4) {
+      await this._updateOreBalance()
     }
   }
 
@@ -157,7 +177,8 @@ class Balances extends Component {
       classes, 
       balance_cusd,
       eos_balance_cusd,
-      telos_balance_cusd,
+      telos_balance_tlosd,
+      ore_balance_ored,
       balance_cusd_tron,
       network
     } = this.props;
@@ -170,7 +191,9 @@ class Balances extends Component {
     } else if (network === 2) {
       balance = balance_cusd_tron
     } else if (network === 3) {
-      balance = telos_balance_cusd
+      balance = telos_balance_tlosd
+    } else if (network === 4) {
+      balance = ore_balance_ored
     }
 
     return (
