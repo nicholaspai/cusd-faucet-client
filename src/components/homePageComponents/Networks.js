@@ -39,8 +39,6 @@ const styles = theme => ({
 
 // Redux mappings
 const mapState = state => ({
-  eos_client: state.global.eos_client,
-  eos_client: state.global.telos_client,
   network: state.global.network,
   scatter_state: state.eos.scatter_state,
   tronWeb: state.global.tronWeb,
@@ -153,7 +151,7 @@ class Networks extends Component {
   // @dev Put anything that you want to continually compute here
   timer = async () => {
 
-    if (this.props.network === 1 || this.props.network === 3){      
+    if (this.props.network === 1 || this.props.network === 3 || this.props.network === 4){      
       await this._checkScatterConnection()
     } else if (this.props.network === 2) {
       await this._checkTronConnection()

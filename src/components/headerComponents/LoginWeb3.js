@@ -112,7 +112,7 @@ class LoginWeb3 extends Component {
     if (account && account.name) {
       // Create eosJS client object
       const RPC = rpc
-      const eos = this.props.scatter_state.eos(EOS_NETWORK, Api, {rpc:RPC, beta3:true})
+      const eos = this.props.scatter_state.eos(NETWORK, Api, {rpc:RPC, beta3:true})
       this.props.setEOS(eos)
       const NETWORK_NAME = "jungle"
       this.props.setEosNetwork(NETWORK_NAME)
@@ -146,7 +146,7 @@ class LoginWeb3 extends Component {
     if (account && account.name) {
       // Create eosJS client object
       const RPC = rpcTelos
-      const telos = this.props.scatter_state.eos(EOS_NETWORK, Api, {rpc:RPC, beta3:true})
+      const telos = this.props.scatter_state.eos(NETWORK, Api, {rpc:RPC, beta3:true})
       this.props.setTELOS(telos)
       const NETWORK_NAME = "testnet"
       this.props.setTelosNetwork(NETWORK_NAME)
@@ -180,7 +180,7 @@ class LoginWeb3 extends Component {
     if (account && account.name) {
       // Create eosJS client object
       const RPC = rpcOre
-      const ore = this.props.scatter_state.eos(EOS_NETWORK, Api, {rpc:RPC, beta3:true})
+      const ore = this.props.scatter_state.eos(NETWORK, Api, {rpc:RPC, beta3:true})
       this.props.setORE(ore)
       const NETWORK_NAME = "staging"
       this.props.setOreNetwork(NETWORK_NAME)
