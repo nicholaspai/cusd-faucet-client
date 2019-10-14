@@ -32,6 +32,7 @@ const mapState = state => ({
   eos_name: state.eos.user_name,
   telos_name: state.telos.user_name,
   ore_name: state.ore.user_name,
+  harmony_name: state.harmony.user_name,
   tron_address: state.tron.user_address
 });
 
@@ -56,7 +57,8 @@ class Accounts extends Component {
       network,
       eos_name,
       telos_name,
-      ore_name
+      ore_name,
+      harmony_name
     } = this.props;
 
     // ETH
@@ -120,6 +122,17 @@ class Accounts extends Component {
                     rel="noopener noreferrer"
                     >
                     {ore_name}
+                    </a>) : ("")}
+              </Typography>
+            )}
+            {network === 5 && (
+            <Typography> 
+                You are connected to HARMONY test net as: {harmony_name ? (<a
+                    href={"https://explorer.testnet.harmony.one/#/address/" + harmony_name}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >
+                    {harmony_name}
                     </a>) : ("")}
               </Typography>
             )}

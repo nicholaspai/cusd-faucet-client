@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 import { globalActions, NETWORKS } from "../../store/globalActions";
 import { eosActions } from "../../store/eosActions";
 import { tronActions } from "../../store/tronActions";
+import { harmonyActions } from "../../store/harmonyActions";
 
 //scatter
 import ScatterJS from 'scatterjs-core';
@@ -53,6 +54,8 @@ const mapDispatch = dispatch => ({
   setWeb3: web3 =>
     dispatch(globalActions.setWeb3(web3)),
   setWeb3Network: number => dispatch(globalActions.setWeb3Network(number)),
+  setHarmonyAddress: string => dispatch(harmonyActions.setHarmonyName(string))
+  
 });
 
 
@@ -102,6 +105,11 @@ class Networks extends Component {
       // Non-dapp browsers, inject tronweb on behalf of user
       window.tronWeb = this.props.tronWeb
     }
+  }
+
+  /** FIXME: Harmony Client */
+  _checkHarmonyConnection = async () => {
+    this.props.setHarmonyAddress('one12dhftev0pcg5hq9z2ekx9v6fntylxaytdzjttn')
   }
 
     /** SET UP Web3 */
@@ -157,6 +165,8 @@ class Networks extends Component {
       await this._checkTronConnection()
     } else if (this.props.network === 0) {
       await this._checkEthereumConnection()
+    } else if (this.props.network === 5) {
+      await this._checkHarmonyConnection()
     }
   }
 
@@ -186,6 +196,9 @@ class Networks extends Component {
     } 
     else if (current === 4) {
       //ORE  
+    }
+    else if (current === 5) {
+      //HARMONY  
     }
     else {
       throw (Error(`Invalid network provided: ${current}`))
@@ -218,6 +231,7 @@ class Networks extends Component {
                     <option value={NETWORKS.TRON}>TRON (Shasta)</option>
                     <option value={NETWORKS.TELOS}>TELOS (Testnet)</option>
                     <option value={NETWORKS.ORE}>ORE (Staging)</option>
+                    <option value={NETWORKS.HARMONY}>Harmony (Testnet)</option>
                 </Select>
             </FormControl>
         </Paper>

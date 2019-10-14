@@ -14,6 +14,7 @@ import { eosActions } from "../../store/eosActions";
 import { telosActions } from "../../store/telosActions";
 import { oreActions } from "../../store/oreActions";
 import { tronActions } from "../../store/tronActions";
+import { harmonyActions } from "../../store/harmonyActions";
 
 // WEB3 Services
 import { updateUserBalance } from '../../eth_services/updateUserBalance'
@@ -25,6 +26,8 @@ import { updateTelosBalance } from '../../telos_services/updateTelosBalance'
 import { updateOreBalance } from '../../ore_services/updateOreBalance'
 // Tron Services
 import { updateTronBalance } from '../../tron_services/updateTronBalance'
+// Harmony Services
+import { updateHarmonyBalance } from '../../harmony_services/getBalance'
 
 // CUSD Currency Logo
 import CarbonLogo from '../helpers/CarbonLogo'
@@ -57,7 +60,9 @@ const mapState = state => ({
   network: state.global.network,
   tron_address: state.tron.user_address,
   tronWeb: state.global.tronWeb,
-  balance_cusd_tron: state.tron.balance_cusd
+  balance_cusd_tron: state.tron.balance_cusd,
+  harmony_address: state.harmony.user_name,
+  harmony_balance_oned: state.harmony.balance_oned
 });
 
 const mapDispatch = dispatch => ({
@@ -66,6 +71,7 @@ const mapDispatch = dispatch => ({
   setTelosBalance: balance => dispatch(telosActions.setTelosBalance(balance)),
   setOreBalance: balance => dispatch(oreActions.setOreBalance(balance)),
   setTronBalance: balance => dispatch(tronActions.setTronBalance(balance)),
+  setHarmonyBalance: balance => dispatch(harmonyActions.setHarmonyBalance(balance)),
 });
 
 class Balances extends Component {
@@ -137,7 +143,18 @@ class Balances extends Component {
     } else {
       this.props.setTronBalance("N/A")
     }
+  }
 
+  // On Harmony
+  _updateHarmonyBalance = async (user) => {
+    let short_balance = await updateHarmonyBalance(user)
+    if (short_balance >= 0 ) {
+        if (short_balance !== this.props.harmony_balance_oned) {
+          this.props.setHarmonyBalance(short_balance)
+        }
+    } else {
+      this.props.setHarmonyBalance("N/A")
+    }
   }
 
   /** CONTINUOUS TIMER BEGINNING AT MOUNT */
@@ -163,6 +180,8 @@ class Balances extends Component {
       await this._updateTelosBalance()
     } else if (this.props.network === 4) {
       await this._updateOreBalance()
+    } else if (this.props.network === 5) {
+      await this._updateHarmonyBalance(this.props.harmony_address)
     }
   }
 
@@ -179,6 +198,7 @@ class Balances extends Component {
       eos_balance_cusd,
       telos_balance_tlosd,
       ore_balance_ored,
+      harmony_balance_oned,
       balance_cusd_tron,
       network
     } = this.props;
@@ -194,6 +214,8 @@ class Balances extends Component {
       balance = telos_balance_tlosd
     } else if (network === 4) {
       balance = ore_balance_ored
+    } else if (network === 5) {
+      balance = harmony_balance_oned
     }
 
     return (
