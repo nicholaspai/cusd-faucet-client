@@ -8,7 +8,7 @@ export const initialState = {
     page: PAGES.MAIN,
     username: '',
     password: '',
-    network: NETWORKS.ETH,
+    network: NETWORKS.EOS,
     eos_client: '',
     telos_client: '',
     ore_client: '',

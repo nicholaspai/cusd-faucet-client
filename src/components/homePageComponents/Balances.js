@@ -15,6 +15,7 @@ import { telosActions } from "../../store/telosActions";
 import { oreActions } from "../../store/oreActions";
 import { tronActions } from "../../store/tronActions";
 import { harmonyActions } from "../../store/harmonyActions";
+import { viteActions } from "../../store/viteActions";
 
 // WEB3 Services
 import { updateUserBalance } from '../../eth_services/updateUserBalance'
@@ -28,6 +29,8 @@ import { updateOreBalance } from '../../ore_services/updateOreBalance'
 import { updateTronBalance } from '../../tron_services/updateTronBalance'
 // Harmony Services
 import { updateHarmonyBalance } from '../../harmony_services/getBalance'
+// Vite Services
+import { updateViteBalance } from '../../vite_services/getBalance'
 
 // CUSD Currency Logo
 import CarbonLogo from '../helpers/CarbonLogo'
@@ -62,7 +65,9 @@ const mapState = state => ({
   tronWeb: state.global.tronWeb,
   balance_cusd_tron: state.tron.balance_cusd,
   harmony_address: state.harmony.user_name,
-  harmony_balance_oned: state.harmony.balance_oned
+  harmony_balance_oned: state.harmony.balance_oned,
+  vite_address: state.vite.user_name,
+  vite_balance_vited: state.vite.balance_vited
 });
 
 const mapDispatch = dispatch => ({
@@ -72,6 +77,7 @@ const mapDispatch = dispatch => ({
   setOreBalance: balance => dispatch(oreActions.setOreBalance(balance)),
   setTronBalance: balance => dispatch(tronActions.setTronBalance(balance)),
   setHarmonyBalance: balance => dispatch(harmonyActions.setHarmonyBalance(balance)),
+  setViteBalance: balance => dispatch(viteActions.setViteBalance(balance))
 });
 
 class Balances extends Component {
@@ -157,6 +163,19 @@ class Balances extends Component {
     }
   }
 
+   // On Vite
+   _updateViteBalance = async (user) => {
+    let balance = await updateViteBalance(user)
+    let availableBalance = balance.availableBalances[0].balance.toNumber()
+    if (availableBalance >= 0 ) {
+        if (availableBalance !== this.props.vite_balance_vited) {
+          this.props.setViteBalance(availableBalance)
+        }
+    } else {
+      this.props.setViteBalance("N/A")
+    }
+  }
+
   /** CONTINUOUS TIMER BEGINNING AT MOUNT */
   componentDidMount = async () => {
     var intervalId = setInterval(this.timer, 5000);
@@ -182,6 +201,8 @@ class Balances extends Component {
       await this._updateOreBalance()
     } else if (this.props.network === 5) {
       await this._updateHarmonyBalance(this.props.harmony_address)
+    } else if (this.props.network === 6) {
+      await this._updateViteBalance(this.props.vite_address)
     }
   }
 
@@ -199,6 +220,7 @@ class Balances extends Component {
       telos_balance_tlosd,
       ore_balance_ored,
       harmony_balance_oned,
+      vite_balance_vited,
       balance_cusd_tron,
       network
     } = this.props;
@@ -216,6 +238,8 @@ class Balances extends Component {
       balance = ore_balance_ored
     } else if (network === 5) {
       balance = harmony_balance_oned
+    } else if (network === 6) {
+      balance = vite_balance_vited
     }
 
     return (

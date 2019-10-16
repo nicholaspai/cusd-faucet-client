@@ -11,6 +11,7 @@ import { telos } from "./telosReducers";
 import { ore } from "./oreReducers";
 import { tron } from "./tronReducers";
 import { harmony } from "./harmonyReducers";
+import { vite } from "./viteReducers";
 
 
 // Add all reducers here to aggregate into one store
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   tron,
   eth,
   harmony,
+  vite,
   global,
   accounts
 });

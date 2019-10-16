@@ -4,7 +4,7 @@ const CarbonLogo = () => (
   <img
     style={{ height: "15px", width: "auto" }}
     alt="CUSD"
-    src="https://db5islsn2p9x4.cloudfront.net/carbon-logo.svg"
+    src="https://carbon12.s3.amazonaws.com/carbon-logo-clear-bckground.png"
   />
 
 );

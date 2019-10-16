@@ -13,6 +13,7 @@ import TelosMint from './homePageComponents/telos/MintButton'
 import OreMint from './homePageComponents/ore/MintButton'
 import TronMint from './homePageComponents/tron/MintButton'
 import HarmonyMint from './homePageComponents/harmony/MintButton'
+import ViteMint from './homePageComponents/vite/MintButton'
 import Balances from './homePageComponents/Balances'
 import TransferButton from './homePageComponents/TransferButton'
 import TronTransfer from './homePageComponents/tron/TransferButton'
@@ -61,7 +62,9 @@ class HomePage extends Component {
                 (network === 2 ? <TronMint /> : 
                   (network === 3 ? <TelosMint /> : 
                     (network === 4 ? <OreMint /> : 
-                      (network === 5 ? <HarmonyMint /> : "" ) 
+                      (network === 5 ? <HarmonyMint /> : 
+                        (network === 6 ? <ViteMint /> : "" ) 
+                      ) 
                     )
                   )
                 )

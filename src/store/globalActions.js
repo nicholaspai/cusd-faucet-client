@@ -27,7 +27,8 @@ export const NETWORKS = {
   TRON: 2,
   TELOS: 3,
   ORE: 4,
-  HARMONY: 5
+  HARMONY: 5,
+  VITE: 6
 }
 
 export const globalActions = {

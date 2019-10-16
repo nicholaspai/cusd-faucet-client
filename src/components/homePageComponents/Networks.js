@@ -15,6 +15,7 @@ import { globalActions, NETWORKS } from "../../store/globalActions";
 import { eosActions } from "../../store/eosActions";
 import { tronActions } from "../../store/tronActions";
 import { harmonyActions } from "../../store/harmonyActions";
+import { viteActions } from "../../store/viteActions";
 
 //scatter
 import ScatterJS from 'scatterjs-core';
@@ -54,8 +55,8 @@ const mapDispatch = dispatch => ({
   setWeb3: web3 =>
     dispatch(globalActions.setWeb3(web3)),
   setWeb3Network: number => dispatch(globalActions.setWeb3Network(number)),
-  setHarmonyAddress: string => dispatch(harmonyActions.setHarmonyName(string))
-  
+  setHarmonyAddress: string => dispatch(harmonyActions.setHarmonyName(string)),
+  setViteAddress: string => dispatch(viteActions.setViteName(string))
 });
 
 
@@ -110,6 +111,11 @@ class Networks extends Component {
   /** FIXME: Harmony Client */
   _checkHarmonyConnection = async () => {
     this.props.setHarmonyAddress('one12dhftev0pcg5hq9z2ekx9v6fntylxaytdzjttn')
+  }
+
+  /** FIXME: Vite Client */
+  _checkViteConnection = async () => {
+    this.props.setViteAddress('vite_c9ef472d042db72d66ade363abdb8327a162b9cb89ed20eae5')
   }
 
     /** SET UP Web3 */
@@ -167,6 +173,8 @@ class Networks extends Component {
       await this._checkEthereumConnection()
     } else if (this.props.network === 5) {
       await this._checkHarmonyConnection()
+    } else if (this.props.network === 6) {
+      await this._checkViteConnection()
     }
   }
 
@@ -200,6 +208,9 @@ class Networks extends Component {
     else if (current === 5) {
       //HARMONY  
     }
+    else if (current === 6) {
+      //VITE  
+    }
     else {
       throw (Error(`Invalid network provided: ${current}`))
     } 
@@ -226,12 +237,14 @@ class Networks extends Component {
                     id: 'network-native-simple',
                     }}
                 >
-                    <option value={NETWORKS.ETH}>ETH (Ropsten)</option>
                     <option value={NETWORKS.EOS}>EOS (Jungle)</option>
+                    <option value={NETWORKS.ETH}>ETH (Ropsten)</option>
                     <option value={NETWORKS.TRON}>TRON (Shasta)</option>
-                    <option value={NETWORKS.TELOS}>TELOS (Testnet)</option>
+                    {/* Removing Telos temporarily as testnet hardforked and all old accounts (stablecarbon, carbonissuer) need to be redeployed from the beginning--including switching of keys */}
+                    {/* <option value={NETWORKS.TELOS}>TELOS (Testnet)</option> */}
                     <option value={NETWORKS.ORE}>ORE (Staging)</option>
                     <option value={NETWORKS.HARMONY}>Harmony (Testnet)</option>
+                    <option value={NETWORKS.VITE}>Vite (Testnet)</option>
                 </Select>
             </FormControl>
         </Paper>

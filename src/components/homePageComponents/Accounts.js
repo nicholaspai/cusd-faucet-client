@@ -33,7 +33,8 @@ const mapState = state => ({
   telos_name: state.telos.user_name,
   ore_name: state.ore.user_name,
   harmony_name: state.harmony.user_name,
-  tron_address: state.tron.user_address
+  tron_address: state.tron.user_address,
+  vite_name: state.vite.user_name
 });
 
 const mapDispatch = dispatch => ({
@@ -58,7 +59,8 @@ class Accounts extends Component {
       eos_name,
       telos_name,
       ore_name,
-      harmony_name
+      harmony_name,
+      vite_name
     } = this.props;
 
     // ETH
@@ -133,6 +135,17 @@ class Accounts extends Component {
                     rel="noopener noreferrer"
                     >
                     {harmony_name}
+                    </a>) : ("")}
+              </Typography>
+            )}
+            {network === 6 && (
+            <Typography> 
+                You are connected to VITE test net as: {vite_name ? (<a
+                    href={"https://explorer.vite.net/account/" + vite_name}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >
+                    {vite_name}
                     </a>) : ("")}
               </Typography>
             )}
