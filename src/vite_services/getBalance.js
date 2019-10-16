@@ -4,10 +4,14 @@ import {contractAddresses} from './contractAddresses'
 
 const CURRENCY_UNIT = new BN(1e18)
 
+let client 
+
 export const updateViteBalance = async (address) => {
     try {
         let tokenId = contractAddresses['CUSD']
-        let client = await getClient()
+        if (!client) {
+            client = await getClient()
+        }
         let _balance = await client.getBalance(address)
         let _availableBalance = _balance.balance
         let _onroadBalance = _balance.onroad
