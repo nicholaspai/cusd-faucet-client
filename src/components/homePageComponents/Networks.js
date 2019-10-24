@@ -241,7 +241,7 @@ class Networks extends Component {
                     <option value={NETWORKS.ETH}>ETH (Ropsten)</option>
                     <option value={NETWORKS.TRON}>TRON (Shasta)</option>
                     {/* Removing Telos temporarily as testnet hardforked and all old accounts (stablecarbon, carbonissuer) need to be redeployed from the beginning--including switching of keys */}
-                    {/* <option value={NETWORKS.TELOS}>TELOS (Testnet)</option> */}
+                    <option value={NETWORKS.TELOS}>TELOS (Testnet)</option>
                     <option value={NETWORKS.ORE}>ORE (Staging)</option>
                     <option value={NETWORKS.HARMONY}>Harmony (Testnet)</option>
                     <option value={NETWORKS.VITE}>Vite (Testnet)</option>
