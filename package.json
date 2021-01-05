@@ -13,7 +13,7 @@
     "@material-ui/icons": "^3.0.1",
     "@vite/vitejs": "^2.2.10",
     "@vite/vitejs-ws": "^2.2.10",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "eos-scatter": "^1.0.0",
     "eosjs": "^20.0.0-beta3",
     "ethers": "^4.0.18",
